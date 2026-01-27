@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recurso de Apoyo Asesoría y Seguimiento 2026 - Secundaria</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <!-- Librería para procesamiento de Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col md:flex-row">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="w-full md:w-72 bg-white border-r border-slate-200 hidden md:flex flex-col flex-shrink-0 transition-all min-h-screen sticky top-0">
+        <div class="p-5 border-b border-slate-100">
+            <div class="flex items-start gap-3 text-slate-800 font-bold text-base leading-tight mb-1">
+                <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-blue-600 rounded-lg flex items-center justify-center text-white shadow-md flex-shrink-0 mt-1">
+                    <i class="ph ph-file-text text-lg"></i>
+                </div>
+                Recurso de Apoyo Asesoría y Seguimiento 2026
+            </div>
+        </div>
+
+        <nav class="flex-1 p-4 space-y-1 overflow-y-auto" id="sidebar-nav"></nav>
+
+        <div class="p-4 border-t border-slate-100 bg-slate-50">
+            <div class="flex items-center gap-3 px-2">
+                <div class="w-8 h-8 rounded-full bg-slate-800 text-white flex-shrink-0 flex items-center justify-center font-bold text-xs">AN</div>
+                <div class="overflow-hidden text-[10px]">
+                    <p class="font-bold text-slate-700 truncate">Rodolfo Juárez / Alberto Bustos</p>
+                    <p class="text-slate-500 truncate mt-0.5" id="auth-status">Conectando con la nube...</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <main class="flex-1 flex flex-col relative min-w-0">
+        <div class="md:hidden bg-white p-4 border-b border-slate-200 flex justify-between items-center shadow-sm sticky top-0 z-20">
+            <span class="font-bold text-slate-800 flex items-center gap-2 text-sm">
+                <i class="ph ph-file-text text-teal-600"></i> Recurso PNFT 2026
+            </span>
+            <button onclick="renderView('dashboard')" class="p-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+                <i class="ph ph-house text-xl"></i>
+            </button>
+        </div>
+
+        <div id="app-content" class="flex-1 p-6 md:p-12 bg-slate-50/50 overflow-y-auto"></div>
+
+        <!-- MODALES -->
+        <div id="auth-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center">
+            <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md mx-4">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-700"><i class="ph ph-lock-key text-3xl"></i></div>
+                    <h3 class="text-xl font-bold text-slate-800">Acceso Asesores Secundaria</h3>
+                </div>
+                <div class="space-y-4">
+                    <input type="password" id="advisor-password" class="w-full p-3 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-teal-500" placeholder="Contraseña de acceso">
+                    <p id="auth-error" class="text-red-500 text-xs hidden">Contraseña incorrecta.</p>
+                    <button onclick="attemptAdvisorLogin()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-3 rounded-lg transition-colors">Ingresar al Panel</button>
+                    <button onclick="closeAuthModal()" class="w-full text-slate-500 py-2 text-center text-sm">Cerrar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="forum-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center">
+            <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-lg mx-4">
+                <h3 id="forum-modal-title" class="text-lg font-bold mb-4 text-slate-800 tracking-tight">Nueva Discusión en la Comunidad</h3>
+                <div class="space-y-4">
+                    <input type="hidden" id="edit-post-id">
+                    <input type="text" id="post-title" class="w-full p-3 border rounded-lg text-sm" placeholder="Título del tema">
+                    <select id="post-tag" class="w-full p-3 border rounded-lg text-sm bg-white font-medium">
+                        <option value="Metodología">Metodología / Design Thinking</option>
+                        <option value="Evaluación">Evaluación del Proyecto</option>
+                        <option value="Administrativo">Administrativo / Lab</option>
+                        <option value="Recursos">Recursos Didácticos</option>
+                    </select>
+                    <textarea id="post-content" class="w-full h-32 p-3 border rounded-lg text-sm leading-relaxed" placeholder="Describe tu aporte o consulta aquí..."></textarea>
+                    <div class="flex justify-end gap-3">
+                        <button onclick="closeForumModal()" class="px-4 py-2 text-slate-500 text-sm font-medium">Cancelar</button>
+                        <button onclick="savePost()" class="px-6 py-2 bg-teal-600 text-white rounded-lg font-bold text-sm shadow-md hover:bg-teal-700 transition-colors">Publicar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Configuración de Firebase (inyectada por el entorno)
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "", authDomain: "", projectId: "", storageBucket: "", messagingSenderId: "", appId: "" };
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'portal-docente-secundaria-2026';
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- GLOBAL STATE ---
+        window.state = {
+            view: 'dashboard',
+            advisorAuthenticated: sessionStorage.getItem('advisorAuth') === 'true',
+            guideLevel: '7',
+            forumFilter: 'Todos',
+            posts: [],
+            institutions: [],
+            user: null
+        };
+
+        // --- AUTH & DATA SYNC ---
+        const initApp = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                document.getElementById('auth-status').innerText = "Error de sincronización";
+            }
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            window.state.user = user;
+            if (user) {
+                document.getElementById('auth-status').innerText = "Sincronizado ✅";
+                setupRealtimeListeners();
+            }
+        });
+
+        const setupRealtimeListeners = () => {
+            const forumRef = collection(db, 'artifacts', appId, 'public', 'data', 'forum');
+            const instRef = collection(db, 'artifacts', appId, 'public', 'data', 'institutions');
+
+            onSnapshot(forumRef, (snapshot) => {
+                window.state.posts = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => b.timestamp - a.timestamp);
+                if (window.state.view === 'forum') renderView('forum');
+            });
+
+            onSnapshot(instRef, (snapshot) => {
+                if (!snapshot.empty) {
+                    window.state.institutions = snapshot.docs.map(d => ({ code: d.id, ...d.data() }));
+                    if (window.state.view === 'advisorDashboard') renderView('advisorDashboard');
+                } else {
+                    initializeBaseData();
+                }
+            });
+        };
+
+        const initializeBaseData = async () => {
+            const base = [
+                { code: "4056", name: "Liceo de Santa Cruz", advisor: "Alberto Bustos", status: "pending" },
+                { code: "5021", name: "CTP de Cañas", advisor: "Rodolfo Juárez", status: "done" }
+            ];
+            for (const i of base) await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', i.code), i);
+        };
+
+        // --- INFORMACIÓN PEDAGÓGICA (RESTAURADA) ---
+        const DOCUMENT_SUMMARY = [
+            {
+                title: "1. Gestión Administrativa en Secundaria",
+                icon: "ph-buildings",
+                subsections: [
+                    { subtitle: "Carga Horaria y GTP", points: ["La carga horaria se asigna según la matrícula oficial del centro educativo.", "Foco en III Ciclo de Colegios Académicos (7°, 8° y 9°).", "GTP: Elaboración de material, coordinación docente y registro SEA."] },
+                    { subtitle: "Codocencia y Escenarios", points: ["Docente de grado debe ser facilitador activo junto al de Informática.", "Escenarios Dirección 1: Atención varía según Módulos Horarios.", "CHIM: Proceso para completar carga en centros aledaños."] }
+                ]
+            },
+            {
+                title: "2. Gestión del Recurso Tecnológico",
+                icon: "ph-monitor-play",
+                subsections: [
+                    { subtitle: "Control de Inventarios y RAEE", points: ["Uso obligatorio de TecnoPresta para inventarios (dos cortes anuales).", "Gestión de RAEE: Manejo responsable según circular DVM-AC-DRTE-470-11-2025.", "Averías: Registro inmediato en boleta técnica."] },
+                    { subtitle: "Resguardo y Bitácoras", points: ["Bitácora de control: Obligatoria para documentar uso diario.", "Prioridad: Siempre lecciones de Formación Tecnológica sobre otros fines."] }
+                ]
+            },
+            {
+                title: "3. Orientaciones Pedagógicas Secundaria",
+                icon: "ph-chalkboard-teacher",
+                subsections: [
+                    { subtitle: "Implementación Curricular", points: ["Largo Plazo: Consolidación de competencias específicas del área.", "Mediano Plazo: Resultados de Aprendizaje (RdA) por ciclo.", "Corto Plazo: Saberes (conceptuales, procedimentales y actitudinales)."] },
+                    { subtitle: "Metodologías Activas", points: ["Design Thinking: Estándar para el desarrollo del Componente Proyecto.", "Diagnóstico Inicial: Proceso valorativo obligatorio (máximo 2 lecciones).", "Articulación: El aprendizaje debe ser contextualizado y transversal."] }
+                ]
+            },
+            {
+                title: "4. Planeamiento Didáctico",
+                icon: "ph-pencil-line",
+                subsections: [
+                    { subtitle: "Lineamientos 2026", points: ["Periodicidad Bimestral utilizando la Guía Docente oficial.", "Elaboración por nivel educativo para atender particularidades.", "Plantilla PNFT: Bloques de Identificación, Mediación y Reflexión."] },
+                    { subtitle: "Herramienta PIA", points: ["Planificación Integral y Ágil: Recurso digital opcional con IA.", "Optimiza el tiempo de redacción de estrategias de mediación."] }
+                ]
+            },
+            {
+                title: "5. Evaluación de los Aprendizajes",
+                icon: "ph-check-square",
+                subsections: [
+                    { subtitle: "Componente Proyecto", points: ["Exclusivo de Secundaria: Evalúa proceso y producto final.", "Se desarrolla estrictamente durante las lecciones (no es tarea).", "Sincronización total con el REA."] }
+                ]
+            }
+        ];
+
+        const TEACHER_GUIDE_DATA = {
+            levels: {
+                "7": { 
+                    title: "Sétimo Año: Fundamentos y Lógica", 
+                    description: "Introducción a la lógica computacional y arquitectura de redes.",
+                    modules: [
+                        { name: "Módulo 1", focus: "Apropiación y Lógica", topics: ["Hardware y Periféricos", "Software y Funciones", "Sistemas Operativos", "Algoritmos y Lógica", "Tablas de Verdad", "Estructuras Condicionales"] },
+                        { name: "Módulo 2", focus: "Conectividad y Ciudadanía", topics: ["Internet y Proveedores ISP", "Netiqueta", "Ciberseguridad", "Multimedia", "Fundamentos de IA", "Bucles"] }
+                    ]
+                },
+                "8": { 
+                    title: "Octavo Año: Robótica y Conectividad", 
+                    description: "Desarrollo de prototipos físicos y sistemas IoT.",
+                    modules: [
+                        { name: "Módulo 1", focus: "Mecanismos y Prototipado", topics: ["Hardware Interno y Rendimiento", "Software Libre vs Paga", "Edición A/V avanzada", "Mecánica aplicada", "Circuitos Eléctricos", "Electrónica"] },
+                        { name: "Módulo 2", focus: "Datos y Sensores", topics: ["Hoja de Cálculo Pro", "Internet de las Cosas (IoT)", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "IA Generativa"] }
+                    ]
+                },
+                "9": { 
+                    title: "Noveno Año: Sistemas Inteligentes", 
+                    description: "Automatización avanzada y gestión de bases de datos.",
+                    modules: [
+                        { name: "Módulo 1", focus: "Automatización Avanzada", topics: ["Microcontroladores Avanzados", "Domótica", "Prototipado Real", "Algoritmos Complejos", "Optimización de Sistemas"] },
+                        { name: "Módulo 2", focus: "Gestión y Ética", topics: ["Gestores de Bases de Datos", "Protocolos Red", "Modelado 3D", "Derechos de Autor", "Huella Digital", "Ética de la IA"] }
+                    ]
+                }
+            },
+            project: {
+                phases: [{name:"1. Empatizar", desc:"Investigación"}, {name:"2. Definir", desc:"Reto"}, {name:"3. Idear", desc:"Soluciones"}, {name:"4. Prototipar", desc:"Construcción"}, {name:"5. Evaluar", desc:"Validación"}]
+            }
+        };
+
+        // --- UI RENDERERS ---
+        window.renderView = (viewId) => {
+            window.state.view = viewId;
+            renderSidebarNav();
+            const c = document.getElementById('app-content');
+            c.innerHTML = '<div class="fade-in"></div>';
+            const container = c.firstChild;
+
+            if (viewId === 'dashboard') {
+                container.innerHTML = `
+                    <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-[2.5rem] p-8 md:p-12 text-white mb-10 shadow-2xl relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-10 opacity-10"><i class="ph ph-rocket-launch text-[15rem]"></i></div>
+                        <div class="relative z-10">
+                            <span class="bg-teal-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-[0.2em] mb-6 inline-block">Secundaria 2026</span>
+                            <h1 class="text-4xl md:text-6xl font-black mb-6 tracking-tighter leading-none">Portal de Apoyo <br>Pedagógico PNFT</h1>
+                            <p class="text-slate-400 max-w-2xl text-lg leading-relaxed mb-10">Información técnica y administrativa exclusiva para docentes y asesores de secundaria del Programa Nacional de Formación Tecnológica.</p>
+                            <div class="flex flex-wrap gap-4">
+                                <button onclick="renderView('teacherGuide')" class="bg-teal-500 hover:bg-teal-400 px-8 py-4 rounded-2xl font-black text-sm shadow-xl transition-all flex items-center gap-3">Explorar Malla Curricular <i class="ph ph-arrow-right-bold"></i></button>
+                                <button onclick="renderView('summary')" class="bg-white/10 hover:bg-white/20 px-8 py-4 rounded-2xl font-black text-sm border border-white/10 transition-all backdrop-blur-sm">Ver Orientaciones</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all group">
+                            <div class="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center text-teal-600 mb-6 group-hover:scale-110 transition-transform"><i class="ph ph-graduation-cap text-3xl"></i></div>
+                            <h4 class="font-black text-slate-800 text-xl mb-2">Malla Curricular</h4>
+                            <p class="text-sm text-slate-500 leading-relaxed">Consulta oficial de saberes, temas y módulos para 7°, 8° y 9° año.</p>
+                        </div>
+                        <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all group">
+                            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 mb-6 group-hover:scale-110 transition-transform"><i class="ph ph-users-three text-3xl"></i></div>
+                            <h4 class="font-black text-slate-800 text-xl mb-2">Comunidad</h4>
+                            <p class="text-sm text-slate-500 leading-relaxed">Espacio colaborativo para compartir experiencias y consultas con colegas.</p>
+                        </div>
+                        <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all group">
+                            <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600 mb-6 group-hover:scale-110 transition-transform"><i class="ph ph-sparkle text-3xl"></i></div>
+                            <h4 class="font-black text-slate-800 text-xl mb-2">Asistente IA</h4>
+                            <p class="text-sm text-slate-500 leading-relaxed">Consultoría normativa y pedagógica automatizada basada en reglamentos MEP.</p>
+                        </div>
+                    </div>
+                `;
+            } else if (viewId === 'summary') {
+                container.innerHTML = `
+                    <div class="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+                        <div>
+                            <h2 class="text-4xl font-black text-slate-800 tracking-tight">Orientaciones para Docentes</h2>
+                            <p class="text-slate-500">Disposiciones oficiales PNFT 2026 para el contexto de Secundaria.</p>
+                        </div>
+                        <button class="bg-slate-800 text-white px-6 py-3 rounded-2xl text-xs font-black flex items-center gap-2 hover:bg-slate-700 transition-all shadow-lg">
+                            <i class="ph ph-download-simple-bold text-xl"></i>Descargar PDF Oficial
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                        ${DOCUMENT_SUMMARY.map(s => `
+                            <div class="bg-white rounded-[2.5rem] border border-slate-200 overflow-hidden shadow-sm flex flex-col hover:border-teal-200 transition-colors">
+                                <div class="bg-slate-50 p-6 border-b border-slate-100 flex items-center gap-4">
+                                    <div class="p-3 bg-white rounded-2xl shadow-sm"><i class="ph ${s.icon} text-3xl text-teal-600"></i></div>
+                                    <h3 class="font-black text-slate-800 text-xl">${s.title}</h3>
+                                </div>
+                                <div class="p-8 space-y-8 flex-1">
+                                    ${s.subsections.map(sub => `
+                                        <div class="relative pl-6">
+                                            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-teal-50 rounded-full"></div>
+                                            <h4 class="text-teal-700 font-black text-xs uppercase tracking-[0.15em] mb-4">${sub.subtitle}</h4>
+                                            <ul class="space-y-4">
+                                                ${sub.points.map(p => `<li class="text-sm text-slate-600 flex gap-4 leading-relaxed items-start"><i class="ph ph-caret-right-bold text-teal-400 mt-1 flex-shrink-0"></i>${p}</li>`).join('')}
+                                            </ul>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (viewId === 'teacherGuide') {
+                const data = TEACHER_GUIDE_DATA.levels[window.state.guideLevel];
+                container.innerHTML = `
+                    <div class="mb-10">
+                        <h2 class="text-4xl font-black text-slate-800 tracking-tighter">Guía Docente Secundaria</h2>
+                        <p class="text-slate-500">Malla curricular, módulos y saberes por nivel educativo.</p>
+                    </div>
+                    <div class="flex gap-2 mb-10 bg-white p-2 rounded-3xl border border-slate-200 w-fit shadow-lg">
+                        ${['7','8','9'].map(l => `<button onclick="state.guideLevel='${l}'; renderView('teacherGuide')" class="px-12 py-3.5 rounded-2xl text-sm font-black transition-all ${window.state.guideLevel === l ? 'bg-teal-600 text-white shadow-xl shadow-teal-500/30' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'}">${l}° Año</button>`).join('')}
+                    </div>
+                    <div class="animate-in fade-in duration-700">
+                        <div class="mb-8 p-10 bg-white rounded-[2.5rem] border-l-[12px] border-teal-500 shadow-sm">
+                            <h3 class="text-3xl font-black text-slate-800 mb-2 tracking-tight">${data.title}</h3>
+                            <p class="text-slate-500 text-lg max-w-3xl leading-relaxed">${data.description}</p>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-10">
+                            ${data.modules.map(m => `
+                                <div class="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden group hover:border-teal-300 transition-all">
+                                    <div class="bg-slate-900 p-6 text-white flex justify-between items-center">
+                                        <span class="font-black text-xs uppercase tracking-[0.2em]">${m.name}</span>
+                                        <span class="bg-teal-500/20 text-teal-300 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border border-teal-500/30">${m.focus}</span>
+                                    </div>
+                                    <div class="p-10">
+                                        <h5 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-6">Saberes Conceptuales</h5>
+                                        <ul class="space-y-5">
+                                            ${m.topics.map(t => `<li class="text-sm text-slate-700 font-medium flex items-center gap-4"><div class="w-2.5 h-2.5 rounded-full bg-teal-500 shadow-sm"></div>${t}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (viewId === 'forum') {
+                container.innerHTML = `
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-6">
+                        <div>
+                            <h2 class="text-4xl font-black text-slate-800 tracking-tighter">Comunidad Docente</h2>
+                            <p class="text-slate-500 text-lg">Espacio nacional de colaboración técnica y pedagógica.</p>
+                        </div>
+                        <button onclick="openForumModal()" class="bg-teal-600 text-white px-10 py-4 rounded-2xl font-black flex items-center gap-3 hover:bg-teal-700 transition-all shadow-xl shadow-teal-600/20"><i class="ph ph-chat-teardrop-dots-bold text-3xl"></i>Nueva Discusión</button>
+                    </div>
+                    <div class="space-y-6">
+                        ${window.state.posts.map(p => `
+                            <div class="bg-white p-10 rounded-[2.5rem] border border-slate-200 shadow-sm relative group hover:shadow-md transition-shadow">
+                                <div class="flex justify-between items-start mb-6">
+                                    <span class="px-4 py-1.5 bg-teal-50 text-teal-700 text-[10px] font-black rounded-xl uppercase tracking-widest border border-teal-100">${p.tag}</span>
+                                    <span class="text-slate-400 text-[10px] font-bold">${p.date}</span>
+                                </div>
+                                <h4 class="font-black text-2xl text-slate-800 mb-4 tracking-tight">${p.title}</h4>
+                                <p class="text-slate-600 text-base leading-relaxed mb-8">${p.content}</p>
+                                <div class="flex justify-between items-center border-t border-slate-50 pt-8">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 font-black text-sm">${p.author.charAt(0)}</div>
+                                        <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">Autor: ${p.author}</span>
+                                    </div>
+                                    ${window.state.advisorAuthenticated ? `<button onclick="deletePost('${p.id}')" class="text-red-500 font-black text-xs hover:underline flex items-center gap-2"><i class="ph ph-trash-bold text-lg"></i>Eliminar</button>` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (viewId === 'advisorDashboard') {
+                const rodolfo = window.state.institutions.filter(i => i.advisor.includes("Rodolfo"));
+                const alberto = window.state.institutions.filter(i => i.advisor.includes("Alberto"));
+                
+                const renderCol = (name, list, color) => `
+                    <div class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden border-t-[10px] border-t-${color}-500 flex flex-col">
+                        <div class="p-8">
+                            <div class="flex items-center gap-4 mb-8">
+                                <div class="w-12 h-12 rounded-2xl bg-${color}-50 flex items-center justify-center text-${color}-600"><i class="ph ph-user-circle text-3xl"></i></div>
+                                <h3 class="text-xl font-black text-slate-800 tracking-tight">Gestión: ${name}</h3>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mb-10">
+                                <div class="p-6 bg-slate-50 rounded-3xl text-center"><p class="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em] mb-2">Nómina</p><p class="text-4xl font-black text-slate-800">${list.length}</p></div>
+                                <div class="p-6 bg-green-50 rounded-3xl text-center"><p class="text-[9px] text-green-600 font-black uppercase tracking-[0.2em] mb-2">Visitados</p><p class="text-4xl font-black text-green-700">${list.filter(x => x.status==='done').length}</p></div>
+                            </div>
+                            <div class="max-h-[450px] overflow-y-auto no-scrollbar rounded-2xl border border-slate-50 shadow-inner">
+                                <table class="w-full text-xs text-left">
+                                    <thead class="sticky top-0 bg-white border-b text-[10px] text-slate-400 uppercase font-black tracking-widest"><tr class="bg-slate-50/50"><th class="px-6 py-4">Centro</th><th class="px-6 py-4 text-center">Estado</th><th class="px-6 py-4 text-right">Acción</th></tr></thead>
+                                    <tbody class="divide-y divide-slate-50">
+                                        ${list.map(i => `<tr class="hover:bg-slate-50 transition-colors"><td class="px-6 py-4 font-bold text-slate-700 truncate max-w-[150px]">${i.name}</td><td class="px-6 py-4 text-center"><span class="px-3 py-1 rounded-lg font-black uppercase text-[9px] ${i.status==='done'?'bg-green-100 text-green-700':'bg-orange-100 text-orange-700'}">${i.status==='done'?'VISITADO':'PEND.'}</span></td><td class="px-6 py-4 text-right"><button onclick="toggleStatus('${i.code}')" class="text-teal-600 p-2 hover:bg-teal-50 rounded-xl transition-colors"><i class="ph ph-arrows-counter-clockwise-bold text-lg"></i></button></td></tr>`).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                container.innerHTML = `
+                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-10 gap-6">
+                        <h2 class="text-4xl font-black text-slate-800 tracking-tighter">Tablero de Control Asesor</h2>
+                        <label class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-black text-sm flex items-center gap-3 cursor-pointer shadow-xl shadow-indigo-600/20 transition-all">
+                            <i class="ph ph-file-xls text-3xl"></i>Importar Excel
+                            <input type="file" class="hidden" accept=".xlsx, .xls" onchange="handleExcel(event)">
+                        </label>
+                    </div>
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-10">
+                        ${renderCol("Rodolfo Juárez Pérez", rodolfo, "indigo")}
+                        ${renderCol("Alberto Bustos Ortega", alberto, "teal")}
+                    </div>
+                `;
+            } else if (viewId === 'advisorGuide') {
+                container.innerHTML = `
+                    <h2 class="text-4xl font-black text-slate-800 mb-10 tracking-tighter">Guía de Gestión Regional</h2>
+                    <div class="bg-slate-900 rounded-[3rem] p-12 text-white relative overflow-hidden shadow-2xl">
+                        <div class="absolute top-0 right-0 p-8 opacity-10"><i class="ph ph-sparkle text-[15rem]"></i></div>
+                        <div class="relative z-10 max-w-4xl">
+                            <span class="bg-yellow-400 text-slate-900 text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-[0.3em] mb-8 inline-block shadow-lg shadow-yellow-400/20">Consultor IA Normativa</span>
+                            <h3 class="text-4xl font-black mb-6 tracking-tight leading-none">Análisis de Casos Administrativos</h3>
+                            <p class="text-slate-400 text-xl mb-12 leading-relaxed">Escriba una situación técnica o administrativa detectada en un centro educativo para recibir una orientación oficial basada en el reglamento de Formación Tecnológica Secundaria.</p>
+                            <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                                <input type="text" id="case-q" class="flex-1 p-6 rounded-2xl bg-slate-800 border-2 border-slate-700 text-white outline-none focus:border-teal-500 transition-all placeholder-slate-600 text-lg font-medium shadow-inner" placeholder="Ej: Docente no imparte el componente proyecto en clase...">
+                                <button onclick="askCase()" class="bg-teal-500 hover:bg-teal-400 px-12 py-6 rounded-2xl font-black text-sm tracking-widest transition-all shadow-xl shadow-teal-500/30 uppercase">Analizar</button>
+                            </div>
+                            <div id="case-r" class="mt-8 p-10 bg-black/40 rounded-[2rem] text-sm hidden text-slate-300 border border-white/5 shadow-inner leading-relaxed whitespace-pre-wrap italic"></div>
+                        </div>
+                    </div>
+                `;
+            }
+        };
+
+        const renderSidebarNav = () => {
+            const nav = document.getElementById('sidebar-nav');
+            const items = [
+                { id: 'dashboard', icon: 'ph-desktop', label: 'Inicio' },
+                { section: 'Recursos Didácticos' },
+                { id: 'summary', icon: 'ph-clipboard-text', label: 'Orientaciones Docentes' },
+                { id: 'teacherGuide', icon: 'ph-graduation-cap', label: 'Guía Docente' },
+                { id: 'forum', icon: 'ph-users-three', label: 'Comunidad Docente' },
+                { section: 'Asesoría Nacional' }
+            ];
+
+            let html = items.map(item => {
+                if (item.section) return `<div class="pt-6 pb-2 px-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">${item.section}</div>`;
+                const active = window.state.view === item.id;
+                return `<button onclick="renderView('${item.id}')" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 ${active ? 'bg-teal-50 text-teal-700 font-black shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'}"><i class="ph ${item.icon} text-2xl"></i><span class="text-sm">${item.label}</span></button>`;
+            }).join('');
+
+            if (window.state.advisorAuthenticated) {
+                html += `<div class="mt-4 space-y-1">`;
+                html += `<button onclick="renderView('advisorDashboard')" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 ${window.state.view === 'advisorDashboard' ? 'bg-slate-800 text-white font-black shadow-md' : ''} transition-all"><i class="ph ph-chart-pie-bold text-2xl"></i><span class="text-sm">Tablero Control</span></button>`;
+                html += `<button onclick="renderView('advisorGuide')" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 ${window.state.view === 'advisorGuide' ? 'bg-slate-800 text-white font-black shadow-md' : ''} transition-all"><i class="ph ph-book-open-bold text-2xl"></i><span class="text-sm">Guía de Gestión</span></button>`;
+                html += `<button onclick="logout()" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 font-black transition-all mt-4"><i class="ph ph-sign-out-bold text-2xl"></i><span class="text-sm uppercase tracking-tighter">Cerrar Sesión</span></button></div>`;
+            } else {
+                html += `<button onclick="openAuthModal()" class="w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-400 hover:bg-slate-50 border-2 border-dashed border-slate-100 mt-8 group transition-all"><i class="ph ph-lock-key-bold text-2xl group-hover:text-teal-500"></i><span class="text-xs font-black uppercase tracking-widest">Acceso Asesores</span></button>`;
+            }
+            nav.innerHTML = html;
+        };
+
+        // --- CORE ACTIONS (CONNECTED TO FIRESTORE) ---
+        window.savePost = async () => {
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+            if(!title || !content || !window.state.user) return;
+            const forumRef = collection(db, 'artifacts', appId, 'public', 'data', 'forum');
+            await addDoc(forumRef, { title, content, tag: document.getElementById('post-tag').value, author: window.state.advisorAuthenticated ? "Asesor Nacional" : "Docente Secundaria", date: new Date().toLocaleDateString(), timestamp: Date.now() });
+            window.closeForumModal();
+            window.showToast("¡Tu publicación ha sido compartida!");
+        };
+
+        window.deletePost = async (id) => { if (confirm("¿Seguro que deseas eliminar este aporte?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'forum', id)); };
+
+        window.toggleStatus = async (code) => {
+            const inst = window.state.institutions.find(i => i.code === code);
+            if (!inst) return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), { status: inst.status === 'done' ? 'pending' : 'done' });
+            window.showToast("Estado de visita actualizado.");
+        };
+
+        window.handleExcel = (e) => {
+            const file = e.target.files[0]; if(!file) return;
+            const reader = new FileReader();
+            reader.onload = async (evt) => {
+                const workbook = XLSX.read(new Uint8Array(evt.target.result), { type: 'array' });
+                const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+                for (const r of json) {
+                    const code = String(r["Código"] || r["Codigo"] || r["id"] || Math.random().toString(36).substring(7));
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), { code, name: r["Institución"] || r["Institucion"] || "Sin Nombre", advisor: r["Asesor"] || "Alberto Bustos", status: (String(r["Estado"]).toLowerCase().includes('atendido')) ? 'done' : 'pending' });
+                }
+                window.showToast("Nómina importada correctamente.");
+            };
+            reader.readAsArrayBuffer(file);
+        };
+
+        window.askCase = async () => {
+            const q = document.getElementById('case-q').value; const r = document.getElementById('case-r'); if(!q) return;
+            r.classList.remove('hidden'); r.innerHTML = '<div class="flex items-center gap-3"><i class="ph ph-spinner animate-spin text-2xl text-teal-500"></i> Analizando normativa administrativa para secundaria...</div>';
+            const res = await callGeminiAPI(`Analiza este caso técnico/administrativo detectado en secundaria: ${q}. Basa tu respuesta estrictamente en el reglamento PNFT y REA del MEP Costa Rica.`);
+            r.innerHTML = res;
+        };
+
+        const callGeminiAPI = async (prompt, retries = 5, delay = 1000) => {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`;
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], systemInstruction: { parts: [{ text: "Actúa como Asesor Nacional de Recursos Tecnológicos del MEP. Tono formal, experto y centrado en secundaria." }] } }) });
+                    if (!res.ok) throw new Error("API Busy");
+                    const data = await res.json(); return data.candidates[0].content.parts[0].text;
+                } catch (e) { if (i === retries - 1) return "Lo siento, el servicio de IA está ocupado. Intenta de nuevo en unos minutos."; await new Promise(r => setTimeout(r, delay * Math.pow(2, i))); }
+            }
+        };
+
+        // --- HELPERS UI ---
+        window.openForumModal = () => document.getElementById('forum-modal').classList.remove('hidden');
+        window.closeForumModal = () => { document.getElementById('forum-modal').classList.add('hidden'); document.getElementById('post-title').value = ''; document.getElementById('post-content').value = ''; };
+        window.openAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
+        window.closeAuthModal = () => { document.getElementById('auth-modal').classList.add('hidden'); document.getElementById('auth-error').classList.add('hidden'); };
+        window.attemptAdvisorLogin = () => {
+            if(document.getElementById('advisor-password').value === ADVISOR_PASSWORD) {
+                window.state.advisorAuthenticated = true; sessionStorage.setItem('advisorAuth', 'true');
+                window.closeAuthModal(); window.renderView('advisorDashboard');
+            } else document.getElementById('auth-error').classList.remove('hidden');
+        };
+        window.logout = () => { window.state.advisorAuthenticated = false; sessionStorage.removeItem('advisorAuth'); window.renderView('dashboard'); };
+        window.showToast = (msg) => {
+            const t = document.createElement('div');
+            t.className = 'fixed bottom-4 right-4 bg-slate-900 text-white px-8 py-4 rounded-2xl shadow-2xl fade-in z-[200] text-xs font-black border border-white/10 flex items-center gap-4 transition-all';
+            t.innerHTML = `<i class="ph ph-check-circle-fill text-teal-400 text-2xl"></i> ${msg}`;
+            document.body.appendChild(t);
+            setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 500); }, 3500);
+        };
+
+        initApp();
+        renderView('dashboard');
+    </script>
+</body>
+</html>
