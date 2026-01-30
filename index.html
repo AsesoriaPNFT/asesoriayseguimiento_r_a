@@ -243,6 +243,27 @@
         async function initApp() {
             try { await signInAnonymously(auth); } 
             catch (e) { document.getElementById('auth-status').innerText = "Modo Visitante"; }
+            async function initApp() {
+            try { await signInAnonymously(auth); } 
+            catch (e) { document.getElementById('auth-status').innerText = "Modo Visitante"; }
+
+            // --- INICIO DEL CÓDIGO DE REPARACIÓN (SOLO USAR UNA VEZ) ---
+            // Esta sección forzará la escritura correcta en la base de datos
+            // ignorando lo que diga la consola visual de Firebase.
+            try {
+                const CLAVE_CORRECTA = "AIzaSyAj8ZMNnzunifD8AaIszD9PUD3pnoStv84"; // <--- ESTA ES TU CLAVE REPARADA
+                
+                await setDoc(doc(db, "config", "api_keys"), { 
+                    gemini_key: CLAVE_CORRECTA 
+                });
+                console.log("✅ ¡CLAVE CORREGIDA Y GUARDADA CON ÉXITO!");
+                alert("✅ ¡CLAVE CORREGIDA! Ahora borra este código.");
+            } catch (error) {
+                console.error("❌ Error al intentar corregir la clave:", error);
+                alert("Error: Revisa la consola (F12)");
+            }
+            // --- FIN DEL CÓDIGO DE REPARACIÓN ---
+        }
         }
 
         // SEGURIDAD: Obtener API Key de Firestore
@@ -622,5 +643,6 @@
     </script>
 </body>
 </html>
+
 
 
