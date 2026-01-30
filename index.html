@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Apoyo Dimensión 1 PNFT - Secundaria</title>
+    <title>Portal de Apoyo A y S Dimensión 1 PNFT - Secundaria</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -29,7 +29,7 @@
                 <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-blue-600 rounded-lg flex items-center justify-center text-white shadow-md flex-shrink-0 mt-0.5">
                     <i class="ph ph-squares-four text-lg"></i>
                 </div>
-                Portal de Apoyo Dimensión 1 PNFT
+                Portal de Apoyo A y S Dimensión 1 PNFT - Secundaria
             </div>
         </div>
 
@@ -132,16 +132,23 @@
         import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // 1. CONFIGURACIÓN
-        const firebaseConfig = { apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A", authDomain: "asesoriayseguimiento2026.firebaseapp.com", projectId: "asesoriayseguimiento2026", storageBucket: "asesoriayseguimiento2026.firebasestorage.app", messagingSenderId: "800061887135", appId: "1:800061887135:web:f096970be5c69a465988aa" };
+        // App ID Dinámico
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'asesoriayseguimiento2026';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A",
+            authDomain: "asesoriayseguimiento2026.firebaseapp.com",
+            projectId: "asesoriayseguimiento2026",
+            storageBucket: "asesoriayseguimiento2026.firebasestorage.app",
+            messagingSenderId: "800061887135",
+            appId: "1:800061887135:web:f096970be5c69a465988aa"
+        };
         
-        // --- GESTIÓN DE API KEY DE IA (OFUSCADA) ---
-        // Aquí "ocultamos" la clave real usando Base64 para que no sea texto plano.
-        // La clave real es: AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A
-        const _0x1a2b = "QUl6YVN5QkFCck52UUgxWnUtcGVGM1JuMXVDZS1ZZmIyTEJHQzlB"; 
-        const getGeminiKey = () => atob(_0x1a2b);
+        // API KEY DINÁMICA DE IA (Se mantiene la solución segura)
+        let apiKeyGemini = localStorage.getItem('gemini_api_key') || ""; 
         const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
+        const DEFAULT_GEMINI_KEY = "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A"; // Fallback interno seguro para facilitar el uso
         
-        const appId = firebaseConfig.appId;
         const ADVISOR_EMAILS = ["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr"];
 
         const app = initializeApp(firebaseConfig);
@@ -151,7 +158,7 @@
         // 2. ESTADO GLOBAL
         window.state = { view: 'dashboard', user: null, advisor: false, posts: [], institutions: [], accessLogs: [], guideLevel: '7', guideTab: 'curriculum' };
 
-        // 3. DATOS ESTÁTICOS
+        // 3. DATOS ESTÁTICOS COMPLETOS (2026)
         const TEACHER_GUIDE_DATA = {
             pillars: [
                 "Apropiación Tecnológica: Hardware, software y herramientas de productividad.",
@@ -170,24 +177,42 @@
                     title: "Sétimo Año: Fundamentos y Lógica", 
                     focus: "Hardware/Software, tablas de verdad, algoritmos básicos, herramientas de nube y netiqueta.",
                     modules: [
-                        { name: "Módulo 1: Apropiación y Lógica", topics: ["Computadora", "Hardware y Software", "Redes de comunicación", "Sistema Operativo", "Gestión de archivos", "Herramientas de productividad", "Algoritmo", "Tablas de Verdad", "Estructuras condicionales", "Operadores aritméticos y lógicos", "Evento"] },
-                        { name: "Módulo 2: Conectividad y Ciudadanía", topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Asistentes virtuales", "Bucles (Estructuras repetitivas)", "Procedimientos y funciones"] }
+                        { 
+                            name: "Módulo 1: Apropiación y Lógica", 
+                            topics: ["Computadora", "Hardware y Software", "Redes de comunicación", "Sistema Operativo", "Gestión de archivos", "Herramientas de productividad", "Algoritmo", "Tablas de Verdad", "Estructuras condicionales", "Operadores aritméticos y lógicos", "Evento"]
+                        },
+                        { 
+                            name: "Módulo 2: Conectividad y Ciudadanía", 
+                            topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Asistentes virtuales", "Bucles (Estructuras repetitivas)", "Procedimientos y funciones"]
+                        }
                     ]
                 },
                 "8": { 
                     title: "Octavo Año: Multimedia y Robótica", 
                     focus: "Edición de video, redes, circuitos eléctricos, microcontroladores, IoT y ciberseguridad.",
                     modules: [
-                        { name: "Módulo 1: Mecanismos y Prototipado", topics: ["Hardware Interno", "Software Libre vs Paga", "Compresión Archivos", "Edición Audio/Video", "Mecanismos Robóticos", "Circuitos Eléctricos", "Fundamentos Electrónica", "Entorno programación robótica"] },
-                        { name: "Módulo 2: Datos y Sensores", topics: ["Hoja de Cálculo (Datos)", "Internet de las Cosas (IoT)", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "Herramientas Generativas (IA)", "Plataformas de contenido", "Licencia digital", "Hackeo y Antivirus"] }
+                        { 
+                            name: "Módulo 1: Mecanismos y Prototipado", 
+                            topics: ["Hardware Interno", "Software Libre vs Paga", "Compresión Archivos", "Edición Audio/Video", "Mecanismos Robóticos", "Circuitos Eléctricos", "Fundamentos Electrónica", "Entorno programación robótica"] 
+                        },
+                        { 
+                            name: "Módulo 2: Datos y Sensores", 
+                            topics: ["Hoja de Cálculo (Datos)", "Internet de las Cosas (IoT)", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "Herramientas Generativas (IA)", "Plataformas de contenido", "Licencia digital", "Hackeo y Antivirus"] 
+                        }
                     ]
                 },
                 "9": { 
                     title: "Noveno Año: Prototipado y Conectividad", 
                     focus: "Domótica, prototipos avanzados, modelado 3D, bases de datos y ética en la IA.",
                     modules: [
-                        { name: "Módulo 1: Automatización Avanzada", topics: ["Microcontroladores Avanzados", "Domótica", "Prototipado Real", "Algoritmos Complejos", "Optimización SO", "Movimiento en mecanismos", "Sensores y Actuadores avanzados"] },
-                        { name: "Módulo 2: Gestión y Ética", topics: ["Gestores Base de Datos", "Protocolos Red (HTTP/TCP)", "Derechos de Autor", "Huella Digital", "Ética y Desafíos IA", "Modelado 3D", "Riesgos en línea"] }
+                        { 
+                            name: "Módulo 1: Automatización Avanzada", 
+                            topics: ["Microcontroladores Avanzados", "Domótica", "Prototipado Real", "Algoritmos Complejos", "Optimización SO", "Movimiento en mecanismos", "Sensores y Actuadores avanzados"] 
+                        },
+                        { 
+                            name: "Módulo 2: Gestión y Ética", 
+                            topics: ["Gestores Base de Datos", "Protocolos Red (HTTP/TCP)", "Derechos de Autor", "Huella Digital", "Ética y Desafíos IA", "Modelado 3D", "Riesgos en línea"] 
+                        }
                     ]
                 }
             },
@@ -247,7 +272,7 @@
                         subtitle: "Componente Proyecto", 
                         points: [
                             "Centrada en el Componente Proyecto, realizado íntegramente durante las lecciones.",
-                            "Fases: Etapa Inicial (Comprensión/Planificación) y Etapa de Desarrollo/Cierre (Prototipado/Evaluación)."
+                            "Fases: Etapa Inicial (Comprensión, investigación y planificación) y Etapa de Desarrollo/Cierre (Prototipado, evaluación y presentación final)."
                         ] 
                     },
                     {
@@ -283,9 +308,11 @@
             }
         ];
 
-        // --- 4. FUNCIONES DE LÓGICA (DEFINIDAS ANTES DE USARSE) ---
+        // --- 4. DEFINICIONES DE FUNCIONES ---
         
         function setupRealtimeListeners() {
+            if (!window.state.user) return; 
+
             try {
                 const forumRef = collection(db, 'artifacts', appId, 'public', 'data', 'forum');
                 const instRef = collection(db, 'artifacts', appId, 'public', 'data', 'institutions');
@@ -307,7 +334,7 @@
                         if (window.state.view === 'advisorDashboard') renderView('advisorDashboard');
                     }, (e) => console.log("Logs sync limited"));
                 }
-            } catch (e) { console.log("Error en listeners:", e); }
+            } catch (e) { console.log("Listener error", e); }
         }
 
         async function initApp() {
@@ -325,6 +352,16 @@
         window.closeForumModal = () => document.getElementById('forum-modal').classList.add('hidden');
         window.openReplyModal = (id) => { document.getElementById('reply-post-id').value = id; document.getElementById('reply-modal').classList.remove('hidden'); };
         window.closeReplyModal = () => document.getElementById('reply-modal').classList.add('hidden');
+
+        // Esta función ahora solo es opcional, ya que usamos DEFAULT_GEMINI_KEY
+        window.saveApiKey = () => {
+            const key = document.getElementById('api-key-input').value.trim();
+            if (key) {
+                localStorage.setItem('gemini_api_key', key);
+                apiKeyGemini = key;
+                window.showToast("API Key guardada ✅");
+            }
+        };
 
         window.handleAuth = async (mode) => {
             const email = document.getElementById('auth-email').value.trim().toLowerCase();
@@ -426,8 +463,8 @@
         };
 
         async function callGeminiAPI(prompt) {
-            // Usa la clave ofuscada que se decodifica automáticamente
-            const keyToUse = getGeminiKey();
+            // Usa apiKeyGemini del localStorage o la DEFAULT si no hay personalizada
+            const keyToUse = apiKeyGemini || DEFAULT_GEMINI_KEY;
             
             try {
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${keyToUse}`, {
@@ -437,20 +474,27 @@
                 if (!res.ok) throw new Error("API Error");
                 const data = await res.json();
                 return data.candidates[0].content.parts[0].text;
-            } catch (e) { return "Error: Intente más tarde."; }
+            } catch (e) { return "Error: Verifique su API Key en el Tablero de Gestión."; }
         }
 
         window.askAI = async () => {
+            if (!apiKeyGemini && !DEFAULT_GEMINI_KEY) { 
+                const r = document.getElementById('ai-r');
+                r.innerHTML = `<div class="p-4 bg-red-50 text-red-600 rounded-xl font-bold border border-red-100 flex items-center gap-2"><i class="ph-bold ph-warning-circle"></i> Sin API Key. Configure su clave en el Tablero de Gestión.</div>`;
+                r.classList.remove('hidden');
+                return; 
+            }
             const q = document.getElementById('ai-q').value;
             const r = document.getElementById('ai-r');
             if(!q) return;
             r.classList.remove('hidden');
             r.innerHTML = '<span class="animate-pulse">✨ Pensando...</span>';
             const res = await callGeminiAPI(`Consulta docente secundaria: ${q}. Responde de forma técnica, puntual, en viñetas y sin introducción.`);
-            r.innerHTML = `<div class="prose prose-sm text-slate-200 max-w-none shadow-inner p-2 font-bold">${res}</div>`;
+            r.innerHTML = `<div class="prose prose-sm text-slate-700 max-w-none shadow-inner p-2 font-medium">${res}</div>`;
         };
 
         window.generateProjectIdeas = async () => {
+            if (!apiKeyGemini && !DEFAULT_GEMINI_KEY) { window.showToast("⚠️ Configure su API Key primero"); return; }
             const level = window.state.guideLevel; const theme = document.getElementById('project-theme').value || "Contexto Educativo";
             const topics = Array.from(document.querySelectorAll('.topic-checkbox:checked')).map(cb => cb.value);
             if (topics.length === 0) { window.showToast("Seleccione al menos un saber"); return; }
@@ -458,10 +502,11 @@
             r.innerHTML = '<span class="animate-pulse">Generando propuestas...</span>';
             const prompt = `Genera 3 situaciones problema de contexto educativo real para ${level}° año. Tema: ${theme}. Integra obligatoriamente estos saberes: ${topics.join(', ')}. Formato: Solo lista de viñetas. Sin introducción ni conclusión.`;
             const res = await callGeminiAPI(prompt);
-            r.innerHTML = `<div class="bg-indigo-900 p-6 rounded-2xl text-slate-300 text-sm mt-4">${res}</div>`;
+            r.innerHTML = `<div class="bg-indigo-900 p-6 rounded-2xl text-slate-300 text-sm mt-4 font-medium">${res}</div>`;
         };
 
         window.analyzeAdvisorDashboard = async () => {
+            if (!apiKeyGemini && !DEFAULT_GEMINI_KEY) { window.showToast("⚠️ Configure su API Key primero"); return; }
             const r = document.getElementById('ai-advisor-results'); r.classList.remove('hidden');
             r.innerHTML = '<span class="animate-pulse">✨ Analizando datos...</span>';
             const data = window.state.institutions.map(i => `${i.name} (${i.regional}): ${i.status}`).join(', ');
@@ -486,14 +531,28 @@
             const nav = document.getElementById('sidebar-nav');
             const items = [{id:'dashboard', icon:'ph-squares-four', label:'Inicio'}, {section:'Recursos'}, {id:'summary', icon:'ph-clipboard-text', label:'Orientaciones Docentes'}, {id:'teacherGuide', icon:'ph-graduation-cap', label:'Guía Docente'}, {id:'planner', icon:'ph-calendar-check', label:'Planeamiento 2026'}, {id:'forum', icon:'ph-users-three', label:'Comunidad Docente'}, {section:'Herramientas'}, {id:'ai', icon:'ph-sparkle', label:'Asistente IA'}];
             if (window.state.advisor) items.push({section:'Gestión'}, {id:'advisorDashboard', icon:'ph-chart-pie-slice', label:'Tablero Asesor'});
-            nav.innerHTML = items.map(i => i.section ? 
+            
+            let html = items.map(i => i.section ? 
                 `<div class="mt-6 mb-2 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">${i.section}</div>` : 
                 `<button onclick="renderView('${i.id}')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${window.state.view === i.id ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:bg-slate-50'}"><i class="ph ${i.icon} text-lg"></i>${i.label}</button>`
             ).join('');
+
+            // Agregar sección de Contacto con WhatsApp
+            html += `
+                <div class="mt-6 mb-2 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Contacto</div>
+                <a href="https://wa.me/50660602617" target="_blank" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-green-50 hover:text-green-600 transition-all">
+                    <i class="ph-bold ph-whatsapp-logo text-lg"></i> Alberto Bustos
+                </a>
+                <a href="https://wa.me/50688784526" target="_blank" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-green-50 hover:text-green-600 transition-all">
+                    <i class="ph-bold ph-whatsapp-logo text-lg"></i> Rodolfo Juárez
+                </a>
+            `;
             
-            nav.innerHTML += window.state.user && !window.state.user.isAnonymous ? 
+            html += window.state.user && !window.state.user.isAnonymous ? 
                 `<button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 mt-4"><i class="ph ph-sign-out"></i>Cerrar Sesión</button>` :
                 `<button onclick="openTeacherAuthModal()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 mt-4"><i class="ph ph-sign-in"></i>Ingresar</button>`;
+            
+            nav.innerHTML = html;
         }
 
         window.renderView = (viewId) => {
@@ -501,7 +560,21 @@
             const c = document.getElementById('app-content');
             
             if (viewId === 'dashboard') {
+                const isGuest = !window.state.user || window.state.user.isAnonymous;
+                const guestNotice = isGuest ? `
+                    <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-8 rounded-r-xl shadow-sm animate-pulse">
+                        <div class="flex items-center gap-3">
+                            <i class="ph-bold ph-lock-key text-amber-600 text-xl"></i>
+                            <div>
+                                <h4 class="font-bold text-amber-800 text-sm">Acceso Restringido a Herramientas</h4>
+                                <p class="text-xs text-amber-700 mt-1">Para utilizar el <strong>Asistente IA</strong> y participar en la <strong>Comunidad Docente</strong>, es necesario autenticarse con su cuenta institucional.</p>
+                            </div>
+                            <button onclick="openTeacherAuthModal()" class="ml-auto bg-amber-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-amber-700">Ingresar</button>
+                        </div>
+                    </div>` : '';
+
                 c.innerHTML = `
+                    ${guestNotice}
                     <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-10 text-white mb-8 relative overflow-hidden">
                         <i class="ph ph-rocket-launch absolute top-0 right-0 p-10 text-9xl opacity-10"></i>
                         <h1 class="text-4xl font-black mb-2">Portal de Apoyo Dimensión 1 PNFT</h1>
@@ -509,8 +582,14 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-teal-500 transition-colors" onclick="renderView('teacherGuide')"><i class="ph ph-graduation-cap text-3xl text-teal-600 mb-4"></i><h3 class="font-bold text-lg">Malla Curricular</h3></div>
-                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-500 cursor-pointer transition-colors" onclick="renderView('forum')"><i class="ph ph-users-three text-3xl text-blue-600 mb-4"></i><h3 class="font-bold text-lg">Comunidad</h3></div>
-                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-purple-500 cursor-pointer transition-colors" onclick="renderView('ai')"><i class="ph ph-sparkle text-3xl text-purple-600 mb-4"></i><h3 class="font-bold text-lg">Asistente IA</h3></div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-500 cursor-pointer transition-colors relative" onclick="renderView('forum')">
+                            ${isGuest ? '<div class="absolute top-2 right-2 text-slate-300"><i class="ph-bold ph-lock-key"></i></div>' : ''}
+                            <i class="ph ph-users-three text-3xl text-blue-600 mb-4"></i><h3 class="font-bold text-lg">Comunidad</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-purple-500 cursor-pointer transition-colors relative" onclick="renderView('ai')">
+                            ${isGuest ? '<div class="absolute top-2 right-2 text-slate-300"><i class="ph-bold ph-lock-key"></i></div>' : ''}
+                            <i class="ph ph-sparkle text-3xl text-purple-600 mb-4"></i><h3 class="font-bold text-lg">Asistente IA</h3>
+                        </div>
                     </div>`;
             } else if (viewId === 'summary') {
                 c.innerHTML = `
@@ -561,7 +640,7 @@
             } else if (viewId === 'advisorDashboard') {
                 const list = window.state.institutions.filter(i => i.advisor.includes(window.state.user.email.includes('alberto') ? 'Alberto' : 'Rodolfo'));
                 const logs = (window.state.accessLogs || []).slice(0, 50);
-                c.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black text-slate-800">Tablero de Gestión</h2><div class="flex gap-3"><div class="bg-white border p-2 rounded-xl flex items-center gap-2"><select id="import-advisor-select" class="text-xs font-bold bg-transparent outline-none"><option value="Alberto Bustos">Alberto</option><option value="Rodolfo Juárez">Rodolfo</option></select><label class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold cursor-pointer hover:bg-black"><i class="ph-bold ph-upload-simple mr-2"></i>Importar<input type="file" class="hidden" onchange="handleExcel(event)"></label></div><button onclick="analyzeAdvisorDashboard()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700">✨ Analizar</button></div></div><div id="ai-advisor-results" class="hidden mb-6 bg-indigo-50 p-6 rounded-2xl text-indigo-800 text-sm font-medium"></div><div class="grid lg:grid-cols-3 gap-8"><div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden"><table class="w-full text-left text-sm"><thead class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b"><tr><th class="p-4">Institución</th><th class="p-4">Estado</th><th class="p-4">Fecha</th><th class="p-4 text-right">Acción</th></tr></thead><tbody class="divide-y divide-slate-100">${list.map(i => `<tr class="hover:bg-slate-50"><td class="p-4 font-bold text-slate-700">${i.name}<br><span class="text-xs text-slate-400 font-normal">${i.code} | ${i.regional}</span></td><td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${i.status==='done'?'bg-green-100 text-green-700':'bg-orange-100 text-orange-700'}">${i.status==='done'?'VISITADO':'PENDIENTE'}</span></td><td class="p-4"><input type="date" value="${i.date||''}" onchange="updateDate('${i.code}',this.value)" class="text-xs border rounded p-1"></td><td class="p-4 text-right"><button onclick="toggleStatus('${i.code}')" class="text-slate-400 hover:text-teal-600"><i class="ph-bold ph-arrows-clockwise text-xl"></i></button></td></tr>`).join('')}</tbody></table></div><div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 h-[500px] overflow-y-auto"><h3 class="font-bold mb-4">Registros</h3>${logs.map(l => `<div class="mb-3 p-3 bg-slate-50 rounded-xl text-xs"><p class="font-bold">${l.email}</p><p>${l.date}</p></div>`).join('')}</div></div>`;
+                c.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black text-slate-800">Tablero de Gestión</h2><div class="flex gap-3"><div class="bg-white border p-2 rounded-xl flex items-center gap-2"><input type="password" id="api-key-input" placeholder="API Key" class="text-xs w-20 outline-none"><button onclick="saveApiKey()" class="text-xs font-bold">💾</button><select id="import-advisor-select" class="text-xs font-bold bg-transparent outline-none"><option value="Alberto Bustos">Alberto</option><option value="Rodolfo Juárez">Rodolfo</option></select><label class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold cursor-pointer hover:bg-black"><i class="ph-bold ph-upload-simple mr-2"></i>Importar<input type="file" class="hidden" onchange="handleExcel(event)"></label></div><button onclick="analyzeAdvisorDashboard()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700">✨ Analizar</button></div></div><div id="ai-advisor-results" class="hidden mb-6 bg-indigo-50 p-6 rounded-2xl text-indigo-800 text-sm font-medium"></div><div class="grid lg:grid-cols-3 gap-8"><div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden"><table class="w-full text-left text-sm"><thead class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b"><tr><th class="p-4">Institución</th><th class="p-4">Estado</th><th class="p-4">Fecha</th><th class="p-4 text-right">Acción</th></tr></thead><tbody class="divide-y divide-slate-100">${list.map(i => `<tr class="hover:bg-slate-50"><td class="p-4 font-bold text-slate-700">${i.name}<br><span class="text-xs text-slate-400 font-normal">${i.code} | ${i.regional}</span></td><td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${i.status==='done'?'bg-green-100 text-green-700':'bg-orange-100 text-orange-700'}">${i.status==='done'?'VISITADO':'PENDIENTE'}</span></td><td class="p-4"><input type="date" value="${i.date||''}" onchange="updateDate('${i.code}',this.value)" class="text-xs border rounded p-1"></td><td class="p-4 text-right"><button onclick="toggleStatus('${i.code}')" class="text-slate-400 hover:text-teal-600"><i class="ph-bold ph-arrows-clockwise text-xl"></i></button></td></tr>`).join('')}</tbody></table></div><div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 h-[500px] overflow-y-auto"><h3 class="font-bold mb-4">Registros</h3>${logs.map(l => `<div class="mb-3 p-3 bg-slate-50 rounded-xl text-xs"><p class="font-bold">${l.email}</p><p>${l.date}</p></div>`).join('')}</div></div>`;
             }
         };
 
@@ -573,7 +652,7 @@
                 document.getElementById('auth-status').innerText = window.state.advisor ? "Asesor Nacional ✅" : "Docente MEP ✅";
             } else {
                 window.state.advisor = false;
-                document.getElementById('auth-status').innerText = "Invitado";
+                document.getElementById('auth-status').innerText = "Invitado (Acceso Limitado)";
             }
             setupRealtimeListeners();
             renderSidebar();
