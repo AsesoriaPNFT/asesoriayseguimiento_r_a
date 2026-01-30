@@ -29,7 +29,7 @@
                 <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-blue-600 rounded-lg flex items-center justify-center text-white shadow-md flex-shrink-0 mt-0.5">
                     <i class="ph ph-squares-four text-lg"></i>
                 </div>
-                Portal de Apoyo Dimensión 1 PNFT
+                Portal de Apoyo Pedagógico A y S Dimensión 1 PNFT
             </div>
         </div>
 
@@ -50,7 +50,7 @@
     <main class="flex-1 flex flex-col relative min-w-0 h-screen overflow-hidden">
         <div class="md:hidden bg-white p-4 border-b border-slate-200 flex justify-between items-center shadow-sm sticky top-0 z-20">
             <span class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                <i class="ph ph-squares-four text-teal-600"></i> Portal PNFT
+                <i class="ph ph-squares-four text-teal-600"></i> Portal de Apoyo Pedagógico A y S Dimensión 1 PNFT
             </span>
             <button onclick="renderView('dashboard')" class="p-2 text-slate-600 hover:bg-slate-100 rounded-lg">
                 <i class="ph ph-house text-xl"></i>
@@ -110,7 +110,8 @@
                     <select id="post-tag" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 font-bold text-slate-700">
                         <option value="Metodología">Metodología / Design Thinking</option>
                         <option value="Evaluación">Evaluación del Proyecto</option>
-                        <option value="Administrativo">Administrativo / Lab</option>
+                        <option value="Administrativo">Administrativo / Laboratoio</option>
+                        <option value="Consulta">Consulta a aseso</option>
                         <option value="Recursos">Recursos Didácticos</option>
                     </select>
                     <textarea id="post-content" class="w-full h-40 p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 font-medium text-slate-700 placeholder-slate-400 resize-none" placeholder="Escribe tu consulta o aporte..."></textarea>
@@ -137,13 +138,25 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // 1. CONFIGURACIÓN
-        const firebaseConfig = { apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A", authDomain: "asesoriayseguimiento2026.firebaseapp.com", projectId: "asesoriayseguimiento2026", storageBucket: "asesoriayseguimiento2026.firebasestorage.app", messagingSenderId: "800061887135", appId: "1:800061887135:web:f096970be5c69a465988aa" };
-        const appId = "asesoriayseguimiento2026";
-        const apiKeyGemini = ""; 
-        const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
+        // Using the exact config provided by the user
+        const firebaseConfig = {
+            apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A",
+            authDomain: "asesoriayseguimiento2026.firebaseapp.com",
+            projectId: "asesoriayseguimiento2026",
+            storageBucket: "asesoriayseguimiento2026.firebasestorage.app",
+            messagingSenderId: "800061887135",
+            appId: "1:800061887135:web:f096970be5c69a465988aa"
+        };
+        
+        // We initialize with the provided config.
+        // We also check for a stored local key, but default to the config's key if available.
+        let apiKeyGemini = localStorage.getItem('gemini_api_key') || firebaseConfig.apiKey; 
+        
+        const appId = firebaseConfig.appId; // Using the provided appId
+        const MODEL_NAME = "gemini-1.5-flash-latest";
         
         const ADVISOR_EMAILS = ["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr"];
 
@@ -152,17 +165,17 @@
         const db = getFirestore(app);
 
         // 2. ESTADO GLOBAL
-        window.state = { view: 'dashboard', user: null, advisor: false, posts: [], institutions: [], guideLevel: '7', guideTab: 'curriculum' };
+        window.state = { view: 'dashboard', user: null, advisor: false, posts: [], institutions: [], accessLogs: [], guideLevel: '7', guideTab: 'curriculum' };
 
         // 3. DATOS ESTÁTICOS
         const TEACHER_GUIDE_DATA = {
             pillars: [
-                "Apropiación Tecnológica y Digital",
-                "Programación y Algoritmos",
-                "Computación Física y Robótica",
-                "Ciencia de Datos e Inteligencia Artificial"
+                "Apropiación Tecnológica: Hardware, software y herramientas de productividad.",
+                "Programación y Algoritmos: Desarrollo del pensamiento lógico.",
+                "Computación Física y Robótica: Electrónica, mecánica y creación de artefactos.",
+                "Ciencia de Datos e IA: Análisis de datos y comprensión de la inteligencia artificial."
             ],
-            axes: ["Pensamiento Computacional", "Ciudadanía y Ética Digital", "Emprendimiento e Innovación"],
+            axes: ["Pensamiento Computacional", "Ciudadanía Digital", "Emprendimiento"],
             knowledgeTypes: [
                 "Conceptuales: El 'saber' (temas técnicos).",
                 "Procedimentales: El 'saber hacer' (abstraer, depurar, programar).",
@@ -174,7 +187,7 @@
                     focus: "Hardware/Software, tablas de verdad, algoritmos básicos, herramientas de nube y netiqueta.",
                     modules: [
                         { name: "Módulo 1: Fundamentos", topics: ["Hardware y Periféricos", "Software y Funciones", "Sistemas Operativos", "Algoritmos (Entrada/Proceso/Salida)", "Tablas de Verdad", "Estructuras Condicionales", "Tipos de Datos"] },
-                        { name: "Módulo 2: Ciudadanía Digital", topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Asistentes virtuales", "Bucles"] }
+                        { name: "Módulo 2: Ciudadanía Digital", topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Bucles"] }
                     ]
                 },
                 "8": { 
@@ -182,15 +195,15 @@
                     focus: "Edición de video, redes, circuitos eléctricos, microcontroladores, IoT y ciberseguridad.",
                     modules: [
                         { name: "Módulo 1: Robótica Física", topics: ["Hardware Interno", "Software Libre vs Paga", "Compresión Archivos", "Edición Audio/Video", "Mecanismos Robóticos", "Circuitos Eléctricos", "Fundamentos Electrónica", "Entorno programación robótica"] },
-                        { name: "Módulo 2: Datos y Sensores", topics: ["Hoja de Cálculo (Datos)", "Internet de las Cosas (IoT)", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "Herramientas Generativas"] }
+                        { name: "Módulo 2: Datos y Sensores", topics: ["Hoja de Cálculo (Datos)", "Internet de las Cosas (IoT)", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "IA Generativa"] }
                     ]
                 },
                 "9": { 
                     title: "Noveno: Prototipado y Conectividad", 
                     focus: "Domótica, prototipos avanzados, modelado 3D, bases de datos y ética en la IA.",
                     modules: [
-                        { name: "Módulo 1: Automatización Avanzada", topics: ["Microcontroladores Avanzados", "Domótica", "Prototipado Real", "Algoritmos Complejos", "Optimización SO", "Movimiento en mecanismos"] },
-                        { name: "Módulo 2: Gestión y Ética", topics: ["Gestores Base de Datos", "Protocolos Red (HTTP/TCP)", "Derechos de Autor", "Huella Digital", "Ética y Desafíos IA", "Modelado 3D"] }
+                        { name: "Módulo 1: Automatización", topics: ["Microcontroladores Avanzados", "Domótica", "Prototipado Real", "Algoritmos Complejos", "Optimización SO"] },
+                        { name: "Módulo 2: Gestión y Ética", topics: ["Gestores Base de Datos", "Protocolos Red (HTTP/TCP)", "Derechos de Autor", "Huella Digital", "Ética y Sesgos IA", "Modelado 3D"] }
                     ]
                 }
             },
@@ -288,48 +301,210 @@
 
         // --- 4. FUNCIONES DE LÓGICA (DEFINIDAS ANTES DE USARSE) ---
         
-        async function setupRealtimeListeners() {
-            const forumRef = collection(db, 'artifacts', appId, 'public', 'data', 'forum');
-            const instRef = collection(db, 'artifacts', appId, 'public', 'data', 'institutions');
-            onSnapshot(forumRef, (snapshot) => {
-                window.state.posts = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => b.timestamp - a.timestamp);
-                if (window.state.view === 'forum') renderView('forum');
-            });
-            onSnapshot(instRef, (snapshot) => {
-                window.state.institutions = snapshot.docs.map(d => ({ code: d.id, ...d.data() }));
-                if (window.state.view === 'advisorDashboard') renderView('advisorDashboard');
-            });
-        }
+        // Manejador seguro de listeners
+        const setupRealtimeListeners = () => {
+            try {
+                const forumRef = collection(db, 'artifacts', appId, 'public', 'data', 'forum');
+                const instRef = collection(db, 'artifacts', appId, 'public', 'data', 'institutions');
+                const logsRef = collection(db, 'artifacts', appId, 'public', 'data', 'access_logs');
 
-        async function initApp() {
+                onSnapshot(query(forumRef, orderBy("timestamp", "desc")), (snapshot) => {
+                    window.state.posts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if (window.state.view === 'forum') renderView('forum');
+                }, (e) => console.log("Forum sync limited"));
+
+                onSnapshot(instRef, (snapshot) => {
+                    window.state.institutions = snapshot.docs.map(d => ({ code: d.id, ...d.data() }));
+                    if (window.state.view === 'advisorDashboard') renderView('advisorDashboard');
+                }, (e) => console.log("Inst sync limited"));
+                
+                if (window.state.advisor) {
+                    onSnapshot(query(logsRef, orderBy("timestamp", "desc")), (snapshot) => {
+                        window.state.accessLogs = snapshot.docs.map(d => d.data());
+                        if (window.state.view === 'advisorDashboard') renderView('advisorDashboard');
+                    }, (e) => console.log("Logs sync limited"));
+                }
+            } catch (e) { console.log("Error en listeners:", e); }
+        };
+
+        const initApp = async () => {
             try { await signInAnonymously(auth); } 
             catch (e) { document.getElementById('auth-status').innerText = "Modo Visitante"; }
-        }
+        };
 
-        async function callGeminiAPI(prompt, retries = 5, delay = 1000) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKeyGemini}`;
-            for (let i = 0; i < retries; i++) {
-                try {
-                    const res = await fetch(url, { 
-                        method: 'POST', 
-                        headers: { 'Content-Type': 'application/json' }, 
-                        body: JSON.stringify({ 
-                            contents: [{ parts: [{ text: prompt }] }], 
-                            systemInstruction: { parts: [{ text: "Actúa como Asesor Nacional del MEP para Secundaria. Brinda respuestas técnicas. Se muy puntual, usa viñetas y no incluyas introducciones ni conclusiones innecesarias." }] } 
-                        }) 
-                    });
-                    if (!res.ok) throw new Error("API Busy");
-                    const data = await res.json(); 
-                    return data.candidates[0].content.parts[0].text;
-                } catch (e) { 
-                    if (i === retries - 1) return "Servicio saturado. Intente luego."; 
-                    await new Promise(r => setTimeout(r, delay * Math.pow(2, i))); 
-                }
+        // --- 5. FUNCIONES GLOBALES (VINCULACIÓN A WINDOW) ---
+        
+        window.openTeacherAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
+        window.closeTeacherAuthModal = () => document.getElementById('auth-modal').classList.add('hidden');
+        window.closeAuthModal = window.closeTeacherAuthModal;
+
+        window.openForumModal = () => document.getElementById('forum-modal').classList.remove('hidden');
+        window.closeForumModal = () => document.getElementById('forum-modal').classList.add('hidden');
+        window.openReplyModal = (id) => { document.getElementById('reply-post-id').value = id; document.getElementById('reply-modal').classList.remove('hidden'); };
+        window.closeReplyModal = () => document.getElementById('reply-modal').classList.add('hidden');
+
+        window.saveApiKey = () => {
+            const key = document.getElementById('api-key-input').value.trim();
+            if (key) {
+                localStorage.setItem('gemini_api_key', key);
+                apiKeyGemini = key;
+                window.showToast("API Key guardada ✅");
             }
+        };
+
+        window.handleAuth = async (mode) => {
+            const email = document.getElementById('auth-email').value.trim().toLowerCase();
+            const password = document.getElementById('auth-password').value;
+            const err = document.getElementById('auth-error');
+            const errText = document.getElementById('auth-error-text');
+            if (!email.endsWith('@mep.go.cr')) {
+                errText.innerText = "Solo correos @mep.go.cr";
+                err.classList.remove('hidden');
+                return;
+            }
+            try {
+                if (mode === 'register') {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    window.showToast("Cuenta creada. ¡Bienvenido!");
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    window.showToast("Sesión iniciada correctamente.");
+                }
+                window.closeAuthModal();
+            } catch (e) {
+                errText.innerText = e.code === 'auth/wrong-password' ? "Contraseña incorrecta" : "Error de autenticación";
+                err.classList.remove('hidden');
+            }
+        };
+
+        window.logout = async () => {
+            await signOut(auth);
+            try { await signInAnonymously(auth); } catch(e){}
+            window.showToast("Sesión cerrada.");
+            window.renderView('dashboard');
+        };
+
+        window.savePost = async () => {
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+            const tag = document.getElementById('post-tag').value;
+            if (!title || !content) return;
+            const author = window.state.advisor ? "Asesor Nacional" : (window.state.user.email || "Docente");
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'forum'), { title, content, tag, author, date: new Date().toLocaleDateString(), timestamp: Date.now() });
+                window.closeForumModal(); window.showToast("Publicado.");
+            } catch(e) { window.showToast("Error de permisos/escritura"); }
+        };
+
+        window.saveReply = async () => {
+            const id = document.getElementById('reply-post-id').value;
+            const content = document.getElementById('reply-content').value;
+            if(!content) return;
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'forum', id), { reply: content });
+                window.closeReplyModal(); window.showToast("Respuesta enviada.");
+            } catch(e) { window.showToast("Error de permisos"); }
+        };
+
+        window.deletePost = async (id) => {
+            if (confirm("¿Eliminar esta publicación?")) {
+                try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'forum', id)); }
+                catch(e) { window.showToast("Error de permisos"); }
+            }
+        };
+
+        window.handleExcel = (e) => {
+            const file = e.target.files[0]; if(!file) return;
+            const advisorName = document.getElementById('import-advisor-select').value;
+            const reader = new FileReader();
+            reader.onload = async (evt) => {
+                const wb = XLSX.read(new Uint8Array(evt.target.result), {type: 'array'});
+                const data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                let count = 0;
+                for (const row of data) {
+                    const code = String(row["Código Presupuestario"] || Math.random().toString(36).substr(2, 9));
+                    try {
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), {
+                            code, name: row["CENTRO_EDUCATIVO"] || "Sin Nombre",
+                            email: row["Correo institucional"] || "", regional: row["REGIONAL"] || "",
+                            circuito: row["CIRCUITO"] || "", advisor: advisorName, status: 'pending', date: ""
+                        });
+                        count++;
+                    } catch(e) {}
+                }
+                window.showToast(`${count} registros cargados`);
+            };
+            reader.readAsArrayBuffer(file);
+        };
+
+        window.toggleStatus = async (code) => {
+            const inst = window.state.institutions.find(i => i.code === code);
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), {
+                    status: inst.status === 'done' ? 'pending' : 'done'
+                });
+            } catch(e) { window.showToast("Error de permisos"); }
+        };
+
+        window.updateDate = async (code, val) => {
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), { date: val }); }
+            catch(e) { window.showToast("Error de permisos"); }
+        };
+
+        async function callGeminiAPI(prompt) {
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKeyGemini}`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                if (!res.ok) throw new Error("API Error");
+                const data = await res.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch (e) { return "Error: Verifique su API Key en el Tablero de Gestión."; }
         }
 
-        // --- 5. RENDERIZADO DE LA INTERFAZ ---
+        window.askAI = async () => {
+            const q = document.getElementById('ai-q').value;
+            const r = document.getElementById('ai-r');
+            if(!q) return;
+            r.classList.remove('hidden');
+            r.innerHTML = '<span class="animate-pulse">✨ Pensando...</span>';
+            const res = await callGeminiAPI(`Consulta docente secundaria: ${q}. Responde de forma técnica, puntual, en viñetas y sin introducción.`);
+            r.innerHTML = `<div class="prose prose-sm text-slate-200 max-w-none shadow-inner p-2 font-bold">${res}</div>`;
+        };
 
+        window.generateProjectIdeas = async () => {
+            const level = window.state.guideLevel; const theme = document.getElementById('project-theme').value || "Contexto Educativo";
+            const topics = Array.from(document.querySelectorAll('.topic-checkbox:checked')).map(cb => cb.value);
+            if (topics.length === 0) { window.showToast("Seleccione al menos un saber"); return; }
+            const r = document.getElementById('project-ai-results'); r.classList.remove('hidden');
+            r.innerHTML = '<span class="animate-pulse">Generando propuestas...</span>';
+            const prompt = `Genera 3 situaciones problema de contexto educativo real para ${level}° año. Tema: ${theme}. Integra obligatoriamente estos saberes: ${topics.join(', ')}. Formato: Solo lista de viñetas. Sin introducción ni conclusión.`;
+            const res = await callGeminiAPI(prompt);
+            r.innerHTML = `<div class="bg-indigo-900 p-6 rounded-2xl text-slate-300 text-sm mt-4">${res}</div>`;
+        };
+
+        window.analyzeAdvisorDashboard = async () => {
+            const r = document.getElementById('ai-advisor-results'); r.classList.remove('hidden');
+            r.innerHTML = '<span class="animate-pulse">✨ Analizando datos...</span>';
+            const data = window.state.institutions.map(i => `${i.name} (${i.regional}): ${i.status}`).join(', ');
+            const res = await callGeminiAPI(`Analiza cobertura regional (resumen ejecutivo): ${data.substring(0,2000)}. Responde de forma puntual y en viñetas.`);
+            r.innerHTML = `<div class="bg-indigo-900 text-white p-6 rounded-2xl text-xs font-medium">${res}</div>`;
+        };
+
+        window.logAccess = async () => {
+            if (!window.state.user) return;
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'access_logs'), {
+                    email: window.state.user.email || "Anónimo", type: window.state.advisor ? "Asesor" : "Docente",
+                    timestamp: Date.now(), date: new Date().toLocaleString()
+                });
+            } catch (e) {}
+        };
+
+        window.showToast = (msg) => { const t = document.createElement('div'); t.className = 'fixed bottom-4 right-4 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-xl z-50 font-bold text-xs fade-in'; t.innerHTML = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000); };
+
+        // --- 6. RENDERIZADO ---
         function renderSidebar() {
             const nav = document.getElementById('sidebar-nav');
             const items = [{id:'dashboard', icon:'ph-squares-four', label:'Inicio'}, {section:'Recursos'}, {id:'summary', icon:'ph-clipboard-text', label:'Orientaciones Docentes'}, {id:'teacherGuide', icon:'ph-graduation-cap', label:'Guía Docente'}, {id:'planner', icon:'ph-calendar-check', label:'Planeamiento 2026'}, {id:'forum', icon:'ph-users-three', label:'Comunidad Docente'}, {section:'Herramientas'}, {id:'ai', icon:'ph-sparkle', label:'Asistente IA'}];
@@ -344,21 +519,16 @@
                 `<button onclick="openTeacherAuthModal()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 mt-4"><i class="ph ph-sign-in"></i>Ingresar</button>`;
         }
 
-        // --- 6. EXPOSICIÓN DE FUNCIONES A WINDOW ---
-
         window.renderView = (viewId) => {
             window.state.view = viewId; renderSidebar();
             const c = document.getElementById('app-content');
             
             if (viewId === 'dashboard') {
                 c.innerHTML = `
-                    <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-[2.5rem] p-12 text-white mb-10 shadow-2xl relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-10 opacity-10"><i class="ph ph-rocket-launch text-[15rem]"></i></div>
-                        <div class="relative z-10">
-                            <span class="bg-teal-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-6 inline-block">Secundaria 2026</span>
-                            <h1 class="text-4xl md:text-6xl font-black mb-6 tracking-tight leading-none">Portal de Apoyo <br>Dimensión 1 PNFT</h1>
-                            <p class="text-slate-400 max-w-2xl text-lg leading-relaxed">Gestión técnica y pedagógica exclusiva para secundaria.</p>
-                        </div>
+                    <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-10 text-white mb-8 relative overflow-hidden">
+                        <i class="ph ph-rocket-launch absolute top-0 right-0 p-10 text-9xl opacity-10"></i>
+                        <h1 class="text-4xl font-black mb-2">Portal de Apoyo Dimensión 1 PNFT</h1>
+                        <p class="text-slate-400">Gestión técnica y pedagógica exclusiva para secundaria 2026.</p>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-teal-500 transition-colors" onclick="renderView('teacherGuide')"><i class="ph ph-graduation-cap text-3xl text-teal-600 mb-4"></i><h3 class="font-bold text-lg">Malla Curricular</h3></div>
@@ -408,179 +578,17 @@
                 c.innerHTML = `<div class="text-center py-12"><div class="bg-white p-12 rounded-[3rem] border border-slate-200 shadow-xl inline-block"><i class="ph ph-file-text text-5xl text-indigo-600 mb-6"></i><h2 class="text-3xl font-black text-slate-800 mb-4">Planeamiento 2026</h2><p class="text-slate-500 mb-8">Herramienta oficial para secundaria.</p><a href="https://k3sb12.github.io/Recurso-Plantilla-Planeamiento-/" target="_blank" class="bg-slate-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-black transition-all">Ir a la Plantilla Web</a></div></div>`;
             } else if (viewId === 'forum') {
                 c.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black text-slate-800">Comunidad</h2>${window.state.user && !window.state.user.isAnonymous ? `<button onclick="openForumModal()" class="bg-teal-600 text-white px-6 py-3 rounded-xl font-bold">Publicar</button>` : `<button onclick="openTeacherAuthModal()" class="bg-slate-800 text-white px-6 py-3 rounded-xl font-bold">Ingresar</button>`}</div><div class="space-y-4">${window.state.posts.map(p => `<div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><div class="flex justify-between mb-2"><span class="bg-slate-100 px-2 py-1 rounded text-xs font-bold text-slate-600">${p.tag}</span><span class="text-xs text-slate-400 font-bold">${p.date}</span></div><h4 class="font-bold text-lg mb-2">${p.title}</h4><p class="text-sm text-slate-600 mb-4">${p.content}</p>${p.reply ? `<div class="bg-indigo-50 p-4 rounded-xl text-sm border-l-4 border-indigo-500 mb-4"><p class="font-bold text-indigo-800 text-xs mb-1">Respuesta Oficial</p>${p.reply}</div>` : ''}<div class="flex justify-between items-center pt-4 border-t"><span class="text-xs font-bold text-slate-400">Por: ${p.author}</span><div class="flex gap-2">${window.state.advisor ? `<button onclick="openReplyModal('${p.id}')" class="text-indigo-600 text-xs font-bold hover:underline">Responder</button><button onclick="deletePost('${p.id}')" class="text-red-500 text-xs font-bold hover:underline">Eliminar</button>` : ''}</div></div></div>`).join('')}</div>`;
-                window.logAccess(); // Auto log access to community
+                window.logAccess(); 
             } else if (viewId === 'ai') {
                 c.innerHTML = `<div class="max-w-4xl mx-auto"><div class="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-xl"><h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-3"><i class="ph-fill ph-sparkle text-purple-600"></i> Asistente Pedagógico</h2><textarea id="ai-q" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 mb-4 h-32 resize-none font-medium" placeholder="Consulta sobre normativa, didáctica o evaluación..."></textarea><div class="flex justify-end"><button onclick="askAI()" class="bg-purple-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-purple-700 transition-all">Consultar</button></div><div id="ai-r" class="mt-8 p-6 bg-slate-50 rounded-2xl border border-slate-100 hidden text-sm leading-relaxed text-slate-700"></div></div></div>`;
             } else if (viewId === 'advisorDashboard') {
                 const list = window.state.institutions.filter(i => i.advisor.includes(window.state.user.email.includes('alberto') ? 'Alberto' : 'Rodolfo'));
-                // Sort logs: newest first
-                const logs = (window.state.accessLogs || []).sort((a,b) => b.timestamp - a.timestamp).slice(0, 50);
-
-                c.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black text-slate-800">Tablero de Gestión</h2><div class="flex gap-3"><div class="bg-white border p-2 rounded-xl flex items-center gap-2"><select id="import-advisor-select" class="text-xs font-bold bg-transparent outline-none"><option value="Alberto Bustos">Alberto</option><option value="Rodolfo Juárez">Rodolfo</option></select><label class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold cursor-pointer hover:bg-black"><i class="ph-bold ph-upload-simple mr-2"></i>Importar<input type="file" class="hidden" onchange="handleExcel(event)"></label></div><button onclick="analyzeAdvisorDashboard()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700">✨ Analizar</button></div></div><div id="ai-advisor-results" class="hidden mb-6 bg-indigo-50 p-6 rounded-2xl text-indigo-800 text-sm font-medium"></div>
-                
-                <div class="grid lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden"><table class="w-full text-left text-sm"><thead class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b"><tr><th class="p-4">Institución</th><th class="p-4">Estado</th><th class="p-4">Fecha</th><th class="p-4 text-right">Acción</th></tr></thead><tbody class="divide-y divide-slate-100">${list.map(i => `<tr class="hover:bg-slate-50"><td class="p-4 font-bold text-slate-700">${i.name}<br><span class="text-xs text-slate-400 font-normal">${i.code} | ${i.regional}</span></td><td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${i.status==='done'?'bg-green-100 text-green-700':'bg-orange-100 text-orange-700'}">${i.status==='done'?'VISITADO':'PENDIENTE'}</span></td><td class="p-4"><input type="date" value="${i.date||''}" onchange="updateDate('${i.code}',this.value)" class="text-xs border rounded p-1"></td><td class="p-4 text-right"><button onclick="toggleStatus('${i.code}')" class="text-slate-400 hover:text-teal-600"><i class="ph-bold ph-arrows-clockwise text-xl"></i></button></td></tr>`).join('')}</tbody></table></div>
-                    
-                    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 overflow-hidden flex flex-col h-[500px]">
-                        <h3 class="font-bold text-slate-800 mb-4 text-sm uppercase tracking-wide">Reporte de Ingresos a Comunidad</h3>
-                        <div class="flex-1 overflow-y-auto pr-2 space-y-3">
-                             ${logs.length > 0 ? logs.map(l => `
-                                <div class="flex items-start gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                    <div class="p-2 bg-white rounded-lg text-slate-400 border border-slate-200"><i class="ph-bold ${l.type === 'Asesor' ? 'ph-crown text-purple-500' : 'ph-user'}"></i></div>
-                                    <div>
-                                        <p class="text-xs font-bold text-slate-700">${l.email}</p>
-                                        <p class="text-[10px] text-slate-400 flex gap-2"><span>${l.type}</span> • <span>${l.date}</span></p>
-                                    </div>
-                                </div>
-                             `).join('') : '<p class="text-xs text-slate-400 italic">No hay registros recientes.</p>'}
-                        </div>
-                    </div>
-                </div>`;
+                const logs = (window.state.accessLogs || []).slice(0, 50);
+                c.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black text-slate-800">Tablero de Gestión</h2><div class="flex gap-3"><div class="bg-white border p-2 rounded-xl flex items-center gap-2"><input type="password" id="api-key-input" placeholder="API Key" class="text-xs w-20 outline-none"><button onclick="saveApiKey()" class="text-xs font-bold">💾</button><select id="import-advisor-select" class="text-xs font-bold bg-transparent outline-none"><option value="Alberto Bustos">Alberto</option><option value="Rodolfo Juárez">Rodolfo</option></select><label class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold cursor-pointer hover:bg-black"><i class="ph-bold ph-upload-simple mr-2"></i>Importar<input type="file" class="hidden" onchange="handleExcel(event)"></label></div><button onclick="analyzeAdvisorDashboard()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700">✨ Analizar</button></div></div><div id="ai-advisor-results" class="hidden mb-6 bg-indigo-50 p-6 rounded-2xl text-indigo-800 text-sm font-medium"></div><div class="grid lg:grid-cols-3 gap-8"><div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden"><table class="w-full text-left text-sm"><thead class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b"><tr><th class="p-4">Institución</th><th class="p-4">Estado</th><th class="p-4">Fecha</th><th class="p-4 text-right">Acción</th></tr></thead><tbody class="divide-y divide-slate-100">${list.map(i => `<tr class="hover:bg-slate-50"><td class="p-4 font-bold text-slate-700">${i.name}<br><span class="text-xs text-slate-400 font-normal">${i.code} | ${i.regional}</span></td><td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${i.status==='done'?'bg-green-100 text-green-700':'bg-orange-100 text-orange-700'}">${i.status==='done'?'VISITADO':'PENDIENTE'}</span></td><td class="p-4"><input type="date" value="${i.date||''}" onchange="updateDate('${i.code}',this.value)" class="text-xs border rounded p-1"></td><td class="p-4 text-right"><button onclick="toggleStatus('${i.code}')" class="text-slate-400 hover:text-teal-600"><i class="ph-bold ph-arrows-clockwise text-xl"></i></button></td></tr>`).join('')}</tbody></table></div><div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 h-[500px] overflow-y-auto"><h3 class="font-bold mb-4">Registros</h3>${logs.map(l => `<div class="mb-3 p-3 bg-slate-50 rounded-xl text-xs"><p class="font-bold">${l.email}</p><p>${l.date}</p></div>`).join('')}</div></div>`;
             }
         };
 
-        window.openTeacherAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
-        window.closeTeacherAuthModal = () => document.getElementById('auth-modal').classList.add('hidden');
-        window.closeAuthModal = window.closeTeacherAuthModal;
-
-        window.openForumModal = () => document.getElementById('forum-modal').classList.remove('hidden');
-        window.closeForumModal = () => document.getElementById('forum-modal').classList.add('hidden');
-        window.openReplyModal = (id) => { document.getElementById('reply-post-id').value = id; document.getElementById('reply-modal').classList.remove('hidden'); };
-        window.closeReplyModal = () => document.getElementById('reply-modal').classList.add('hidden');
-
-        window.handleAuth = async (mode) => {
-            const email = document.getElementById('auth-email').value.trim().toLowerCase();
-            const password = document.getElementById('auth-password').value;
-            const err = document.getElementById('auth-error');
-            const errText = document.getElementById('auth-error-text');
-            if (!email.endsWith('@mep.go.cr')) {
-                errText.innerText = "Solo correos @mep.go.cr";
-                err.classList.remove('hidden');
-                return;
-            }
-            try {
-                if (mode === 'register') {
-                    await createUserWithEmailAndPassword(auth, email, password);
-                    window.showToast("Cuenta creada. ¡Bienvenido!");
-                } else {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    window.showToast("Sesión iniciada correctamente.");
-                }
-                window.closeAuthModal();
-            } catch (e) {
-                errText.innerText = e.code === 'auth/wrong-password' ? "Contraseña incorrecta" : "Error de autenticación";
-                err.classList.remove('hidden');
-            }
-        };
-
-        window.logout = async () => {
-            await signOut(auth);
-            try { await signInAnonymously(auth); } catch(e){}
-            window.showToast("Sesión cerrada.");
-            window.renderView('dashboard');
-        };
-
-        window.savePost = async () => {
-            const title = document.getElementById('post-title').value;
-            const content = document.getElementById('post-content').value;
-            const tag = document.getElementById('post-tag').value;
-            if (!title || !content) return;
-            const author = window.state.advisor ? "Asesor Nacional" : (window.state.user.email || "Docente");
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'forum'), { title, content, tag, author, date: new Date().toLocaleDateString(), timestamp: Date.now() });
-            window.closeForumModal(); window.showToast("Publicado.");
-        };
-
-        window.saveReply = async () => {
-            const id = document.getElementById('reply-post-id').value;
-            const content = document.getElementById('reply-content').value;
-            if(!content) return;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'forum', id), { reply: content });
-            window.closeReplyModal(); window.showToast("Respuesta enviada.");
-        };
-
-        window.deletePost = async (id) => {
-            if (confirm("¿Eliminar esta publicación?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'forum', id));
-        };
-
-        window.handleExcel = (e) => {
-            const file = e.target.files[0]; if(!file) return;
-            const advisorName = document.getElementById('import-advisor-select').value;
-            const reader = new FileReader();
-            reader.onload = async (evt) => {
-                const wb = XLSX.read(new Uint8Array(evt.target.result), {type: 'array'});
-                const data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-                for (const row of data) {
-                    const code = String(row["Código Presupuestario"] || Math.random().toString(36).substr(2, 9));
-                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), {
-                        code,
-                        name: row["CENTRO_EDUCATIVO"] || "Sin Nombre",
-                        email: row["Correo institucional"] || "",
-                        regional: row["REGIONAL"] || "",
-                        circuito: row["CIRCUITO"] || "",
-                        advisor: advisorName,
-                        status: 'pending',
-                        date: ""
-                    });
-                }
-                window.showToast("Nómina cargada exitosamente.");
-            };
-            reader.readAsArrayBuffer(file);
-        };
-
-        window.toggleStatus = async (code) => {
-            const inst = window.state.institutions.find(i => i.code === code);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), {
-                status: inst.status === 'done' ? 'pending' : 'done'
-            });
-        };
-
-        window.updateDate = async (code, val) => {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), { date: val });
-        };
-
-        window.analyzeAdvisorDashboard = async () => {
-            const r = document.getElementById('ai-advisor-results');
-            r.classList.remove('hidden');
-            r.innerHTML = '<span class="animate-pulse">✨ Analizando datos...</span>';
-            const data = window.state.institutions.map(i => `${i.name} (${i.regional}): ${i.status}`).join(', ');
-            const res = await callGeminiAPI(`Analiza cobertura regional (resumen ejecutivo): ${data.substring(0,2000)}. Responde de forma puntual y en viñetas.`);
-            r.innerHTML = `<div class="bg-indigo-900 text-white p-6 rounded-2xl text-xs font-medium">${res}</div>`;
-        };
-
-        window.askAI = async () => {
-            const q = document.getElementById('ai-q').value;
-            const r = document.getElementById('ai-r');
-            if(!q) return;
-            r.classList.remove('hidden');
-            r.innerHTML = '<span class="animate-pulse">✨ Pensando...</span>';
-            const res = await callGeminiAPI(`Consulta docente secundaria: ${q}. Responde de forma técnica, puntual, en viñetas y sin introducción.`);
-            r.innerHTML = `<div class="prose prose-sm text-slate-200 max-w-none shadow-inner p-2 font-bold">${res}</div>`;
-        };
-
-        window.generateProjectIdeas = async () => {
-            const level = window.state.guideLevel; const theme = document.getElementById('project-theme').value || "Contexto Educativo";
-            const topics = Array.from(document.querySelectorAll('.topic-checkbox:checked')).map(cb => cb.value);
-            if (topics.length === 0) { window.showToast("Seleccione al menos un saber"); return; }
-            const r = document.getElementById('project-ai-results'); r.classList.remove('hidden');
-            r.innerHTML = '<span class="animate-pulse">Generando propuestas...</span>';
-            const prompt = `Genera 3 situaciones problema de contexto educativo real para ${level}° año. Tema: ${theme}. Integra obligatoriamente estos saberes: ${topics.join(', ')}. Formato: Solo lista de viñetas. Sin introducción ni conclusión.`;
-            const res = await callGeminiAPI(prompt);
-            r.innerHTML = `<div class="bg-indigo-900 p-6 rounded-2xl text-slate-300 text-sm mt-4">${res}</div>`;
-        };
-
-        window.logAccess = async () => {
-            if (!window.state.user) return;
-            const userType = window.state.advisor ? "Asesor" : (window.state.user.isAnonymous ? "Invitado" : "Docente");
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'access_logs'), {
-                email: window.state.user.email || "Anónimo",
-                type: userType,
-                timestamp: Date.now(),
-                date: new Date().toLocaleString('es-CR')
-            });
-        };
-
-        window.showToast = (msg) => { const t = document.createElement('div'); t.className = 'fixed bottom-4 right-4 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-xl z-50 font-bold text-xs fade-in'; t.innerHTML = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000); };
-
+        // --- AUTH LISTENER ---
         onAuthStateChanged(auth, (user) => {
             window.state.user = user;
             if (user && !user.isAnonymous) {
