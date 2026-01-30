@@ -136,7 +136,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        // Importación COMPLETA incluyendo getDoc para la seguridad
         import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // 1. CONFIGURACIÓN Y ESTADO
@@ -151,7 +150,14 @@
             appId: "1:800061887135:web:f096970be5c69a465988aa"
         };
         
+        // --- CONFIGURACIÓN DE IA ---
         const MODEL_NAME = "gemini-1.5-flash"; 
+        
+        // CLAVE DE API GEMINI (HARDCODED)
+        // IMPORTANTE: Debes restringir esta clave en Google Cloud Console a tu dominio web.
+        // "AIza" (A mayúscula, I mayúscula, z, a)
+        const GEMINI_API_KEY = "AIzaSyAj8ZMNnzunifD8AaIszD9PUD3pnoStv84"; 
+
         const ADVISOR_EMAILS = ["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr"];
 
         const app = initializeApp(firebaseConfig);
@@ -212,7 +218,7 @@
             { title: "6. Planeamiento Didáctico", icon: "ph-pencil-line", subsections: [{ subtitle: "Lineamientos", points: ["Bimestral.", "Por nivel.", "Plantilla oficial 2026."] }] }
         ];
 
-        // --- 3. DEFINICIÓN DE FUNCIONES (HOISTING) ---
+        // --- 3. DEFINICIÓN DE FUNCIONES ---
         
         async function setupRealtimeListeners() {
             if (!window.state.user) return; 
@@ -245,36 +251,28 @@
             catch (e) { document.getElementById('auth-status').innerText = "Modo Visitante"; }
         }
 
-        // SEGURIDAD: Obtener API Key de Firestore
-        async function getSecureApiKey() {
-            if (!auth.currentUser) return null;
-            const docRef = doc(db, "config", "api_keys");
-            try {
-                const docSnap = await getDoc(docRef);
-                return docSnap.exists() ? docSnap.data().gemini_key : null;
-            } catch (error) {
-                console.error("Error obteniendo credenciales:", error);
-                return null;
-            }
-        }
-
-        // CONEXIÓN IA: Usando la clave segura
+        // CONEXIÓN IA: Usando la clave DIRECTA (Sin Base de Datos)
         async function callGeminiAPI(prompt) {
             try {
-                const apiKey = await getSecureApiKey();
-                if (!apiKey) return "⚠️ Error: No tienes permisos para usar la IA o la clave no está configurada.";
+                if (!GEMINI_API_KEY) return "⚠️ Error: Clave de API no configurada en el código.";
 
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`, {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${GEMINI_API_KEY}`, {
                     method: 'POST', 
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
                 
-                if (!res.ok) throw new Error("API Error");
+                if (!res.ok) {
+                    // Si falla, intentamos leer el error para depuración
+                    const errorData = await res.json().catch(() => ({}));
+                    console.error("Gemini API Error:", errorData);
+                    throw new Error("API Error");
+                }
+                
                 const data = await res.json();
                 return data.candidates[0].content.parts[0].text;
             } catch (e) { 
-                return "Error: No se pudo conectar con el asistente inteligente."; 
+                return "Error: No se pudo conectar con el asistente. Asegúrate de haber configurado las restricciones HTTP en Google Cloud para tu dominio."; 
             }
         }
 
@@ -387,7 +385,6 @@
             r.innerHTML = `<div class="prose prose-sm text-slate-700 max-w-none shadow-inner p-2 font-medium">${res}</div>`;
         };
 
-        // --- FUNCIÓN ACTUALIZADA: GENERADOR DE SITUACIONES PROBLEMA ---
         window.generateProjectIdeas = async () => {
             const level = window.state.guideLevel; 
             const theme = document.getElementById('project-theme').value;
