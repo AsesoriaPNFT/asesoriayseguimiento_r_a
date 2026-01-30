@@ -29,7 +29,7 @@
                 <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-blue-600 rounded-lg flex items-center justify-center text-white shadow-md flex-shrink-0 mt-0.5">
                     <i class="ph ph-squares-four text-lg"></i>
                 </div>
-                Portal de Apoyo Pedagógico A y S Dimensión 1 PNFT
+                Portal de Apoyo Dimensión 1 PNFT
             </div>
         </div>
 
@@ -50,7 +50,7 @@
     <main class="flex-1 flex flex-col relative min-w-0 h-screen overflow-hidden">
         <div class="md:hidden bg-white p-4 border-b border-slate-200 flex justify-between items-center shadow-sm sticky top-0 z-20">
             <span class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                <i class="ph ph-squares-four text-teal-600"></i> Portal de Apoyo Pedagógico A y S Dimensión 1 PNFT
+                <i class="ph ph-squares-four text-teal-600"></i> Portal PNFT
             </span>
             <button onclick="renderView('dashboard')" class="p-2 text-slate-600 hover:bg-slate-100 rounded-lg">
                 <i class="ph ph-house text-xl"></i>
@@ -59,7 +59,7 @@
 
         <div id="app-content" class="flex-1 p-6 md:p-12 overflow-y-auto h-full pb-20"></div>
 
-        <!-- MODAL LOGIN UNIFICADO -->
+        <!-- MODAL LOGIN -->
         <div id="auth-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center fade-in">
             <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md mx-4 relative overflow-hidden">
                 <div class="text-center mb-8">
@@ -72,23 +72,15 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Correo Institucional</label>
-                        <div class="relative">
-                            <i class="ph ph-envelope absolute left-4 top-3.5 text-slate-400"></i>
-                            <input type="email" id="auth-email" class="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-sm font-bold text-slate-700 placeholder-slate-400" placeholder="nombre.apellido@mep.go.cr">
-                        </div>
+                        <input type="email" id="auth-email" class="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-sm font-bold text-slate-700 placeholder-slate-400" placeholder="nombre.apellido@mep.go.cr">
                     </div>
                     <div>
                         <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Contraseña</label>
-                        <div class="relative">
-                            <i class="ph ph-lock-key absolute left-4 top-3.5 text-slate-400"></i>
-                            <input type="password" id="auth-password" class="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-sm font-bold text-slate-700 placeholder-slate-400" placeholder="••••••••">
-                        </div>
+                        <input type="password" id="auth-password" class="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-sm font-bold text-slate-700 placeholder-slate-400" placeholder="••••••••">
                     </div>
-                    
                     <div id="auth-error" class="bg-red-50 text-red-600 p-3 rounded-xl text-xs font-bold flex items-center gap-2 hidden animate-pulse">
                         <i class="ph-fill ph-warning-circle"></i> <span id="auth-error-text">Error de credenciales</span>
                     </div>
-
                     <div class="grid grid-cols-2 gap-3 pt-2">
                         <button onclick="handleAuth('login')" class="bg-slate-900 text-white py-3.5 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20 active:scale-95">Entrar</button>
                         <button onclick="handleAuth('register')" class="bg-white border-2 border-slate-200 text-slate-700 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest hover:border-slate-300 hover:bg-slate-50 transition-all active:scale-95">Registrarse</button>
@@ -110,8 +102,7 @@
                     <select id="post-tag" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 font-bold text-slate-700">
                         <option value="Metodología">Metodología / Design Thinking</option>
                         <option value="Evaluación">Evaluación del Proyecto</option>
-                        <option value="Administrativo">Administrativo / Laboratoio</option>
-                        <option value="Consulta">Consulta a aseso</option>
+                        <option value="Administrativo">Administrativo / Lab</option>
                         <option value="Recursos">Recursos Didácticos</option>
                     </select>
                     <textarea id="post-content" class="w-full h-40 p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 font-medium text-slate-700 placeholder-slate-400 resize-none" placeholder="Escribe tu consulta o aporte..."></textarea>
@@ -140,8 +131,7 @@
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 1. CONFIGURACIÓN
-        // Using the exact config provided by the user
+        // 1. CONFIGURACIÓN FIREBASE Y API KEY
         const firebaseConfig = {
             apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A",
             authDomain: "asesoriayseguimiento2026.firebaseapp.com",
@@ -151,12 +141,12 @@
             appId: "1:800061887135:web:f096970be5c69a465988aa"
         };
         
-        // We initialize with the provided config.
-        // We also check for a stored local key, but default to the config's key if available.
-        let apiKeyGemini = localStorage.getItem('gemini_api_key') || firebaseConfig.apiKey; 
-        
-        const appId = firebaseConfig.appId; // Using the provided appId
-        const MODEL_NAME = "gemini-1.5-flash-latest";
+        // CORRECCIÓN CRÍTICA:
+        // Usamos la misma API Key de Firebase como predeterminada para Gemini si no hay una personalizada.
+        // Esto soluciona el error "Sin API Key".
+        let apiKeyGemini = localStorage.getItem('gemini_api_key') || firebaseConfig.apiKey;
+        const appId = firebaseConfig.appId;
+        const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
         
         const ADVISOR_EMAILS = ["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr"];
 
@@ -279,7 +269,7 @@
                     subtitle: "Control de Equipos", 
                     points: [
                         "Docente es custodio legal de laboratorios y dispositivos.",
-                        "Obligatorio mantener actualizada la bitácora y el inventario en TecnoPresta.",
+                        "Obligatorio mantener actualizada la bitácora y el inventario en la plataforma TecnoPresta.",
                         "Se debe mantener carpeta institucional (física o digital).",
                         "Prioridad absoluta de las lecciones de IE sobre el uso del equipo."
                     ] 
@@ -299,10 +289,9 @@
             }
         ];
 
-        // --- 4. FUNCIONES DE LÓGICA (DEFINIDAS ANTES DE USARSE) ---
+        // --- 4. DEFINICIONES DE FUNCIONES (HOISTING) ---
         
-        // Manejador seguro de listeners
-        const setupRealtimeListeners = () => {
+        function setupRealtimeListeners() {
             try {
                 const forumRef = collection(db, 'artifacts', appId, 'public', 'data', 'forum');
                 const instRef = collection(db, 'artifacts', appId, 'public', 'data', 'institutions');
@@ -325,15 +314,15 @@
                     }, (e) => console.log("Logs sync limited"));
                 }
             } catch (e) { console.log("Error en listeners:", e); }
-        };
+        }
 
-        const initApp = async () => {
+        async function initApp() {
             try { await signInAnonymously(auth); } 
             catch (e) { document.getElementById('auth-status').innerText = "Modo Visitante"; }
-        };
+        }
 
-        // --- 5. FUNCIONES GLOBALES (VINCULACIÓN A WINDOW) ---
-        
+        // --- 5. FUNCIONES GLOBALES ---
+
         window.openTeacherAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
         window.closeTeacherAuthModal = () => document.getElementById('auth-modal').classList.add('hidden');
         window.closeAuthModal = window.closeTeacherAuthModal;
