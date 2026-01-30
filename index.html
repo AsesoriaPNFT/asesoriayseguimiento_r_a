@@ -76,7 +76,7 @@
                     </div>
                     <div>
                         <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Contraseña</label>
-                        <input type="password" id="auth-password" class="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-sm font-bold text-slate-700 placeholder-slate-400" placeholder="••••••••">
+                        <input type="password" id="auth-password" class="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-sm font-bold text-slate-700 placeholder-••••••••">
                     </div>
                     <div id="auth-error" class="bg-red-50 text-red-600 p-3 rounded-xl text-xs font-bold flex items-center gap-2 hidden animate-pulse">
                         <i class="ph-fill ph-warning-circle"></i> <span id="auth-error-text">Error de credenciales</span>
@@ -132,16 +132,16 @@
         import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // 1. CONFIGURACIÓN
-        // IMPORTANTE: Definición dinámica del appId para evitar errores de permisos
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'asesoriayseguimiento2026';
-
         const firebaseConfig = { apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A", authDomain: "asesoriayseguimiento2026.firebaseapp.com", projectId: "asesoriayseguimiento2026", storageBucket: "asesoriayseguimiento2026.firebasestorage.app", messagingSenderId: "800061887135", appId: "1:800061887135:web:f096970be5c69a465988aa" };
         
-        // API KEY DINÁMICA (Para funcionamiento en dominio propio o Canvas)
-        // Intenta leer de localStorage, si no, usa la de Firebase, si no, cadena vacía.
-        let apiKeyGemini = localStorage.getItem('gemini_api_key') || firebaseConfig.apiKey || ""; 
+        // --- GESTIÓN DE API KEY DE IA (OFUSCADA) ---
+        // Aquí "ocultamos" la clave real usando Base64 para que no sea texto plano.
+        // La clave real es: AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A
+        const _0x1a2b = "QUl6YVN5QkFCck52UUgxWnUtcGVGM1JuMXVDZS1ZZmIyTEJHQzlB"; 
+        const getGeminiKey = () => atob(_0x1a2b);
         const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
         
+        const appId = firebaseConfig.appId;
         const ADVISOR_EMAILS = ["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr"];
 
         const app = initializeApp(firebaseConfig);
@@ -151,7 +151,7 @@
         // 2. ESTADO GLOBAL
         window.state = { view: 'dashboard', user: null, advisor: false, posts: [], institutions: [], accessLogs: [], guideLevel: '7', guideTab: 'curriculum' };
 
-        // 3. DATOS ESTÁTICOS COMPLETOS (2026)
+        // 3. DATOS ESTÁTICOS
         const TEACHER_GUIDE_DATA = {
             pillars: [
                 "Apropiación Tecnológica: Hardware, software y herramientas de productividad.",
@@ -167,23 +167,23 @@
             ],
             levels: {
                 "7": { 
-                    title: "Sétimo: Fundamentos y Lógica", 
+                    title: "Sétimo Año: Fundamentos y Lógica", 
                     focus: "Hardware/Software, tablas de verdad, algoritmos básicos, herramientas de nube y netiqueta.",
                     modules: [
-                        { name: "Módulo 1: Fundamentos", topics: ["Hardware y Periféricos", "Software y Funciones", "Sistemas Operativos", "Algoritmos (Entrada/Proceso/Salida)", "Tablas de Verdad", "Estructuras Condicionales", "Tipos de Datos"] },
-                        { name: "Módulo 2: Ciudadanía Digital", topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Asistentes virtuales", "Bucles"] }
+                        { name: "Módulo 1: Apropiación y Lógica", topics: ["Computadora", "Hardware y Software", "Redes de comunicación", "Sistema Operativo", "Gestión de archivos", "Herramientas de productividad", "Algoritmo", "Tablas de Verdad", "Estructuras condicionales", "Operadores aritméticos y lógicos", "Evento"] },
+                        { name: "Módulo 2: Conectividad y Ciudadanía", topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Asistentes virtuales", "Bucles (Estructuras repetitivas)", "Procedimientos y funciones"] }
                     ]
                 },
                 "8": { 
-                    title: "Octavo: Multimedia y Robótica", 
+                    title: "Octavo Año: Multimedia y Robótica", 
                     focus: "Edición de video, redes, circuitos eléctricos, microcontroladores, IoT y ciberseguridad.",
                     modules: [
-                        { name: "Módulo 1: Robótica Física", topics: ["Hardware Interno", "Software Libre vs Paga", "Compresión Archivos", "Edición Audio/Video", "Mecanismos Robóticos", "Circuitos Eléctricos", "Fundamentos Electrónica", "Entorno programación robótica"] },
-                        { name: "Módulo 2: Datos e IoT", topics: ["Hoja de Cálculo (Datos)", "Internet de las Cosas (IoT)", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "Herramientas Generativas (IA)", "Plataformas de contenido", "Licencia digital", "Hackeo y Antivirus"] }
+                        { name: "Módulo 1: Mecanismos y Prototipado", topics: ["Hardware Interno", "Software Libre vs Paga", "Compresión Archivos", "Edición Audio/Video", "Mecanismos Robóticos", "Circuitos Eléctricos", "Fundamentos Electrónica", "Entorno programación robótica"] },
+                        { name: "Módulo 2: Datos y Sensores", topics: ["Hoja de Cálculo (Datos)", "Internet de las Cosas (IoT)", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "Herramientas Generativas (IA)", "Plataformas de contenido", "Licencia digital", "Hackeo y Antivirus"] }
                     ]
                 },
                 "9": { 
-                    title: "Noveno: Prototipado y Conectividad", 
+                    title: "Noveno Año: Prototipado y Conectividad", 
                     focus: "Domótica, prototipos avanzados, modelado 3D, bases de datos y ética en la IA.",
                     modules: [
                         { name: "Módulo 1: Automatización Avanzada", topics: ["Microcontroladores Avanzados", "Domótica", "Prototipado Real", "Algoritmos Complejos", "Optimización SO", "Movimiento en mecanismos", "Sensores y Actuadores avanzados"] },
@@ -194,8 +194,8 @@
             methodology: {
                 title: "Metodología y Evaluación",
                 strategies: ["Aprendizaje Basado en Juegos (ABJ)", "Aprendizaje Basado en Retos (ABR)", "Design Thinking"],
-                role: "Facilitador que contextualiza las estrategias y prioriza la lógica algorítmica antes que la codificación pura.",
-                eval: "Basada en indicadores de logro específicos que miden desde la clasificación de componentes hasta el diseño de soluciones automatizadas complejas."
+                role: "Facilitador que contextualiza las estrategias y prioriza la lógica algorítmica.",
+                eval: "Basada en indicadores de logro específicos."
             },
             project: { phases: [{name:"Empatizar"}, {name:"Definir"}, {name:"Idear"}, {name:"Prototipar"}, {name:"Evaluar"}] }
         };
@@ -283,7 +283,7 @@
             }
         ];
 
-        // --- 4. DEFINICIONES DE FUNCIONES (HOISTING) ---
+        // --- 4. FUNCIONES DE LÓGICA (DEFINIDAS ANTES DE USARSE) ---
         
         function setupRealtimeListeners() {
             try {
@@ -325,15 +325,6 @@
         window.closeForumModal = () => document.getElementById('forum-modal').classList.add('hidden');
         window.openReplyModal = (id) => { document.getElementById('reply-post-id').value = id; document.getElementById('reply-modal').classList.remove('hidden'); };
         window.closeReplyModal = () => document.getElementById('reply-modal').classList.add('hidden');
-
-        window.saveApiKey = () => {
-            const key = document.getElementById('api-key-input').value.trim();
-            if (key) {
-                localStorage.setItem('gemini_api_key', key);
-                apiKeyGemini = key;
-                window.showToast("API Key guardada ✅");
-            }
-        };
 
         window.handleAuth = async (mode) => {
             const email = document.getElementById('auth-email').value.trim().toLowerCase();
@@ -435,8 +426,8 @@
         };
 
         async function callGeminiAPI(prompt) {
-            // Asegurar que usamos la API Key correcta
-            const keyToUse = apiKeyGemini || firebaseConfig.apiKey;
+            // Usa la clave ofuscada que se decodifica automáticamente
+            const keyToUse = getGeminiKey();
             
             try {
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${keyToUse}`, {
@@ -446,17 +437,10 @@
                 if (!res.ok) throw new Error("API Error");
                 const data = await res.json();
                 return data.candidates[0].content.parts[0].text;
-            } catch (e) { return "Error: Verifique su API Key en el Tablero de Gestión."; }
+            } catch (e) { return "Error: Intente más tarde."; }
         }
 
         window.askAI = async () => {
-            // Si no hay key en localStorage ni en config, pide configurarla
-            if (!apiKeyGemini && !firebaseConfig.apiKey) { 
-                const r = document.getElementById('ai-r');
-                r.innerHTML = `<div class="p-4 bg-red-50 text-red-600 rounded-xl font-bold border border-red-100 flex items-center gap-2"><i class="ph-bold ph-warning-circle"></i> Sin API Key. Configure su clave en el Tablero de Gestión.</div>`;
-                r.classList.remove('hidden');
-                return; 
-            }
             const q = document.getElementById('ai-q').value;
             const r = document.getElementById('ai-r');
             if(!q) return;
@@ -467,7 +451,6 @@
         };
 
         window.generateProjectIdeas = async () => {
-            if (!apiKeyGemini && !firebaseConfig.apiKey) { window.showToast("⚠️ Configure su API Key primero"); return; }
             const level = window.state.guideLevel; const theme = document.getElementById('project-theme').value || "Contexto Educativo";
             const topics = Array.from(document.querySelectorAll('.topic-checkbox:checked')).map(cb => cb.value);
             if (topics.length === 0) { window.showToast("Seleccione al menos un saber"); return; }
@@ -479,7 +462,6 @@
         };
 
         window.analyzeAdvisorDashboard = async () => {
-            if (!apiKeyGemini && !firebaseConfig.apiKey) { window.showToast("⚠️ Configure su API Key primero"); return; }
             const r = document.getElementById('ai-advisor-results'); r.classList.remove('hidden');
             r.innerHTML = '<span class="animate-pulse">✨ Analizando datos...</span>';
             const data = window.state.institutions.map(i => `${i.name} (${i.regional}): ${i.status}`).join(', ');
@@ -579,7 +561,7 @@
             } else if (viewId === 'advisorDashboard') {
                 const list = window.state.institutions.filter(i => i.advisor.includes(window.state.user.email.includes('alberto') ? 'Alberto' : 'Rodolfo'));
                 const logs = (window.state.accessLogs || []).slice(0, 50);
-                c.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black text-slate-800">Tablero de Gestión</h2><div class="flex gap-3"><div class="bg-white border p-2 rounded-xl flex items-center gap-2"><input type="password" id="api-key-input" placeholder="API Key" class="text-xs w-20 outline-none"><button onclick="saveApiKey()" class="text-xs font-bold">💾</button><select id="import-advisor-select" class="text-xs font-bold bg-transparent outline-none"><option value="Alberto Bustos">Alberto</option><option value="Rodolfo Juárez">Rodolfo</option></select><label class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold cursor-pointer hover:bg-black"><i class="ph-bold ph-upload-simple mr-2"></i>Importar<input type="file" class="hidden" onchange="handleExcel(event)"></label></div><button onclick="analyzeAdvisorDashboard()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700">✨ Analizar</button></div></div><div id="ai-advisor-results" class="hidden mb-6 bg-indigo-50 p-6 rounded-2xl text-indigo-800 text-sm font-medium"></div><div class="grid lg:grid-cols-3 gap-8"><div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden"><table class="w-full text-left text-sm"><thead class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b"><tr><th class="p-4">Institución</th><th class="p-4">Estado</th><th class="p-4">Fecha</th><th class="p-4 text-right">Acción</th></tr></thead><tbody class="divide-y divide-slate-100">${list.map(i => `<tr class="hover:bg-slate-50"><td class="p-4 font-bold text-slate-700">${i.name}<br><span class="text-xs text-slate-400 font-normal">${i.code} | ${i.regional}</span></td><td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${i.status==='done'?'bg-green-100 text-green-700':'bg-orange-100 text-orange-700'}">${i.status==='done'?'VISITADO':'PENDIENTE'}</span></td><td class="p-4"><input type="date" value="${i.date||''}" onchange="updateDate('${i.code}',this.value)" class="text-xs border rounded p-1"></td><td class="p-4 text-right"><button onclick="toggleStatus('${i.code}')" class="text-slate-400 hover:text-teal-600"><i class="ph-bold ph-arrows-clockwise text-xl"></i></button></td></tr>`).join('')}</tbody></table></div><div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 h-[500px] overflow-y-auto"><h3 class="font-bold mb-4">Registros</h3>${logs.map(l => `<div class="mb-3 p-3 bg-slate-50 rounded-xl text-xs"><p class="font-bold">${l.email}</p><p>${l.date}</p></div>`).join('')}</div></div>`;
+                c.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black text-slate-800">Tablero de Gestión</h2><div class="flex gap-3"><div class="bg-white border p-2 rounded-xl flex items-center gap-2"><select id="import-advisor-select" class="text-xs font-bold bg-transparent outline-none"><option value="Alberto Bustos">Alberto</option><option value="Rodolfo Juárez">Rodolfo</option></select><label class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold cursor-pointer hover:bg-black"><i class="ph-bold ph-upload-simple mr-2"></i>Importar<input type="file" class="hidden" onchange="handleExcel(event)"></label></div><button onclick="analyzeAdvisorDashboard()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700">✨ Analizar</button></div></div><div id="ai-advisor-results" class="hidden mb-6 bg-indigo-50 p-6 rounded-2xl text-indigo-800 text-sm font-medium"></div><div class="grid lg:grid-cols-3 gap-8"><div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden"><table class="w-full text-left text-sm"><thead class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b"><tr><th class="p-4">Institución</th><th class="p-4">Estado</th><th class="p-4">Fecha</th><th class="p-4 text-right">Acción</th></tr></thead><tbody class="divide-y divide-slate-100">${list.map(i => `<tr class="hover:bg-slate-50"><td class="p-4 font-bold text-slate-700">${i.name}<br><span class="text-xs text-slate-400 font-normal">${i.code} | ${i.regional}</span></td><td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${i.status==='done'?'bg-green-100 text-green-700':'bg-orange-100 text-orange-700'}">${i.status==='done'?'VISITADO':'PENDIENTE'}</span></td><td class="p-4"><input type="date" value="${i.date||''}" onchange="updateDate('${i.code}',this.value)" class="text-xs border rounded p-1"></td><td class="p-4 text-right"><button onclick="toggleStatus('${i.code}')" class="text-slate-400 hover:text-teal-600"><i class="ph-bold ph-arrows-clockwise text-xl"></i></button></td></tr>`).join('')}</tbody></table></div><div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 h-[500px] overflow-y-auto"><h3 class="font-bold mb-4">Registros</h3>${logs.map(l => `<div class="mb-3 p-3 bg-slate-50 rounded-xl text-xs"><p class="font-bold">${l.email}</p><p>${l.date}</p></div>`).join('')}</div></div>`;
             }
         };
 
