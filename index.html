@@ -142,7 +142,7 @@
         // CONFIGURACIÓN
         const firebaseConfig = { apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A", authDomain: "asesoriayseguimiento2026.firebaseapp.com", projectId: "asesoriayseguimiento2026", storageBucket: "asesoriayseguimiento2026.firebasestorage.app", messagingSenderId: "800061887135", appId: "1:800061887135:web:f096970be5c69a465988aa" };
         const appId = "asesoriayseguimiento2026";
-        const apiKeyGemini = ""; // Inyectada por entorno
+        const apiKeyGemini = ""; 
         const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
         
         const ADVISOR_EMAILS = ["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr"];
@@ -157,12 +157,12 @@
         // DATOS ESTÁTICOS ACTUALIZADOS (2026)
         const TEACHER_GUIDE_DATA = {
             pillars: [
-                "Apropiación Tecnológica: Hardware, software y herramientas de productividad.",
-                "Programación y Algoritmos: Desarrollo del pensamiento lógico.",
-                "Computación Física y Robótica: Electrónica, mecánica y creación de artefactos.",
-                "Ciencia de Datos e IA: Análisis de datos y comprensión de la inteligencia artificial."
+                "Apropiación Tecnológica y Digital",
+                "Programación y Algoritmos",
+                "Computación Física y Robótica",
+                "Ciencia de Datos e Inteligencia Artificial"
             ],
-            axes: ["Pensamiento Computacional", "Ciudadanía Digital", "Emprendimiento"],
+            axes: ["Pensamiento Computacional", "Ciudadanía y Ética Digital", "Emprendimiento e Innovación"],
             knowledgeTypes: [
                 "Conceptuales: El 'saber' (temas técnicos).",
                 "Procedimentales: El 'saber hacer' (abstraer, depurar, programar).",
@@ -173,32 +173,32 @@
                     title: "Sétimo: Fundamentos y Lógica", 
                     focus: "Hardware/Software, tablas de verdad, algoritmos básicos, herramientas de nube y netiqueta.",
                     modules: [
-                        { name: "Módulo 1: Fundamentos", topics: ["Hardware y Periféricos", "Software y Funciones", "Sistemas Operativos", "Algoritmos (Entrada/Proceso/Salida)", "Tablas de Verdad", "Estructuras Condicionales", "Tipos de Datos"] },
-                        { name: "Módulo 2: Ciudadanía Digital", topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Bucles"] }
+                        { name: "Módulo 1: Apropiación y Lógica", topics: ["Computadora", "Hardware y Software", "Redes de comunicación", "Sistema Operativo", "Gestión de archivos", "Herramientas de productividad", "Algoritmo", "Tablas de Verdad", "Estructuras condicionales", "Operadores"] },
+                        { name: "Módulo 2: Conectividad y Ciudadanía", topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Asistentes virtuales", "Bucles"] }
                     ]
                 },
                 "8": { 
                     title: "Octavo: Multimedia y Robótica", 
                     focus: "Edición de video, redes, circuitos eléctricos, microcontroladores, IoT y ciberseguridad.",
                     modules: [
-                        { name: "Módulo 1: Robótica Física", topics: ["Edición de Video", "Circuitos Eléctricos", "Microcontroladores", "Fundamentos Electrónica"] },
-                        { name: "Módulo 2: Datos e IoT", topics: ["Redes de Comunicación", "Internet de las Cosas (IoT)", "Ciberseguridad"] }
+                        { name: "Módulo 1: Mecanismos y Prototipado", topics: ["Hardware Interno", "Software Libre vs Paga", "Edición Audio/Video", "Mecanismos Robóticos", "Circuitos Eléctricos", "Fundamentos Electrónica", "Entorno programación robótica"] },
+                        { name: "Módulo 2: Datos y Sensores", topics: ["Hoja de Cálculo (Datos)", "Internet de las Cosas (IoT)", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "Herramientas Generativas"] }
                     ]
                 },
                 "9": { 
                     title: "Noveno: Prototipado y Conectividad", 
                     focus: "Domótica, prototipos avanzados, modelado 3D, bases de datos y ética en la IA.",
                     modules: [
-                        { name: "Módulo 1: Automatización", topics: ["Domótica", "Prototipos Avanzados", "Modelado 3D"] },
-                        { name: "Módulo 2: Gestión y Ética", topics: ["Bases de Datos", "Ética en la IA", "Gestión de Datos"] }
+                        { name: "Módulo 1: Automatización Avanzada", topics: ["Microcontroladores Avanzados", "Domótica", "Prototipado Real", "Algoritmos Complejos", "Optimización SO", "Movimiento en mecanismos"] },
+                        { name: "Módulo 2: Gestión y Ética", topics: ["Gestores Base de Datos", "Protocolos Red (HTTP/TCP)", "Derechos de Autor", "Huella Digital", "Ética y Desafíos IA", "Modelado 3D"] }
                     ]
                 }
             },
             methodology: {
                 title: "Metodología y Evaluación",
                 strategies: ["Aprendizaje Basado en Juegos (ABJ)", "Aprendizaje Basado en Retos (ABR)", "Design Thinking"],
-                role: "Facilitador que contextualiza las estrategias y prioriza la lógica algorítmica antes que la codificación pura.",
-                eval: "Basada en indicadores de logro específicos que miden desde la clasificación de componentes hasta el diseño de soluciones automatizadas complejas."
+                role: "Facilitador que contextualiza las estrategias y prioriza la lógica algorítmica.",
+                eval: "Basada en indicadores de logro específicos."
             },
             project: { phases: [{name:"Empatizar"}, {name:"Definir"}, {name:"Idear"}, {name:"Prototipar"}, {name:"Evaluar"}] }
         };
@@ -473,8 +473,14 @@
             const nav = document.getElementById('sidebar-nav');
             const items = [{id:'dashboard', icon:'ph-squares-four', label:'Inicio'}, {section:'Recursos'}, {id:'summary', icon:'ph-clipboard-text', label:'Orientaciones Docentes'}, {id:'teacherGuide', icon:'ph-graduation-cap', label:'Guía Docente'}, {id:'planner', icon:'ph-calendar-check', label:'Planeamiento 2026'}, {id:'forum', icon:'ph-users-three', label:'Comunidad Docente'}, {section:'Herramientas'}, {id:'ai', icon:'ph-sparkle', label:'Asistente IA'}];
             if (window.state.advisor) items.push({section:'Gestión'}, {id:'advisorDashboard', icon:'ph-chart-pie-slice', label:'Tablero Asesor'});
-            nav.innerHTML = items.map(i => i.section ? `<div class="mt-6 mb-2 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">${i.section}</div>` : `<button onclick="renderView('${i.id}')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${window.state.view === i.id ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:bg-slate-50'}"><i class="ph ${i.icon} text-lg"></i>${i.label}</button>`).join('');
-            nav.innerHTML += window.state.user && !window.state.user.isAnonymous ? `<button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 mt-4"><i class="ph ph-sign-out"></i>Cerrar Sesión</button>` : `<button onclick="openTeacherAuthModal()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 mt-4"><i class="ph ph-sign-in"></i>Ingresar</button>`;
+            nav.innerHTML = items.map(i => i.section ? 
+                `<div class="mt-6 mb-2 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">${i.section}</div>` : 
+                `<button onclick="renderView('${i.id}')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${window.state.view === i.id ? 'bg-teal-50 text-teal-700' : 'text-slate-600 hover:bg-slate-50'}"><i class="ph ${i.icon} text-lg"></i>${i.label}</button>`
+            ).join('');
+            
+            nav.innerHTML += window.state.user && !window.state.user.isAnonymous ? 
+                `<button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 mt-4"><i class="ph ph-sign-out"></i>Cerrar Sesión</button>` :
+                `<button onclick="openTeacherAuthModal()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 mt-4"><i class="ph ph-sign-in"></i>Ingresar</button>`;
         };
 
         window.renderView = (viewId) => {
