@@ -3,123 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Asesoría Tecnología Educativa</title>
+    <title>Portal de Apoyo Dimensión 1 PNFT - Secundaria</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        /* Estilos para el contenido generado por IA */
+        .prose strong { color: #2dd4bf; } /* Teal-400 */
     </style>
 </head>
-<body class="text-slate-800 h-screen flex overflow-hidden">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col md:flex-row">
 
-    <aside class="w-72 bg-white border-r border-slate-200 flex-shrink-0 flex flex-col h-full z-20 hidden md:flex shadow-xl">
-        <div class="p-8 border-b border-slate-100 bg-slate-50">
-            <div class="flex items-center gap-3">
-                <div class="bg-indigo-600 p-2 rounded-xl shadow-lg shadow-indigo-200">
-                    <i class="ph-bold ph-cube text-white text-xl"></i>
+    <aside class="w-full md:w-72 bg-white border-r border-slate-200 hidden md:flex flex-col flex-shrink-0 transition-all min-h-screen sticky top-0 z-30">
+        <div class="p-6 border-b border-slate-100">
+            <div class="flex items-start gap-3 text-slate-800 font-bold text-base leading-tight">
+                <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-blue-600 rounded-lg flex items-center justify-center text-white shadow-md flex-shrink-0 mt-0.5">
+                    <i class="ph ph-squares-four text-lg"></i>
                 </div>
-                <div>
-                    <h1 class="font-black text-lg tracking-tight text-slate-800">Asesoría PNFT</h1>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Dimensión 1</p>
-                </div>
+                Portal de Apoyo Dimensión 1 PNFT
             </div>
         </div>
-        <nav class="flex-1 overflow-y-auto p-4 space-y-1" id="sidebar-nav"></nav>
+
+        <nav class="flex-1 p-4 space-y-1 overflow-y-auto" id="sidebar-nav"></nav>
+
         <div class="p-4 border-t border-slate-100 bg-slate-50">
-            <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm flex items-center gap-3">
-                <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-xs font-bold text-slate-700 truncate" id="auth-status">Cargando...</p>
-                    <p class="text-[10px] text-slate-400">Sistema Activo</p>
+            <div class="flex items-center gap-3 px-2">
+                <div class="w-8 h-8 rounded-full bg-slate-800 text-white flex-shrink-0 flex items-center justify-center font-bold text-xs">AN</div>
+                <div class="overflow-hidden text-[10px]">
+                    <p class="font-bold text-slate-700 truncate">Rodolfo Juárez / Alberto Bustos</p>
+                    <p class="text-slate-500 truncate mt-0.5" id="auth-status">Conectando...</p>
                 </div>
             </div>
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col h-full relative overflow-hidden bg-slate-50/50">
-        <header class="md:hidden bg-white border-b border-slate-200 p-4 flex justify-between items-center z-10 sticky top-0">
-            <h1 class="font-bold text-slate-700">Portal Asesoría</h1>
-            <button onclick="document.querySelector('aside').classList.toggle('hidden'); document.querySelector('aside').classList.toggle('absolute'); document.querySelector('aside').classList.toggle('h-full');" class="p-2 text-slate-600"><i class="ph-bold ph-list text-2xl"></i></button>
-        </header>
-        <div id="app-content" class="flex-1 overflow-y-auto p-4 md:p-10 fade-in relative"></div>
+    <main class="flex-1 flex flex-col relative min-w-0 h-screen overflow-hidden">
+        <div class="md:hidden bg-white p-4 border-b border-slate-200 flex justify-between items-center shadow-sm sticky top-0 z-20">
+            <span class="font-bold text-slate-800 flex items-center gap-2 text-sm">
+                <i class="ph ph-squares-four text-teal-600"></i> Portal PNFT
+            </span>
+            <button onclick="renderView('dashboard')" class="p-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+                <i class="ph ph-house text-xl"></i>
+            </button>
+        </div>
+
+        <div id="app-content" class="flex-1 p-6 md:p-12 overflow-y-auto h-full pb-20"></div>
+
+        <div id="auth-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center fade-in">
+            <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md mx-4 relative overflow-hidden">
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-900 shadow-sm border border-slate-100">
+                        <i class="ph-bold ph-fingerprint text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-slate-800 tracking-tight">Identificación Oficial</h3>
+                    <p class="text-xs text-slate-500 mt-2 font-medium">Acceso exclusivo para funcionarios <strong>@mep.go.cr</strong></p>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Correo Institucional</label>
+                        <input type="email" id="auth-email" class="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-sm font-bold text-slate-700 placeholder-slate-400" placeholder="nombre.apellido@mep.go.cr">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Contraseña</label>
+                        <input type="password" id="auth-password" class="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-sm font-bold text-slate-700 placeholder-••••••••">
+                    </div>
+                    <div id="auth-error" class="bg-red-50 text-red-600 p-3 rounded-xl text-xs font-bold flex items-center gap-2 hidden animate-pulse">
+                        <i class="ph-fill ph-warning-circle"></i> <span id="auth-error-text">Error de credenciales</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <button onclick="handleAuth('login')" class="bg-slate-900 text-white py-3.5 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20 active:scale-95">Entrar</button>
+                        <button onclick="handleAuth('register')" class="bg-white border-2 border-slate-200 text-slate-700 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest hover:border-slate-300 hover:bg-slate-50 transition-all active:scale-95">Registrarse</button>
+                    </div>
+                    <button onclick="closeAuthModal()" class="w-full text-slate-400 py-2 text-[10px] font-black uppercase tracking-widest hover:text-slate-600 transition-colors mt-2">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="forum-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center fade-in">
+            <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-xl mx-4">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-black text-slate-800">Nueva Discusión</h3>
+                    <button onclick="closeForumModal()" class="p-2 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-colors"><i class="ph-bold ph-x"></i></button>
+                </div>
+                <div class="space-y-4">
+                    <input type="text" id="post-title" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 font-bold text-slate-700 placeholder-slate-400" placeholder="Título del tema">
+                    <select id="post-tag" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 font-bold text-slate-700">
+                        <option value="Metodología">Metodología / Design Thinking</option>
+                        <option value="Evaluación">Evaluación del Proyecto</option>
+                        <option value="Administrativo">Administrativo / Lab</option>
+                        <option value="Recursos">Recursos Didácticos</option>
+                    </select>
+                    <textarea id="post-content" class="w-full h-40 p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 font-medium text-slate-700 placeholder-slate-400 resize-none" placeholder="Escribe tu consulta o aporte..."></textarea>
+                    <button onclick="savePost()" class="w-full bg-teal-600 text-white py-4 rounded-xl font-black uppercase tracking-widest hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20 active:scale-95 flex items-center justify-center gap-2"><i class="ph-bold ph-paper-plane-right"></i> Publicar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="reply-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center fade-in">
+            <div class="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-md mx-4 text-sm">
+                <h3 class="text-lg font-black mb-4 text-slate-800 tracking-tight">Responder Consulta</h3>
+                <input type="hidden" id="reply-post-id">
+                <textarea id="reply-content" class="w-full h-32 p-3 border border-slate-200 rounded-lg text-sm leading-relaxed outline-none focus:ring-2 focus:ring-indigo-500 font-medium" placeholder="Escribe tu respuesta técnica oficial aquí..."></textarea>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button onclick="closeReplyModal()" class="px-4 py-2 text-slate-500 font-bold uppercase text-[10px]">Cancelar</button>
+                    <button onclick="saveReply()" class="px-6 py-2 bg-indigo-600 text-white rounded-lg font-black text-[10px] uppercase tracking-widest hover:bg-indigo-700 shadow-md font-bold">Enviar Respuesta</button>
+                </div>
+            </div>
+        </div>
     </main>
-
-    <div id="auth-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 fade-in">
-        <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-teal-400 to-indigo-500"></div>
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="ph-bold ph-x text-xl"></i></button>
-            <div class="text-center mb-8">
-                <div class="bg-indigo-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="ph-bold ph-fingerprint text-3xl text-indigo-600"></i>
-                </div>
-                <h3 class="text-2xl font-black text-slate-800">Identificación</h3>
-                <p class="text-slate-500 text-sm mt-2">Acceso exclusivo para docentes MEP.</p>
-            </div>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1 ml-1">Correo Oficial</label>
-                    <div class="relative">
-                        <i class="ph-bold ph-envelope absolute left-4 top-3.5 text-slate-400"></i>
-                        <input type="email" id="auth-email" placeholder="nombre.apellido@mep.go.cr" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 font-medium transition-all text-sm">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1 ml-1">Contraseña</label>
-                    <div class="relative">
-                        <i class="ph-bold ph-lock-key absolute left-4 top-3.5 text-slate-400"></i>
-                        <input type="password" id="auth-password" placeholder="••••••••" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 font-medium transition-all text-sm">
-                    </div>
-                </div>
-                <button onclick="handleAuth('login')" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-lg shadow-slate-200 hover:bg-black transition-transform active:scale-95 mt-2">Ingresar</button>
-                <button onclick="handleAuth('register')" class="w-full bg-white text-slate-600 py-3 rounded-xl font-bold border border-slate-200 hover:bg-slate-50 transition-colors text-sm">Crear cuenta nueva</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="forum-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 fade-in">
-        <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-2xl">
-            <h3 class="text-2xl font-black mb-6">Nueva Publicación</h3>
-            <input type="text" id="post-title" placeholder="Título del tema..." class="w-full p-4 bg-slate-50 border rounded-xl mb-4 font-bold outline-none focus:border-blue-500">
-            <select id="post-tag" class="w-full p-4 bg-slate-50 border rounded-xl mb-4 font-bold text-slate-600 outline-none">
-                <option value="Duda General">🤔 Duda General</option>
-                <option value="Material Didáctico">📚 Material Didáctico</option>
-                <option value="Experiencia">💡 Experiencia Exitosa</option>
-            </select>
-            <textarea id="post-content" class="w-full p-4 bg-slate-50 border rounded-xl mb-6 h-32 resize-none outline-none focus:border-blue-500" placeholder="Escribe tu consulta o aporte..."></textarea>
-            <div class="flex justify-end gap-3">
-                <button onclick="closeForumModal()" class="px-6 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100">Cancelar</button>
-                <button onclick="savePost()" class="px-6 py-3 rounded-xl font-bold bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200">Publicar</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="reply-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 fade-in">
-        <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-lg">
-            <h3 class="text-xl font-black mb-4 text-indigo-800">Respuesta Oficial</h3>
-            <input type="hidden" id="reply-post-id">
-            <textarea id="reply-content" class="w-full p-4 bg-indigo-50 border border-indigo-100 rounded-xl mb-6 h-32 resize-none outline-none focus:border-indigo-500" placeholder="Escribe la respuesta oficial..."></textarea>
-            <div class="flex justify-end gap-3">
-                <button onclick="closeReplyModal()" class="px-6 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100">Cancelar</button>
-                <button onclick="saveReply()" class="px-6 py-3 rounded-xl font-bold bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg">Enviar Respuesta</button>
-            </div>
-        </div>
-    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // Importación COMPLETA incluyendo getDoc para la seguridad
         import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- 1. CONFIGURACIÓN ---
-        const appId = 'asesoriayseguimiento2026';
-        
+        // 1. CONFIGURACIÓN Y ESTADO
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'asesoriayseguimiento2026';
+
         const firebaseConfig = {
             apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A",
             authDomain: "asesoriayseguimiento2026.firebaseapp.com",
@@ -136,187 +158,62 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Estado Global
         window.state = { view: 'dashboard', user: null, advisor: false, posts: [], institutions: [], accessLogs: [], guideLevel: '7', guideTab: 'curriculum' };
 
-        // --- DATOS ESTÁTICOS ---
+        // 2. DATOS ESTÁTICOS (CURRÍCULO)
         const TEACHER_GUIDE_DATA = {
             pillars: ["Apropiación Tecnológica y Digital", "Programación y Algoritmos", "Computación Física y Robótica", "Ciencia de Datos e Inteligencia Artificial"],
             axes: ["Pensamiento Computacional", "Ciudadanía y Ética Digital", "Emprendimiento e Innovación"],
             knowledgeTypes: ["Conceptuales: El 'saber' (temas técnicos).", "Procedimentales: El 'saber hacer' (abstraer, depurar, programar).", "Actitudinales: El 'ser' (tolerancia a la frustración, precisión y ética)."],
             levels: {
-                "7": { title: "Sétimo Año: Fundamentos y Lógica", modules: [{ name: "Módulo 1: Apropiación y Lógica", topics: ["Computadora", "Hardware y Software", "Redes de comunicación", "Sistema Operativo", "Gestión de archivos", "Herramientas de productividad", "Algoritmo", "Tablas de Verdad", "Estructuras condicionales", "Operadores aritméticos y lógicos", "Evento"] }, { name: "Módulo 2: Conectividad y Ciudadanía", topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Asistentes virtuales", "Bucles", "Procedimientos y funciones"] }] },
-                "8": { title: "Octavo Año: Multimedia y Robótica", modules: [{ name: "Módulo 1: Mecanismos y Prototipado", topics: ["Hardware Interno", "Software Libre vs Paga", "Compresión Archivos", "Edición Audio/Video", "Mecanismos Robóticos", "Circuitos Eléctricos", "Fundamentos Electrónica", "Entorno programación robótica"] }, { name: "Módulo 2: Datos y Sensores", topics: ["Hoja de Cálculo (Datos)", "Internet de las Cosas (IoT)", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "Herramientas Generativas (IA)", "Licencia digital", "Hackeo y Antivirus"] }] },
-                "9": { title: "Noveno Año: Prototipado y Conectividad", modules: [{ name: "Módulo 1: Automatización Avanzada", topics: ["Microcontroladores Avanzados", "Domótica", "Prototipado Real", "Algoritmos Complejos", "Optimización SO", "Movimiento en mecanismos", "Sensores y Actuadores avanzados"] }, { name: "Módulo 2: Gestión y Ética", topics: ["Gestores Base de Datos", "Protocolos Red (HTTP/TCP)", "Derechos de Autor", "Huella Digital", "Ética y Desafíos IA", "Modelado 3D", "Riesgos en línea"] }] }
+                "7": { 
+                    title: "Sétimo Año: Fundamentos y Lógica", 
+                    focus: "Hardware/Software, tablas de verdad, algoritmos básicos, herramientas de nube y netiqueta.",
+                    modules: [
+                        { name: "Módulo 1: Apropiación y Lógica", topics: ["Computadora", "Hardware y Software", "Redes de comunicación", "Sistema Operativo", "Gestión de archivos", "Herramientas de productividad", "Algoritmo", "Tablas de Verdad", "Estructuras condicionales", "Operadores aritméticos y lógicos", "Evento"] },
+                        { name: "Módulo 2: Conectividad y Ciudadanía", topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Asistentes virtuales", "Bucles", "Procedimientos y funciones"] }
+                    ]
+                },
+                "8": { 
+                    title: "Octavo Año: Multimedia y Robótica", 
+                    focus: "Edición de video, redes, circuitos eléctricos, microcontroladores, IoT y ciberseguridad.",
+                    modules: [
+                        { name: "Módulo 1: Mecanismos y Prototipado", topics: ["Hardware Interno", "Software Libre vs Paga", "Compresión Archivos", "Edición Audio/Video", "Mecanismos Robóticos", "Circuitos Eléctricos", "Fundamentos Electrónica", "Entorno programación robótica"] },
+                        { name: "Módulo 2: Datos y Sensores", topics: ["Hoja de Cálculo (Datos)", "Internet de las Cosas (IoT)", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "Herramientas Generativas (IA)", "Licencia digital", "Hackeo y Antivirus"] }
+                    ]
+                },
+                "9": { 
+                    title: "Noveno Año: Prototipado y Conectividad", 
+                    focus: "Domótica, prototipos avanzados, modelado 3D, bases de datos y ética en la IA.",
+                    modules: [
+                        { name: "Módulo 1: Automatización Avanzada", topics: ["Microcontroladores Avanzados", "Domótica", "Prototipado Real", "Algoritmos Complejos", "Optimización SO", "Movimiento en mecanismos", "Sensores y Actuadores avanzados"] },
+                        { name: "Módulo 2: Gestión y Ética", topics: ["Gestores Base de Datos", "Protocolos Red (HTTP/TCP)", "Derechos de Autor", "Huella Digital", "Ética y Desafíos IA", "Modelado 3D", "Riesgos en línea"] }
+                    ]
+                }
             },
-            methodology: { strategies: ["Aprendizaje Basado en Juegos (ABJ)", "Aprendizaje Basado en Retos (ABR)", "Design Thinking"], role: "Facilitador que contextualiza las estrategias y prioriza la lógica algorítmica.", eval: "Basada en indicadores de logro específicos." },
+            methodology: {
+                title: "Metodología y Evaluación",
+                strategies: ["Aprendizaje Basado en Juegos (ABJ)", "Aprendizaje Basado en Retos (ABR)", "Design Thinking"],
+                role: "Facilitador que contextualiza las estrategias y prioriza la lógica algorítmica.",
+                eval: "Basada en indicadores de logro específicos."
+            },
             project: { phases: [{name:"Empatizar"}, {name:"Definir"}, {name:"Idear"}, {name:"Prototipar"}, {name:"Evaluar"}] }
         };
-        const DOCUMENT_SUMMARY = [{ title: "1. Niveles de Implementación", icon: "ph-buildings", subsections: [{ subtitle: "Modalidades 2026", points: ["III Ciclo (Académico): 7°, 8° y 9°.", "Educación Diversificada: NO se implementa.", "CTP: Solo en Ciclo Diversificado Vocacional.", "EPJA: IPEC, CINDEA, CAN y CONED."] }] }, { title: "2. Disposiciones Administrativas", icon: "ph-user-gear", subsections: [{ subtitle: "Organización", points: ["Carga según matrícula.", "Responsable único.", "2 lecciones semanales.", "Evaluación sumativa.", "Sin GTP."] }] }, { title: "3. Metodología: Proyectos", icon: "ph-chalkboard-teacher", subsections: [{ subtitle: "Enfoque", points: ["Base: Design Thinking.", "Estructura modular.", "Flexibilidad metodológica."] }] }, { title: "4. Evaluación de Aprendizajes", icon: "ph-check-square", subsections: [{ subtitle: "Componente Proyecto", points: ["Centrada en el proyecto.", "Desarrollo en clase."] }, { subtitle: "Desglose", points: ["Cotidiano: 50%", "Proyecto: 30%", "Tareas: 10%", "Asistencia: 10%"] }] }, { title: "5. Gestión de Recursos", icon: "ph-monitor-play", subsections: [{ subtitle: "Responsabilidades", points: ["Control: Bitácora y TecnoPresta.", "Uso prioritario para IE.", "Planeamiento: Bimestral."] }] }, { title: "6. Planeamiento Didáctico", icon: "ph-pencil-line", subsections: [{ subtitle: "Lineamientos", points: ["Bimestral.", "Por nivel.", "Plantilla oficial 2026."] }] }];
 
-        // --- FUNCIONES CORE (Seguridad y Reparación) ---
+        const DOCUMENT_SUMMARY = [
+            { title: "1. Niveles de Implementación", icon: "ph-buildings", subsections: [{ subtitle: "Modalidades 2026", points: ["III Ciclo (Académico): 7°, 8° y 9°.", "Educación Diversificada: NO se implementa.", "CTP: Solo en Ciclo Diversificado Vocacional.", "EPJA: IPEC, CINDEA, CAN y CONED."] }] },
+            { title: "2. Disposiciones Administrativas", icon: "ph-user-gear", subsections: [{ subtitle: "Organización", points: ["Carga según matrícula.", "Responsable único.", "2 lecciones semanales.", "Evaluación sumativa.", "Sin GTP."] }] },
+            { title: "3. Metodología: Proyectos", icon: "ph-chalkboard-teacher", subsections: [{ subtitle: "Enfoque", points: ["Base: Design Thinking.", "Estructura modular.", "Flexibilidad metodológica."] }] },
+            { title: "4. Evaluación de Aprendizajes", icon: "ph-check-square", subsections: [
+                { subtitle: "Componente Proyecto", points: ["Centrada en el proyecto.", "Desarrollo en clase."] },
+                { subtitle: "Desglose", points: ["Cotidiano: 50%", "Proyecto: 30%", "Tareas: 10%", "Asistencia: 10%"] }
+            ]},
+            { title: "5. Gestión de Recursos", icon: "ph-monitor-play", subsections: [{ subtitle: "Responsabilidades", points: ["Control: Bitácora y TecnoPresta.", "Uso prioritario para IE.", "Planeamiento: Bimestral."] }] },
+            { title: "6. Planeamiento Didáctico", icon: "ph-pencil-line", subsections: [{ subtitle: "Lineamientos", points: ["Bimestral.", "Por nivel.", "Plantilla oficial 2026."] }] }
+        ];
 
-        async function autoRepairDatabase() {
-            // ESTA FUNCIÓN ES LA CLAVE DE LA SOLUCIÓN
-            // Escribe la clave correcta "AIza..." directamente en la base de datos
-            // saltándose cualquier traducción del navegador.
-            try {
-                // Clave REPARADA (Empieza con AIza - i mayúscula)
-                const KEY_CORRECTA = "AIzaSyAj8ZMNnzunifD8AaIszD9PUD3pnoStv84"; 
-                await setDoc(doc(db, "config", "api_keys"), { gemini_key: KEY_CORRECTA });
-                console.log("✅ SISTEMA: Clave API reparada exitosamente.");
-            } catch (e) {
-                console.log("⚠️ Sistema: No se pudo reparar la clave (posible falta de permisos).", e);
-            }
-        }
+        // --- 3. DEFINICIÓN DE FUNCIONES (HOISTING) ---
         
-        async function getSecureApiKey() {
-            if (!auth.currentUser) return null;
-            const docRef = doc(db, "config", "api_keys");
-            try {
-                const docSnap = await getDoc(docRef);
-                return docSnap.exists() ? docSnap.data().gemini_key : null;
-            } catch (error) { return null; }
-        }
-
-        async function callGeminiAPI(prompt) {
-            try {
-                const apiKey = await getSecureApiKey();
-                if (!apiKey) return "⚠️ Error: No se detectó la API Key. Recarga la página para que el sistema la repare.";
-
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`, {
-                    method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
-                
-                if (!res.ok) throw new Error("API Error");
-                const data = await res.json();
-                return data.candidates[0].content.parts[0].text;
-            } catch (e) { return "Error: No se pudo conectar con el asistente inteligente. Verifica tu conexión."; }
-        }
-
-        async function initApp() {
-            try { 
-                await signInAnonymously(auth);
-                // Ejecutamos la reparación de la clave al iniciar
-                await autoRepairDatabase();
-            } 
-            catch (e) { document.getElementById('auth-status').innerText = "Modo Visitante"; }
-        }
-
-        // --- INTERFAZ Y EVENTOS ---
-        window.openTeacherAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
-        window.closeTeacherAuthModal = () => document.getElementById('auth-modal').classList.add('hidden');
-        window.closeAuthModal = window.closeTeacherAuthModal;
-        window.openForumModal = () => document.getElementById('forum-modal').classList.remove('hidden');
-        window.closeForumModal = () => document.getElementById('forum-modal').classList.add('hidden');
-        window.openReplyModal = (id) => { document.getElementById('reply-post-id').value = id; document.getElementById('reply-modal').classList.remove('hidden'); };
-        window.closeReplyModal = () => document.getElementById('reply-modal').classList.add('hidden');
-
-        window.handleAuth = async (mode) => {
-            const email = document.getElementById('auth-email').value.trim().toLowerCase();
-            const password = document.getElementById('auth-password').value;
-            if (!email.endsWith('@mep.go.cr')) { window.showToast("Solo correos @mep.go.cr"); return; }
-            try {
-                if (mode === 'register') await createUserWithEmailAndPassword(auth, email, password);
-                else await signInWithEmailAndPassword(auth, email, password);
-                window.closeAuthModal();
-            } catch (e) { window.showToast("Error de credenciales"); }
-        };
-
-        window.logout = async () => {
-            await signOut(auth);
-            try { await signInAnonymously(auth); } catch(e){}
-            window.showToast("Sesión cerrada");
-            window.renderView('dashboard');
-        };
-
-        // --- LÓGICA DE PROYECTOS ---
-        window.generateProjectIdeas = async () => {
-            const level = window.state.guideLevel; const theme = document.getElementById('project-theme').value;
-            if (!theme) { window.showToast("Escribe un contexto primero"); return; }
-            const topics = Array.from(document.querySelectorAll('.topic-checkbox:checked')).map(cb => cb.value);
-            if (topics.length === 0) { window.showToast("Seleccione al menos un saber"); return; }
-            
-            const r = document.getElementById('project-ai-results'); r.classList.remove('hidden');
-            r.innerHTML = '<div class="text-center text-teal-400 font-bold animate-pulse">✨ Analizando saberes y generando situaciones...</div>';
-            
-            const prompt = `Actúa como Asesor Nacional de Tecnología Educativa. Genera 3 situaciones problema para secundaria (${level}° año). Contexto: ${theme}. Saberes: ${topics.join(', ')}. FORMATO: 3 opciones numeradas, párrafos cortos, sin saludos. Al final nota: "Nota: El docente toma la decisión final y analiza la viabilidad pedagógica."`;
-            const res = await callGeminiAPI(prompt);
-            
-            r.innerHTML = `<h3 class="font-black text-2xl mb-4 text-white">Resultados Sugeridos</h3><div class="prose prose-invert prose-p:text-slate-300 prose-strong:text-teal-400 max-w-none space-y-4">${res.replace(/\n/g, '<br>')}</div>`;
-        };
-
-        window.askAI = async () => {
-            const q = document.getElementById('ai-q').value; const r = document.getElementById('ai-r');
-            if(!q) return;
-            r.classList.remove('hidden'); r.innerHTML = '<span class="animate-pulse">✨ Pensando...</span>';
-            const res = await callGeminiAPI(`Consulta docente secundaria: ${q}. Responde técnico y puntual.`);
-            r.innerHTML = `<div class="prose prose-sm text-slate-700 max-w-none shadow-inner p-2 font-medium">${res}</div>`;
-        };
-
-        // --- LÓGICA DE VISTAS ---
-        window.savePost = async () => { const t = document.getElementById('post-title').value; const c = document.getElementById('post-content').value; const tag = document.getElementById('post-tag').value; if (!t || !c) return; const author = window.state.advisor ? "Asesor Nacional" : (window.state.user.email || "Docente"); try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'forum'), { title: t, content: c, tag, author, date: new Date().toLocaleDateString(), timestamp: Date.now() }); window.closeForumModal(); window.showToast("Publicado"); } catch(e) { window.showToast("Error de permisos"); } };
-        window.saveReply = async () => { const id = document.getElementById('reply-post-id').value; const content = document.getElementById('reply-content').value; if(!content) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'forum', id), { reply: content }); window.closeReplyModal(); window.showToast("Respuesta enviada"); } catch(e) { window.showToast("Error de permisos"); } };
-        window.deletePost = async (id) => { if (confirm("¿Eliminar?")) { try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'forum', id)); } catch(e) { window.showToast("Error de permisos"); } } };
-        window.logAccess = async () => { if (!window.state.user) return; try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'access_logs'), { email: window.state.user.email || "Anónimo", type: window.state.advisor ? "Asesor" : "Docente", timestamp: Date.now(), date: new Date().toLocaleString() }); } catch (e) {} };
-        window.showToast = (msg) => { const t = document.createElement('div'); t.className = 'fixed bottom-4 right-4 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-xl z-50 font-bold text-xs fade-in'; t.innerHTML = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000); };
-
-        function renderSidebar() {
-            const nav = document.getElementById('sidebar-nav');
-            let html = [{id:'dashboard', icon:'ph-squares-four', label:'Inicio'}, {section:'Recursos'}, {id:'summary', icon:'ph-clipboard-text', label:'Orientaciones Docentes'}, {id:'teacherGuide', icon:'ph-graduation-cap', label:'Guía Docente'}, {id:'planner', icon:'ph-calendar-check', label:'Planeamiento 2026'}, {id:'forum', icon:'ph-users-three', label:'Comunidad Docente'}, {section:'Herramientas'}, {id:'ai', icon:'ph-sparkle', label:'Asistente IA'}].map(i => i.section ? `<div class="mt-6 mb-2 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">${i.section}</div>` : `<button onclick="renderView('${i.id}')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${window.state.view === i.id ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:bg-slate-50'}"><i class="ph ${i.icon} text-lg"></i>${i.label}</button>`).join('');
-            if (window.state.advisor) html += `<div class="mt-6 mb-2 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Gestión</div><button onclick="renderView('advisorDashboard')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${window.state.view === 'advisorDashboard' ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:bg-slate-50'}"><i class="ph ph-chart-pie-slice text-lg"></i>Tablero Asesor</button>`;
-            html += `<div class="mt-6 mb-2 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Contacto</div><a href="https://wa.me/50660602617" target="_blank" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-green-50 hover:text-green-600 transition-all"><i class="ph-bold ph-whatsapp-logo text-lg"></i> Alberto Bustos</a><a href="https://wa.me/50688784526" target="_blank" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-green-50 hover:text-green-600 transition-all"><i class="ph-bold ph-whatsapp-logo text-lg"></i> Rodolfo Juárez</a>`;
-            html += window.state.user && !window.state.user.isAnonymous ? `<button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 mt-4"><i class="ph ph-sign-out"></i>Cerrar Sesión</button>` : `<button onclick="openTeacherAuthModal()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 mt-4"><i class="ph ph-sign-in"></i>Ingresar</button>`;
-            nav.innerHTML = html;
-        }
-
-        window.renderView = (viewId) => {
-            window.state.view = viewId; renderSidebar(); const c = document.getElementById('app-content');
-            if (viewId === 'dashboard') {
-                const isGuest = !window.state.user || window.state.user.isAnonymous;
-                const guestNotice = isGuest ? `<div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-8 rounded-r-xl shadow-sm animate-pulse"><div class="flex items-center gap-3"><i class="ph-bold ph-lock-key text-amber-600 text-xl"></i><div><h4 class="font-bold text-amber-800 text-sm">Acceso Restringido a Herramientas</h4><p class="text-xs text-amber-700 mt-1">Para utilizar el <strong>Asistente IA</strong> y participar en la <strong>Comunidad Docente</strong>, es necesario autenticarse.</p></div><button onclick="openTeacherAuthModal()" class="ml-auto bg-amber-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-amber-700">Ingresar</button></div></div>` : '';
-                c.innerHTML = `${guestNotice}<div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-10 text-white mb-8 relative overflow-hidden"><i class="ph ph-rocket-launch absolute top-0 right-0 p-10 text-9xl opacity-10"></i><h1 class="text-4xl font-black mb-2">Portal de Apoyo Dimensión 1 PNFT</h1><p class="text-slate-400">Gestión técnica y pedagógica exclusiva para secundaria 2026.</p></div><div class="grid grid-cols-1 md:grid-cols-3 gap-6"><div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-teal-500 transition-colors" onclick="renderView('teacherGuide')"><i class="ph ph-graduation-cap text-3xl text-teal-600 mb-4"></i><h3 class="font-bold text-lg">Malla Curricular</h3></div><div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-500 cursor-pointer transition-colors relative" onclick="renderView('forum')">${isGuest ? '<div class="absolute top-2 right-2 text-slate-300"><i class="ph-bold ph-lock-key"></i></div>' : ''}<i class="ph ph-users-three text-3xl text-blue-600 mb-4"></i><h3 class="font-bold text-lg">Comunidad</h3></div><div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-purple-500 cursor-pointer transition-colors relative" onclick="renderView('ai')">${isGuest ? '<div class="absolute top-2 right-2 text-slate-300"><i class="ph-bold ph-lock-key"></i></div>' : ''}<i class="ph ph-sparkle text-3xl text-purple-600 mb-4"></i><h3 class="font-bold text-lg">Asistente IA</h3></div></div>`;
-            } else if (viewId === 'summary') {
-                c.innerHTML = `<h2 class="text-3xl font-black text-slate-800 mb-8">Orientaciones Generales 2026 (Secundaria)</h2><div class="bg-white p-6 rounded-2xl border border-slate-200 mb-8 flex items-center gap-4 shadow-sm"><div class="p-3 bg-teal-50 text-teal-600 rounded-full"><i class="ph ph-speaker-high text-2xl"></i></div><div class="flex-1"><h4 class="font-bold text-sm">Resumen en Audio</h4><video controls class="w-full h-10 mt-2 rounded bg-slate-100"><source src="https://res.cloudinary.com/dljxx3chc/video/upload/v1769616584/Orientaciones_Docente_2026_t1q9so.mp4" type="video/mp4"></video></div></div><div class="grid grid-cols-1 xl:grid-cols-2 gap-8">${DOCUMENT_SUMMARY.map(s => `<div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm"><h3 class="font-bold text-lg mb-4 flex gap-2 items-center"><i class="ph ${s.icon} text-teal-600"></i>${s.title}</h3><ul class="list-disc pl-5 text-sm text-slate-600 space-y-2">${s.subsections[0].points.map(p => `<li>${p}</li>`).join('')}</ul>${s.title.includes("6.") ? `<div class="mt-4 pt-4 border-t border-slate-100 flex flex-col gap-3"><a href="https://res.cloudinary.com/dljxx3chc/image/upload/v1740624021/Formaci%C3%B3n_Tecnol%C3%B3gica_Gu%C3%ADa_de_Implementaci%C3%B3n_2026_id9wov.pdf" target="_blank" class="text-teal-600 font-bold text-sm flex items-center gap-2 hover:underline"><i class="ph ph-file-pdf"></i> Descargar Guía Resumen PDF</a><a href="https://adminmepcr-my.sharepoint.com/:b:/g/personal/alberto_bustos_ortega_mep_go_cr/IQB2V-ZCEVyHRaw6p6kqi6TsAUFYsCO3i6cWwMwPmsR-69U?e=7fz66K" target="_blank" class="text-indigo-600 font-bold text-sm flex items-center gap-2 hover:underline"><i class="ph ph-cloud-arrow-down"></i> Descargar Documento Oficial</a></div>` : ''}</div>`).join('')}</div>`;
-            } else if (viewId === 'teacherGuide') {
-                const data = TEACHER_GUIDE_DATA.levels[window.state.guideLevel];
-                c.innerHTML = `<h2 class="text-3xl font-black mb-6">Guía Docente Secundaria</h2><div class="flex gap-2 mb-8">${['7','8','9'].map(l => `<button onclick="window.state.guideLevel='${l}';renderView('teacherGuide')" class="px-6 py-2 rounded-xl font-bold transition-all ${window.state.guideLevel === l ? 'bg-teal-600 text-white' : 'bg-white text-slate-500'}">${l}° Año</button>`).join('')}</div><div class="flex border-b mb-8 font-bold">${['curriculum', 'projects'].map(t => `<button onclick="window.state.guideTab='${t}'; renderView('teacherGuide')" class="px-6 py-2 border-b-2 transition-all ${window.state.guideTab === t ? 'border-indigo-600 text-indigo-700' : 'border-transparent text-slate-400'}">${t==='curriculum'?'Malla':'Crear Situaciones Problema ✨'}</button>`).join('')}</div>`;
-                if(window.state.guideTab === 'curriculum') {
-                    c.innerHTML += `<div class="space-y-6"><div class="bg-indigo-50 p-6 rounded-3xl border border-indigo-100"><h4 class="font-black text-indigo-800 mb-4 uppercase text-xs tracking-widest">Estructura y Áreas de Conocimiento</h4><ul class="grid md:grid-cols-2 gap-4 text-sm text-slate-700">${TEACHER_GUIDE_DATA.pillars.map(p => `<li class="flex gap-2"><i class="ph-fill ph-check-circle text-indigo-500"></i>${p}</li>`).join('')}</ul></div><div class="grid md:grid-cols-2 gap-6"><div class="bg-white p-6 rounded-3xl border border-slate-200"><h4 class="font-black text-teal-600 mb-3 uppercase text-xs tracking-widest">Ejes Transversales</h4><div class="flex flex-wrap gap-2">${TEACHER_GUIDE_DATA.axes.map(a => `<span class="px-3 py-1 bg-teal-50 text-teal-700 rounded-lg text-xs font-bold border border-teal-100">${a}</span>`).join('')}</div></div><div class="bg-white p-6 rounded-3xl border border-slate-200"><h4 class="font-black text-teal-600 mb-3 uppercase text-xs tracking-widest">Tipos de Saberes</h4><ul class="space-y-2 text-xs font-medium text-slate-600">${TEACHER_GUIDE_DATA.knowledgeTypes.map(k => `<li>• ${k}</li>`).join('')}</ul></div></div><div class="bg-white p-6 rounded-3xl border border-slate-200"><h4 class="font-black text-slate-800 mb-4 uppercase text-xs tracking-widest">Módulos del Nivel ${window.state.guideLevel}°</h4><div class="grid md:grid-cols-2 gap-6">${data.modules.map(m => `<div class="bg-slate-50 p-5 rounded-2xl"><h5 class="font-bold text-slate-800 mb-2">${m.name}</h5><ul class="space-y-1 text-xs text-slate-600">${m.topics.map(t => `<li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-teal-500 rounded-full"></div>${t}</li>`).join('')}</ul></div>`).join('')}</div></div><div class="bg-orange-50 p-6 rounded-3xl border border-orange-100"><h4 class="font-black text-orange-800 mb-3 uppercase text-xs tracking-widest">Metodología y Evaluación</h4><div class="text-sm text-slate-700 space-y-2"><p><strong>Estrategias:</strong> ${TEACHER_GUIDE_DATA.methodology.strategies.join(', ')}</p><p><strong>Rol Docente:</strong> ${TEACHER_GUIDE_DATA.methodology.role}</p><p><strong>Evaluación:</strong> ${TEACHER_GUIDE_DATA.methodology.eval}</p></div></div></div>`;
-                } else {
-                    c.innerHTML += `<div class="bg-slate-900 p-8 rounded-[2rem] text-white shadow-2xl"><div class="flex flex-col md:flex-row gap-4 mb-8"><input type="text" id="project-theme" class="flex-1 p-4 rounded-xl bg-slate-800 border border-slate-700 outline-none focus:border-teal-500 font-bold transition-all placeholder-slate-500" placeholder="Describe el contexto (ej. Contaminación en mi comunidad)..."><button onclick="generateProjectIdeas()" class="bg-teal-500 hover:bg-teal-400 text-slate-900 px-8 py-4 rounded-xl font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-teal-500/20">Generar</button></div><div class="grid md:grid-cols-2 gap-8 mb-6">${data.modules.map((m, index) => `<div><h5 class="font-black text-teal-400 text-xs uppercase tracking-widest mb-4 border-b border-slate-700 pb-2 flex justify-between">${m.name} <span class="text-slate-600">M.${index + 1}</span></h5><div class="grid grid-cols-1 gap-2 text-xs">${m.topics.map(t => `<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-800 cursor-pointer transition-colors group"><input type="checkbox" value="${t}" class="topic-checkbox accent-teal-500 w-4 h-4 rounded border-slate-600 bg-slate-700"><span class="text-slate-400 group-hover:text-slate-200 font-medium">${t}</span></label>`).join('')}</div></div>`).join('')}</div><div id="project-ai-results" class="hidden animate-pulse mt-8 border-t border-slate-700 pt-6"></div></div><div class="mt-8 bg-white p-6 rounded-2xl border border-slate-200 opacity-75 grayscale hover:grayscale-0 transition-all"><h4 class="font-bold mb-4 text-slate-400 text-xs uppercase tracking-widest">Fases de Referencia (Design Thinking)</h4><div class="grid grid-cols-5 gap-2 text-center text-xs">${TEACHER_GUIDE_DATA.project.phases.map((p,i)=>`<div class="p-2 bg-slate-50 rounded-lg text-slate-500"><div class="font-bold mb-1">${i+1}</div>${p.name}</div>`).join('')}</div></div>`;
-                }
-            } else if (viewId === 'planner') {
-                c.innerHTML = `<div class="text-center py-12"><div class="bg-white p-12 rounded-[3rem] border border-slate-200 shadow-xl inline-block"><i class="ph ph-file-text text-5xl text-indigo-600 mb-6"></i><h2 class="text-3xl font-black text-slate-800 mb-4">Planeamiento 2026</h2><p class="text-slate-500 mb-8">Herramienta oficial para secundaria.</p><a href="https://k3sb12.github.io/Recurso-Plantilla-Planeamiento-/" target="_blank" class="bg-slate-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-black transition-all">Ir a la Plantilla Web</a></div></div>`;
-            } else if (viewId === 'forum') {
-                c.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black text-slate-800">Comunidad</h2>${window.state.user && !window.state.user.isAnonymous ? `<button onclick="openForumModal()" class="bg-teal-600 text-white px-6 py-3 rounded-xl font-bold">Publicar</button>` : `<button onclick="openTeacherAuthModal()" class="bg-slate-800 text-white px-6 py-3 rounded-xl font-bold">Ingresar</button>`}</div><div class="space-y-4">${window.state.posts.map(p => `<div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><div class="flex justify-between mb-2"><span class="bg-slate-100 px-2 py-1 rounded text-xs font-bold text-slate-600">${p.tag}</span><span class="text-xs text-slate-400 font-bold">${p.date}</span></div><h4 class="font-bold text-lg mb-2">${p.title}</h4><p class="text-sm text-slate-600 mb-4">${p.content}</p>${p.reply ? `<div class="bg-indigo-50 p-4 rounded-xl text-sm border-l-4 border-indigo-500 mb-4"><p class="font-bold text-indigo-800 text-xs mb-1">Respuesta Oficial</p>${p.reply}</div>` : ''}<div class="flex justify-between items-center pt-4 border-t"><span class="text-xs font-bold text-slate-400">Por: ${p.author}</span><div class="flex gap-2">${window.state.advisor ? `<button onclick="openReplyModal('${p.id}')" class="text-indigo-600 text-xs font-bold hover:underline">Responder</button><button onclick="deletePost('${p.id}')" class="text-red-500 text-xs font-bold hover:underline">Eliminar</button>` : ''}</div></div></div>`).join('')}</div>`;
-                window.logAccess(); 
-            } else if (viewId === 'ai') {
-                c.innerHTML = `<div class="max-w-4xl mx-auto"><div class="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-xl"><h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-3"><i class="ph-fill ph-sparkle text-purple-600"></i> Asistente Pedagógico</h2><textarea id="ai-q" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 mb-4 h-32 resize-none font-medium" placeholder="Consulta sobre normativa, didáctica o evaluación..."></textarea><div class="flex justify-end"><button onclick="askAI()" class="bg-purple-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-purple-700 transition-all">Consultar</button></div><div id="ai-r" class="mt-8 p-6 bg-slate-50 rounded-2xl border border-slate-100 hidden text-sm leading-relaxed text-slate-700"></div></div></div>`;
-            } else if (viewId === 'advisorDashboard') {
-                const list = window.state.institutions.filter(i => i.advisor.includes(window.state.user.email.includes('alberto') ? 'Alberto' : 'Rodolfo'));
-                const logs = (window.state.accessLogs || []).slice(0, 50);
-                c.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black text-slate-800">Tablero de Gestión</h2><div class="flex gap-3"><div class="bg-white border p-2 rounded-xl flex items-center gap-2"><select id="import-advisor-select" class="text-xs font-bold bg-transparent outline-none"><option value="Alberto Bustos">Alberto</option><option value="Rodolfo Juárez">Rodolfo</option></select><label class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold cursor-pointer hover:bg-black"><i class="ph-bold ph-upload-simple mr-2"></i>Importar<input type="file" class="hidden" onchange="handleExcel(event)"></label></div><button onclick="analyzeAdvisorDashboard()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700">✨ Analizar</button></div></div><div id="ai-advisor-results" class="hidden mb-6 bg-indigo-50 p-6 rounded-2xl text-indigo-800 text-sm font-medium"></div><div class="grid lg:grid-cols-3 gap-8"><div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden"><table class="w-full text-left text-sm"><thead class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b"><tr><th class="p-4">Institución</th><th class="p-4">Estado</th><th class="p-4">Fecha</th><th class="p-4 text-right">Acción</th></tr></thead><tbody class="divide-y divide-slate-100">${list.map(i => `<tr class="hover:bg-slate-50"><td class="p-4 font-bold text-slate-700">${i.name}<br><span class="text-xs text-slate-400 font-normal">${i.code} | ${i.regional}</span></td><td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${i.status==='done'?'bg-green-100 text-green-700':'bg-orange-100 text-orange-700'}">${i.status==='done'?'VISITADO':'PENDIENTE'}</span></td><td class="p-4"><input type="date" value="${i.date||''}" onchange="updateDate('${i.code}',this.value)" class="text-xs border rounded p-1"></td><td class="p-4 text-right"><button onclick="toggleStatus('${i.code}')" class="text-slate-400 hover:text-teal-600"><i class="ph-bold ph-arrows-clockwise text-xl"></i></button></td></tr>`).join('')}</tbody></table></div><div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 h-[500px] overflow-y-auto"><h3 class="font-bold mb-4">Registros</h3>${logs.map(l => `<div class="mb-3 p-3 bg-slate-50 rounded-xl text-xs"><p class="font-bold">${l.email}</p><p>${l.date}</p></div>`).join('')}</div></div>`;
-            }
-        };
-
-        // --- AUTH LISTENER ---
-        onAuthStateChanged(auth, (user) => {
-            window.state.user = user;
-            if (user && !user.isAnonymous) {
-                window.state.advisor = ADVISOR_EMAILS.includes(user.email.toLowerCase());
-                document.getElementById('auth-status').innerText = window.state.advisor ? "Asesor Nacional ✅" : "Docente MEP ✅";
-            } else {
-                window.state.advisor = false;
-                document.getElementById('auth-status').innerText = "Invitado";
-            }
-            renderSidebar();
-            if (['forum', 'advisorDashboard'].includes(window.state.view)) renderView(window.state.view);
-            setTimeout(setupRealtimeListeners, 500); 
-        });
-
-        // --- LISTENERS EN TIEMPO REAL ---
         async function setupRealtimeListeners() {
             if (!window.state.user) return; 
             try {
@@ -342,6 +239,383 @@
                 }
             } catch (e) { console.log("Listener setup error", e); }
         }
+
+        async function initApp() {
+            try { await signInAnonymously(auth); } 
+            catch (e) { document.getElementById('auth-status').innerText = "Modo Visitante"; }
+        }
+
+        // SEGURIDAD: Obtener API Key de Firestore
+        async function getSecureApiKey() {
+            if (!auth.currentUser) return null;
+            const docRef = doc(db, "config", "api_keys");
+            try {
+                const docSnap = await getDoc(docRef);
+                return docSnap.exists() ? docSnap.data().gemini_key : null;
+            } catch (error) {
+                console.error("Error obteniendo credenciales:", error);
+                return null;
+            }
+        }
+
+        // CONEXIÓN IA: Usando la clave segura
+        async function callGeminiAPI(prompt) {
+            try {
+                const apiKey = await getSecureApiKey();
+                if (!apiKey) return "⚠️ Error: No tienes permisos para usar la IA o la clave no está configurada.";
+
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`, {
+                    method: 'POST', 
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                
+                if (!res.ok) throw new Error("API Error");
+                const data = await res.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch (e) { 
+                return "Error: No se pudo conectar con el asistente inteligente."; 
+            }
+        }
+
+        // --- 4. FUNCIONES DE UI Y ACCIONES ---
+
+        window.openTeacherAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
+        window.closeTeacherAuthModal = () => document.getElementById('auth-modal').classList.add('hidden');
+        window.closeAuthModal = window.closeTeacherAuthModal;
+
+        window.openForumModal = () => document.getElementById('forum-modal').classList.remove('hidden');
+        window.closeForumModal = () => document.getElementById('forum-modal').classList.add('hidden');
+        window.openReplyModal = (id) => { document.getElementById('reply-post-id').value = id; document.getElementById('reply-modal').classList.remove('hidden'); };
+        window.closeReplyModal = () => document.getElementById('reply-modal').classList.add('hidden');
+
+        window.handleAuth = async (mode) => {
+            const email = document.getElementById('auth-email').value.trim().toLowerCase();
+            const password = document.getElementById('auth-password').value;
+            if (!email.endsWith('@mep.go.cr')) {
+                window.showToast("Solo correos @mep.go.cr");
+                return;
+            }
+            try {
+                if (mode === 'register') await createUserWithEmailAndPassword(auth, email, password);
+                else await signInWithEmailAndPassword(auth, email, password);
+                window.closeAuthModal();
+            } catch (e) { window.showToast("Error de credenciales"); }
+        };
+
+        window.logout = async () => {
+            await signOut(auth);
+            try { await signInAnonymously(auth); } catch(e){}
+            window.showToast("Sesión cerrada");
+            window.renderView('dashboard');
+        };
+
+        window.savePost = async () => {
+            const t = document.getElementById('post-title').value;
+            const c = document.getElementById('post-content').value;
+            const tag = document.getElementById('post-tag').value;
+            if (!t || !c) return;
+            const author = window.state.advisor ? "Asesor Nacional" : (window.state.user.email || "Docente");
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'forum'), { title: t, content: c, tag, author, date: new Date().toLocaleDateString(), timestamp: Date.now() });
+                window.closeForumModal(); window.showToast("Publicado");
+            } catch(e) { window.showToast("Error de permisos"); }
+        };
+
+        window.saveReply = async () => {
+            const id = document.getElementById('reply-post-id').value;
+            const content = document.getElementById('reply-content').value;
+            if(!content) return;
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'forum', id), { reply: content });
+                window.closeReplyModal(); window.showToast("Respuesta enviada");
+            } catch(e) { window.showToast("Error de permisos"); }
+        };
+
+        window.deletePost = async (id) => {
+            if (confirm("¿Eliminar?")) {
+                try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'forum', id)); }
+                catch(e) { window.showToast("Error de permisos"); }
+            }
+        };
+
+        window.handleExcel = (e) => {
+            const file = e.target.files[0]; if(!file) return;
+            const advisorName = document.getElementById('import-advisor-select').value;
+            const reader = new FileReader();
+            reader.onload = async (evt) => {
+                const wb = XLSX.read(new Uint8Array(evt.target.result), {type: 'array'});
+                const data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                let count = 0;
+                for (const row of data) {
+                    const code = String(row["Código Presupuestario"] || Math.random().toString(36).substr(2, 9));
+                    try {
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), {
+                            code, name: row["CENTRO_EDUCATIVO"] || "Sin Nombre",
+                            email: row["Correo institucional"] || "", regional: row["REGIONAL"] || "",
+                            circuito: row["CIRCUITO"] || "", advisor: advisorName, status: 'pending', date: ""
+                        });
+                        count++;
+                    } catch(e) {}
+                }
+                window.showToast(`${count} registros cargados`);
+            };
+            reader.readAsArrayBuffer(file);
+        };
+
+        window.toggleStatus = async (code) => {
+            const inst = window.state.institutions.find(i => i.code === code);
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), {
+                    status: inst.status === 'done' ? 'pending' : 'done'
+                });
+            } catch(e) { window.showToast("Error de permisos"); }
+        };
+
+        window.updateDate = async (code, val) => {
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), { date: val }); }
+            catch(e) { window.showToast("Error de permisos"); }
+        };
+
+        window.askAI = async () => {
+            const q = document.getElementById('ai-q').value;
+            const r = document.getElementById('ai-r');
+            if(!q) return;
+            r.classList.remove('hidden');
+            r.innerHTML = '<span class="animate-pulse">✨ Pensando...</span>';
+            const res = await callGeminiAPI(`Consulta docente secundaria: ${q}. Responde de forma técnica y puntual.`);
+            r.innerHTML = `<div class="prose prose-sm text-slate-700 max-w-none shadow-inner p-2 font-medium">${res}</div>`;
+        };
+
+        // --- FUNCIÓN ACTUALIZADA: GENERADOR DE SITUACIONES PROBLEMA ---
+        window.generateProjectIdeas = async () => {
+            const level = window.state.guideLevel; 
+            const theme = document.getElementById('project-theme').value;
+            
+            if (!theme) { window.showToast("Escribe un contexto o tema primero"); return; }
+
+            const topics = Array.from(document.querySelectorAll('.topic-checkbox:checked')).map(cb => cb.value);
+            if (topics.length === 0) { window.showToast("Seleccione al menos un saber de la lista"); return; }
+            
+            const r = document.getElementById('project-ai-results'); 
+            r.classList.remove('hidden');
+            r.innerHTML = '<div class="text-center text-teal-400 font-bold">✨ Analizando saberes y generando situaciones...</div>';
+            
+            const prompt = `
+                Actúa como un Asesor Nacional de Tecnología Educativa experto.
+                Tarea: Genera 3 opciones de 'Situación Problema' para estudiantes de secundaria (${level}° año).
+                Contexto: ${theme}.
+                Saberes Tecnológicos a integrar: ${topics.join(', ')}.
+                
+                REGLAS DE FORMATO ESTRICTAS:
+                1. NO des saludos, ni introducciones, ni conclusiones. Ve directo al grano.
+                2. Genera exactamente 3 opciones numeradas (Opción 1, Opción 2, Opción 3).
+                3. Cada opción debe ser un párrafo narrativo resumido (máximo 40 palabras) que plantee el problema claramente.
+                4. Al final de todo, agrega una línea separada que diga exactamente: "Nota: El docente toma la decisión final y analiza la viabilidad pedagógica para su contexto."
+            `;
+
+            const res = await callGeminiAPI(prompt);
+            
+            r.classList.remove('animate-pulse');
+            r.innerHTML = `
+                <h3 class="font-black text-2xl mb-4 text-white">Resultados Sugeridos</h3>
+                <div class="prose prose-invert prose-p:text-slate-300 prose-strong:text-teal-400 max-w-none space-y-4">
+                    ${res.replace(/\n/g, '<br>')}
+                </div>
+            `;
+        };
+
+        window.analyzeAdvisorDashboard = async () => {
+            const r = document.getElementById('ai-advisor-results'); r.classList.remove('hidden');
+            r.innerHTML = '<span class="animate-pulse">✨ Analizando datos...</span>';
+            const data = window.state.institutions.map(i => `${i.name} (${i.regional}): ${i.status}`).join(', ');
+            const res = await callGeminiAPI(`Analiza cobertura regional (resumen ejecutivo): ${data.substring(0,2000)}. Responde de forma puntual.`);
+            r.innerHTML = `<div class="bg-indigo-900 text-white p-6 rounded-2xl text-xs font-medium">${res}</div>`;
+        };
+
+        window.logAccess = async () => {
+            if (!window.state.user) return;
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'access_logs'), {
+                    email: window.state.user.email || "Anónimo", type: window.state.advisor ? "Asesor" : "Docente",
+                    timestamp: Date.now(), date: new Date().toLocaleString()
+                });
+            } catch (e) {}
+        };
+
+        window.showToast = (msg) => { const t = document.createElement('div'); t.className = 'fixed bottom-4 right-4 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-xl z-50 font-bold text-xs fade-in'; t.innerHTML = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000); };
+
+        // --- 6. RENDERIZADO (VISTAS) ---
+        function renderSidebar() {
+            const nav = document.getElementById('sidebar-nav');
+            let html = [{id:'dashboard', icon:'ph-squares-four', label:'Inicio'}, {section:'Recursos'}, {id:'summary', icon:'ph-clipboard-text', label:'Orientaciones Docentes'}, {id:'teacherGuide', icon:'ph-graduation-cap', label:'Guía Docente'}, {id:'planner', icon:'ph-calendar-check', label:'Planeamiento 2026'}, {id:'forum', icon:'ph-users-three', label:'Comunidad Docente'}, {section:'Herramientas'}, {id:'ai', icon:'ph-sparkle', label:'Asistente IA'}].map(i => i.section ? 
+                `<div class="mt-6 mb-2 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">${i.section}</div>` : 
+                `<button onclick="renderView('${i.id}')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${window.state.view === i.id ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:bg-slate-50'}"><i class="ph ${i.icon} text-lg"></i>${i.label}</button>`
+            ).join('');
+
+            if (window.state.advisor) {
+                html += `<div class="mt-6 mb-2 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Gestión</div>
+                         <button onclick="renderView('advisorDashboard')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${window.state.view === 'advisorDashboard' ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:bg-slate-50'}"><i class="ph ph-chart-pie-slice text-lg"></i>Tablero Asesor</button>`;
+            }
+
+            html += `
+                <div class="mt-6 mb-2 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Contacto</div>
+                <a href="https://wa.me/50660602617" target="_blank" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-green-50 hover:text-green-600 transition-all"><i class="ph-bold ph-whatsapp-logo text-lg"></i> Alberto Bustos</a>
+                <a href="https://wa.me/50688784526" target="_blank" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-green-50 hover:text-green-600 transition-all"><i class="ph-bold ph-whatsapp-logo text-lg"></i> Rodolfo Juárez</a>
+            `;
+            
+            html += window.state.user && !window.state.user.isAnonymous ? 
+                `<button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 mt-4"><i class="ph ph-sign-out"></i>Cerrar Sesión</button>` :
+                `<button onclick="openTeacherAuthModal()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 mt-4"><i class="ph ph-sign-in"></i>Ingresar</button>`;
+            
+            nav.innerHTML = html;
+        }
+
+        window.renderView = (viewId) => {
+            window.state.view = viewId; renderSidebar();
+            const c = document.getElementById('app-content');
+            
+            if (viewId === 'dashboard') {
+                const isGuest = !window.state.user || window.state.user.isAnonymous;
+                const guestNotice = isGuest ? `
+                    <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-8 rounded-r-xl shadow-sm animate-pulse">
+                        <div class="flex items-center gap-3">
+                            <i class="ph-bold ph-lock-key text-amber-600 text-xl"></i>
+                            <div>
+                                <h4 class="font-bold text-amber-800 text-sm">Acceso Restringido a Herramientas</h4>
+                                <p class="text-xs text-amber-700 mt-1">Para utilizar el <strong>Asistente IA</strong> y participar en la <strong>Comunidad Docente</strong>, es necesario autenticarse.</p>
+                            </div>
+                            <button onclick="openTeacherAuthModal()" class="ml-auto bg-amber-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-amber-700">Ingresar</button>
+                        </div>
+                    </div>` : '';
+
+                c.innerHTML = `
+                    ${guestNotice}
+                    <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-10 text-white mb-8 relative overflow-hidden">
+                        <i class="ph ph-rocket-launch absolute top-0 right-0 p-10 text-9xl opacity-10"></i>
+                        <h1 class="text-4xl font-black mb-2">Portal de Apoyo Dimensión 1 PNFT</h1>
+                        <p class="text-slate-400">Gestión técnica y pedagógica exclusiva para secundaria 2026.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-teal-500 transition-colors" onclick="renderView('teacherGuide')"><i class="ph ph-graduation-cap text-3xl text-teal-600 mb-4"></i><h3 class="font-bold text-lg">Malla Curricular</h3></div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-500 cursor-pointer transition-colors relative" onclick="renderView('forum')">
+                            ${isGuest ? '<div class="absolute top-2 right-2 text-slate-300"><i class="ph-bold ph-lock-key"></i></div>' : ''}
+                            <i class="ph ph-users-three text-3xl text-blue-600 mb-4"></i><h3 class="font-bold text-lg">Comunidad</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-purple-500 cursor-pointer transition-colors relative" onclick="renderView('ai')">
+                            ${isGuest ? '<div class="absolute top-2 right-2 text-slate-300"><i class="ph-bold ph-lock-key"></i></div>' : ''}
+                            <i class="ph ph-sparkle text-3xl text-purple-600 mb-4"></i><h3 class="font-bold text-lg">Asistente IA</h3>
+                        </div>
+                    </div>`;
+            } else if (viewId === 'summary') {
+                c.innerHTML = `
+                    <h2 class="text-3xl font-black text-slate-800 mb-8">Orientaciones Generales 2026 (Secundaria)</h2>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 mb-8 flex items-center gap-4 shadow-sm">
+                        <div class="p-3 bg-teal-50 text-teal-600 rounded-full"><i class="ph ph-speaker-high text-2xl"></i></div>
+                        <div class="flex-1"><h4 class="font-bold text-sm">Resumen en Audio</h4><video controls class="w-full h-10 mt-2 rounded bg-slate-100"><source src="https://res.cloudinary.com/dljxx3chc/video/upload/v1769616584/Orientaciones_Docente_2026_t1q9so.mp4" type="video/mp4"></video></div>
+                    </div>
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">${DOCUMENT_SUMMARY.map(s => `<div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm"><h3 class="font-bold text-lg mb-4 flex gap-2 items-center"><i class="ph ${s.icon} text-teal-600"></i>${s.title}</h3><ul class="list-disc pl-5 text-sm text-slate-600 space-y-2">${s.subsections[0].points.map(p => `<li>${p}</li>`).join('')}</ul>${s.title.includes("6.") ? `<div class="mt-4 pt-4 border-t border-slate-100 flex flex-col gap-3"><a href="https://res.cloudinary.com/dljxx3chc/image/upload/v1740624021/Formaci%C3%B3n_Tecnol%C3%B3gica_Gu%C3%ADa_de_Implementaci%C3%B3n_2026_id9wov.pdf" target="_blank" class="text-teal-600 font-bold text-sm flex items-center gap-2 hover:underline"><i class="ph ph-file-pdf"></i> Descargar Guía Resumen PDF</a><a href="https://adminmepcr-my.sharepoint.com/:b:/g/personal/alberto_bustos_ortega_mep_go_cr/IQB2V-ZCEVyHRaw6p6kqi6TsAUFYsCO3i6cWwMwPmsR-69U?e=7fz66K" target="_blank" class="text-indigo-600 font-bold text-sm flex items-center gap-2 hover:underline"><i class="ph ph-cloud-arrow-down"></i> Descargar Documento Oficial</a></div>` : ''}</div>`).join('')}</div>`;
+            } else if (viewId === 'teacherGuide') {
+                const data = TEACHER_GUIDE_DATA.levels[window.state.guideLevel];
+                // HEADER Y TABS
+                c.innerHTML = `
+                <h2 class="text-3xl font-black mb-6">Guía Docente Secundaria</h2>
+                <div class="flex gap-2 mb-8">
+                    ${['7','8','9'].map(l => `<button onclick="window.state.guideLevel='${l}';renderView('teacherGuide')" class="px-6 py-2 rounded-xl font-bold transition-all ${window.state.guideLevel === l ? 'bg-teal-600 text-white' : 'bg-white text-slate-500'}">${l}° Año</button>`).join('')}
+                </div>
+                <div class="flex border-b mb-8 font-bold">
+                    ${['curriculum', 'projects'].map(t => `<button onclick="window.state.guideTab='${t}'; renderView('teacherGuide')" class="px-6 py-2 border-b-2 transition-all ${window.state.guideTab === t ? 'border-indigo-600 text-indigo-700' : 'border-transparent text-slate-400'}">${t==='curriculum'?'Malla':'Crear Situaciones Problema ✨'}</button>`).join('')}
+                </div>`;
+
+                // CONTENIDO DE LOS TABS
+                if(window.state.guideTab === 'curriculum') {
+                    c.innerHTML += `
+                    <div class="space-y-6">
+                        <div class="bg-indigo-50 p-6 rounded-3xl border border-indigo-100">
+                            <h4 class="font-black text-indigo-800 mb-4 uppercase text-xs tracking-widest">Estructura y Áreas de Conocimiento</h4>
+                            <ul class="grid md:grid-cols-2 gap-4 text-sm text-slate-700">
+                                ${TEACHER_GUIDE_DATA.pillars.map(p => `<li class="flex gap-2"><i class="ph-fill ph-check-circle text-indigo-500"></i>${p}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="bg-white p-6 rounded-3xl border border-slate-200">
+                                <h4 class="font-black text-teal-600 mb-3 uppercase text-xs tracking-widest">Ejes Transversales</h4>
+                                <div class="flex flex-wrap gap-2">${TEACHER_GUIDE_DATA.axes.map(a => `<span class="px-3 py-1 bg-teal-50 text-teal-700 rounded-lg text-xs font-bold border border-teal-100">${a}</span>`).join('')}</div>
+                            </div>
+                            <div class="bg-white p-6 rounded-3xl border border-slate-200">
+                                <h4 class="font-black text-teal-600 mb-3 uppercase text-xs tracking-widest">Tipos de Saberes</h4>
+                                <ul class="space-y-2 text-xs font-medium text-slate-600">${TEACHER_GUIDE_DATA.knowledgeTypes.map(k => `<li>• ${k}</li>`).join('')}</ul>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-3xl border border-slate-200"><h4 class="font-black text-slate-800 mb-4 uppercase text-xs tracking-widest">Módulos del Nivel ${window.state.guideLevel}°</h4><div class="grid md:grid-cols-2 gap-6">${data.modules.map(m => `<div class="bg-slate-50 p-5 rounded-2xl"><h5 class="font-bold text-slate-800 mb-2">${m.name}</h5><ul class="space-y-1 text-xs text-slate-600">${m.topics.map(t => `<li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-teal-500 rounded-full"></div>${t}</li>`).join('')}</ul></div>`).join('')}</div></div>
+                        <div class="bg-orange-50 p-6 rounded-3xl border border-orange-100"><h4 class="font-black text-orange-800 mb-3 uppercase text-xs tracking-widest">Metodología y Evaluación</h4><div class="text-sm text-slate-700 space-y-2"><p><strong>Estrategias:</strong> ${TEACHER_GUIDE_DATA.methodology.strategies.join(', ')}</p><p><strong>Rol Docente:</strong> ${TEACHER_GUIDE_DATA.methodology.role}</p><p><strong>Evaluación:</strong> ${TEACHER_GUIDE_DATA.methodology.eval}</p></div></div>
+                    </div>`;
+                } else {
+                    // SECCIÓN "CREAR SITUACIONES PROBLEMA" (ACTUALIZADA)
+                    c.innerHTML += `
+                    <div class="bg-slate-900 p-8 rounded-[2rem] text-white shadow-2xl">
+                        <div class="flex flex-col md:flex-row gap-4 mb-8">
+                            <input type="text" id="project-theme" class="flex-1 p-4 rounded-xl bg-slate-800 border border-slate-700 outline-none focus:border-teal-500 font-bold transition-all placeholder-slate-500" placeholder="Describe el contexto (ej. Contaminación en mi comunidad)...">
+                            <button onclick="generateProjectIdeas()" class="bg-teal-500 hover:bg-teal-400 text-slate-900 px-8 py-4 rounded-xl font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-teal-500/20">Generar</button>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-8 mb-6">
+                            ${data.modules.map((m, index) => `
+                                <div>
+                                    <h5 class="font-black text-teal-400 text-xs uppercase tracking-widest mb-4 border-b border-slate-700 pb-2 flex justify-between">
+                                        ${m.name} <span class="text-slate-600">M.${index + 1}</span>
+                                    </h5>
+                                    <div class="grid grid-cols-1 gap-2 text-xs">
+                                        ${m.topics.map(t => `
+                                            <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-800 cursor-pointer transition-colors group">
+                                                <input type="checkbox" value="${t}" class="topic-checkbox accent-teal-500 w-4 h-4 rounded border-slate-600 bg-slate-700">
+                                                <span class="text-slate-400 group-hover:text-slate-200 font-medium">${t}</span>
+                                            </label>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div id="project-ai-results" class="hidden animate-pulse mt-8 border-t border-slate-700 pt-6"></div>
+                    </div>
+                    
+                    <div class="mt-8 bg-white p-6 rounded-2xl border border-slate-200 opacity-75 grayscale hover:grayscale-0 transition-all">
+                        <h4 class="font-bold mb-4 text-slate-400 text-xs uppercase tracking-widest">Fases de Referencia (Design Thinking)</h4>
+                        <div class="grid grid-cols-5 gap-2 text-center text-xs">
+                            ${TEACHER_GUIDE_DATA.project.phases.map((p,i)=>`<div class="p-2 bg-slate-50 rounded-lg text-slate-500"><div class="font-bold mb-1">${i+1}</div>${p.name}</div>`).join('')}
+                        </div>
+                    </div>`;
+                }
+            } else if (viewId === 'planner') {
+                c.innerHTML = `<div class="text-center py-12"><div class="bg-white p-12 rounded-[3rem] border border-slate-200 shadow-xl inline-block"><i class="ph ph-file-text text-5xl text-indigo-600 mb-6"></i><h2 class="text-3xl font-black text-slate-800 mb-4">Planeamiento 2026</h2><p class="text-slate-500 mb-8">Herramienta oficial para secundaria.</p><a href="https://k3sb12.github.io/Recurso-Plantilla-Planeamiento-/" target="_blank" class="bg-slate-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-black transition-all">Ir a la Plantilla Web</a></div></div>`;
+            } else if (viewId === 'forum') {
+                c.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black text-slate-800">Comunidad</h2>${window.state.user && !window.state.user.isAnonymous ? `<button onclick="openForumModal()" class="bg-teal-600 text-white px-6 py-3 rounded-xl font-bold">Publicar</button>` : `<button onclick="openTeacherAuthModal()" class="bg-slate-800 text-white px-6 py-3 rounded-xl font-bold">Ingresar</button>`}</div><div class="space-y-4">${window.state.posts.map(p => `<div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><div class="flex justify-between mb-2"><span class="bg-slate-100 px-2 py-1 rounded text-xs font-bold text-slate-600">${p.tag}</span><span class="text-xs text-slate-400 font-bold">${p.date}</span></div><h4 class="font-bold text-lg mb-2">${p.title}</h4><p class="text-sm text-slate-600 mb-4">${p.content}</p>${p.reply ? `<div class="bg-indigo-50 p-4 rounded-xl text-sm border-l-4 border-indigo-500 mb-4"><p class="font-bold text-indigo-800 text-xs mb-1">Respuesta Oficial</p>${p.reply}</div>` : ''}<div class="flex justify-between items-center pt-4 border-t"><span class="text-xs font-bold text-slate-400">Por: ${p.author}</span><div class="flex gap-2">${window.state.advisor ? `<button onclick="openReplyModal('${p.id}')" class="text-indigo-600 text-xs font-bold hover:underline">Responder</button><button onclick="deletePost('${p.id}')" class="text-red-500 text-xs font-bold hover:underline">Eliminar</button>` : ''}</div></div></div>`).join('')}</div>`;
+                window.logAccess(); 
+            } else if (viewId === 'ai') {
+                c.innerHTML = `<div class="max-w-4xl mx-auto"><div class="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-xl"><h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-3"><i class="ph-fill ph-sparkle text-purple-600"></i> Asistente Pedagógico</h2><textarea id="ai-q" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 mb-4 h-32 resize-none font-medium" placeholder="Consulta sobre normativa, didáctica o evaluación..."></textarea><div class="flex justify-end"><button onclick="askAI()" class="bg-purple-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-purple-700 transition-all">Consultar</button></div><div id="ai-r" class="mt-8 p-6 bg-slate-50 rounded-2xl border border-slate-100 hidden text-sm leading-relaxed text-slate-700"></div></div></div>`;
+            } else if (viewId === 'advisorDashboard') {
+                const list = window.state.institutions.filter(i => i.advisor.includes(window.state.user.email.includes('alberto') ? 'Alberto' : 'Rodolfo'));
+                const logs = (window.state.accessLogs || []).slice(0, 50);
+                
+                c.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black text-slate-800">Tablero de Gestión</h2><div class="flex gap-3"><div class="bg-white border p-2 rounded-xl flex items-center gap-2"><select id="import-advisor-select" class="text-xs font-bold bg-transparent outline-none"><option value="Alberto Bustos">Alberto</option><option value="Rodolfo Juárez">Rodolfo</option></select><label class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold cursor-pointer hover:bg-black"><i class="ph-bold ph-upload-simple mr-2"></i>Importar<input type="file" class="hidden" onchange="handleExcel(event)"></label></div><button onclick="analyzeAdvisorDashboard()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700">✨ Analizar</button></div></div><div id="ai-advisor-results" class="hidden mb-6 bg-indigo-50 p-6 rounded-2xl text-indigo-800 text-sm font-medium"></div><div class="grid lg:grid-cols-3 gap-8"><div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden"><table class="w-full text-left text-sm"><thead class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b"><tr><th class="p-4">Institución</th><th class="p-4">Estado</th><th class="p-4">Fecha</th><th class="p-4 text-right">Acción</th></tr></thead><tbody class="divide-y divide-slate-100">${list.map(i => `<tr class="hover:bg-slate-50"><td class="p-4 font-bold text-slate-700">${i.name}<br><span class="text-xs text-slate-400 font-normal">${i.code} | ${i.regional}</span></td><td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${i.status==='done'?'bg-green-100 text-green-700':'bg-orange-100 text-orange-700'}">${i.status==='done'?'VISITADO':'PENDIENTE'}</span></td><td class="p-4"><input type="date" value="${i.date||''}" onchange="updateDate('${i.code}',this.value)" class="text-xs border rounded p-1"></td><td class="p-4 text-right"><button onclick="toggleStatus('${i.code}')" class="text-slate-400 hover:text-teal-600"><i class="ph-bold ph-arrows-clockwise text-xl"></i></button></td></tr>`).join('')}</tbody></table></div><div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 h-[500px] overflow-y-auto"><h3 class="font-bold mb-4">Registros</h3>${logs.map(l => `<div class="mb-3 p-3 bg-slate-50 rounded-xl text-xs"><p class="font-bold">${l.email}</p><p>${l.date}</p></div>`).join('')}</div></div>`;
+            }
+        };
+
+        // --- AUTH LISTENER ---
+        onAuthStateChanged(auth, (user) => {
+            window.state.user = user;
+            if (user && !user.isAnonymous) {
+                window.state.advisor = ADVISOR_EMAILS.includes(user.email.toLowerCase());
+                document.getElementById('auth-status').innerText = window.state.advisor ? "Asesor Nacional ✅" : "Docente MEP ✅";
+            } else {
+                window.state.advisor = false;
+                document.getElementById('auth-status').innerText = "Invitado";
+            }
+            setupRealtimeListeners();
+            renderSidebar();
+            if (['forum', 'advisorDashboard'].includes(window.state.view)) renderView(window.state.view);
+        });
 
         initApp();
         renderView('dashboard');
