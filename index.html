@@ -131,21 +131,15 @@
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 1. CONFIGURACIÓN FIREBASE Y API KEY
-        const firebaseConfig = {
-            apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A",
-            authDomain: "asesoriayseguimiento2026.firebaseapp.com",
-            projectId: "asesoriayseguimiento2026",
-            storageBucket: "asesoriayseguimiento2026.firebasestorage.app",
-            messagingSenderId: "800061887135",
-            appId: "1:800061887135:web:f096970be5c69a465988aa"
-        };
+        // 1. CONFIGURACIÓN
+        // IMPORTANTE: Definición dinámica del appId para evitar errores de permisos
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'asesoriayseguimiento2026';
+
+        const firebaseConfig = { apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A", authDomain: "asesoriayseguimiento2026.firebaseapp.com", projectId: "asesoriayseguimiento2026", storageBucket: "asesoriayseguimiento2026.firebasestorage.app", messagingSenderId: "800061887135", appId: "1:800061887135:web:f096970be5c69a465988aa" };
         
-        // CORRECCIÓN CRÍTICA:
-        // Usamos la misma API Key de Firebase como predeterminada para Gemini si no hay una personalizada.
-        // Esto soluciona el error "Sin API Key".
-        let apiKeyGemini = localStorage.getItem('gemini_api_key') || firebaseConfig.apiKey;
-        const appId = firebaseConfig.appId;
+        // API KEY DINÁMICA (Para funcionamiento en dominio propio o Canvas)
+        // Intenta leer de localStorage, si no, usa la de Firebase, si no, cadena vacía.
+        let apiKeyGemini = localStorage.getItem('gemini_api_key') || firebaseConfig.apiKey || ""; 
         const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
         
         const ADVISOR_EMAILS = ["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr"];
@@ -157,7 +151,7 @@
         // 2. ESTADO GLOBAL
         window.state = { view: 'dashboard', user: null, advisor: false, posts: [], institutions: [], accessLogs: [], guideLevel: '7', guideTab: 'curriculum' };
 
-        // 3. DATOS ESTÁTICOS
+        // 3. DATOS ESTÁTICOS COMPLETOS (2026)
         const TEACHER_GUIDE_DATA = {
             pillars: [
                 "Apropiación Tecnológica: Hardware, software y herramientas de productividad.",
@@ -177,7 +171,7 @@
                     focus: "Hardware/Software, tablas de verdad, algoritmos básicos, herramientas de nube y netiqueta.",
                     modules: [
                         { name: "Módulo 1: Fundamentos", topics: ["Hardware y Periféricos", "Software y Funciones", "Sistemas Operativos", "Algoritmos (Entrada/Proceso/Salida)", "Tablas de Verdad", "Estructuras Condicionales", "Tipos de Datos"] },
-                        { name: "Módulo 2: Ciudadanía Digital", topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Bucles"] }
+                        { name: "Módulo 2: Ciudadanía Digital", topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Asistentes virtuales", "Bucles"] }
                     ]
                 },
                 "8": { 
@@ -185,15 +179,15 @@
                     focus: "Edición de video, redes, circuitos eléctricos, microcontroladores, IoT y ciberseguridad.",
                     modules: [
                         { name: "Módulo 1: Robótica Física", topics: ["Hardware Interno", "Software Libre vs Paga", "Compresión Archivos", "Edición Audio/Video", "Mecanismos Robóticos", "Circuitos Eléctricos", "Fundamentos Electrónica", "Entorno programación robótica"] },
-                        { name: "Módulo 2: Datos y Sensores", topics: ["Hoja de Cálculo (Datos)", "Internet de las Cosas (IoT)", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "IA Generativa"] }
+                        { name: "Módulo 2: Datos e IoT", topics: ["Hoja de Cálculo (Datos)", "Internet de las Cosas (IoT)", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "Herramientas Generativas (IA)", "Plataformas de contenido", "Licencia digital", "Hackeo y Antivirus"] }
                     ]
                 },
                 "9": { 
                     title: "Noveno: Prototipado y Conectividad", 
                     focus: "Domótica, prototipos avanzados, modelado 3D, bases de datos y ética en la IA.",
                     modules: [
-                        { name: "Módulo 1: Automatización", topics: ["Microcontroladores Avanzados", "Domótica", "Prototipado Real", "Algoritmos Complejos", "Optimización SO"] },
-                        { name: "Módulo 2: Gestión y Ética", topics: ["Gestores Base de Datos", "Protocolos Red (HTTP/TCP)", "Derechos de Autor", "Huella Digital", "Ética y Sesgos IA", "Modelado 3D"] }
+                        { name: "Módulo 1: Automatización Avanzada", topics: ["Microcontroladores Avanzados", "Domótica", "Prototipado Real", "Algoritmos Complejos", "Optimización SO", "Movimiento en mecanismos", "Sensores y Actuadores avanzados"] },
+                        { name: "Módulo 2: Gestión y Ética", topics: ["Gestores Base de Datos", "Protocolos Red (HTTP/TCP)", "Derechos de Autor", "Huella Digital", "Ética y Desafíos IA", "Modelado 3D", "Riesgos en línea"] }
                     ]
                 }
             },
@@ -441,8 +435,11 @@
         };
 
         async function callGeminiAPI(prompt) {
+            // Asegurar que usamos la API Key correcta
+            const keyToUse = apiKeyGemini || firebaseConfig.apiKey;
+            
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKeyGemini}`, {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${keyToUse}`, {
                     method: 'POST', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
@@ -453,6 +450,13 @@
         }
 
         window.askAI = async () => {
+            // Si no hay key en localStorage ni en config, pide configurarla
+            if (!apiKeyGemini && !firebaseConfig.apiKey) { 
+                const r = document.getElementById('ai-r');
+                r.innerHTML = `<div class="p-4 bg-red-50 text-red-600 rounded-xl font-bold border border-red-100 flex items-center gap-2"><i class="ph-bold ph-warning-circle"></i> Sin API Key. Configure su clave en el Tablero de Gestión.</div>`;
+                r.classList.remove('hidden');
+                return; 
+            }
             const q = document.getElementById('ai-q').value;
             const r = document.getElementById('ai-r');
             if(!q) return;
@@ -463,6 +467,7 @@
         };
 
         window.generateProjectIdeas = async () => {
+            if (!apiKeyGemini && !firebaseConfig.apiKey) { window.showToast("⚠️ Configure su API Key primero"); return; }
             const level = window.state.guideLevel; const theme = document.getElementById('project-theme').value || "Contexto Educativo";
             const topics = Array.from(document.querySelectorAll('.topic-checkbox:checked')).map(cb => cb.value);
             if (topics.length === 0) { window.showToast("Seleccione al menos un saber"); return; }
@@ -474,6 +479,7 @@
         };
 
         window.analyzeAdvisorDashboard = async () => {
+            if (!apiKeyGemini && !firebaseConfig.apiKey) { window.showToast("⚠️ Configure su API Key primero"); return; }
             const r = document.getElementById('ai-advisor-results'); r.classList.remove('hidden');
             r.innerHTML = '<span class="animate-pulse">✨ Analizando datos...</span>';
             const data = window.state.institutions.map(i => `${i.name} (${i.regional}): ${i.status}`).join(', ');
