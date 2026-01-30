@@ -139,7 +139,7 @@
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN
+        // 1. CONFIGURACIÓN
         const firebaseConfig = { apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A", authDomain: "asesoriayseguimiento2026.firebaseapp.com", projectId: "asesoriayseguimiento2026", storageBucket: "asesoriayseguimiento2026.firebasestorage.app", messagingSenderId: "800061887135", appId: "1:800061887135:web:f096970be5c69a465988aa" };
         const appId = "asesoriayseguimiento2026";
         const apiKeyGemini = ""; 
@@ -151,10 +151,10 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // ESTADO GLOBAL
+        // 2. ESTADO GLOBAL
         window.state = { view: 'dashboard', user: null, advisor: false, posts: [], institutions: [], guideLevel: '7', guideTab: 'curriculum' };
 
-        // DATOS ESTÁTICOS ACTUALIZADOS (2026)
+        // 3. DATOS ESTÁTICOS
         const TEACHER_GUIDE_DATA = {
             pillars: [
                 "Apropiación Tecnológica y Digital",
@@ -173,15 +173,15 @@
                     title: "Sétimo: Fundamentos y Lógica", 
                     focus: "Hardware/Software, tablas de verdad, algoritmos básicos, herramientas de nube y netiqueta.",
                     modules: [
-                        { name: "Módulo 1: Apropiación y Lógica", topics: ["Computadora", "Hardware y Software", "Redes de comunicación", "Sistema Operativo", "Gestión de archivos", "Herramientas de productividad", "Algoritmo", "Tablas de Verdad", "Estructuras condicionales", "Operadores"] },
-                        { name: "Módulo 2: Conectividad y Ciudadanía", topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Asistentes virtuales", "Bucles"] }
+                        { name: "Módulo 1: Fundamentos", topics: ["Hardware y Periféricos", "Software y Funciones", "Sistemas Operativos", "Algoritmos (Entrada/Proceso/Salida)", "Tablas de Verdad", "Estructuras Condicionales", "Tipos de Datos"] },
+                        { name: "Módulo 2: Ciudadanía Digital", topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Asistentes virtuales", "Bucles"] }
                     ]
                 },
                 "8": { 
                     title: "Octavo: Multimedia y Robótica", 
                     focus: "Edición de video, redes, circuitos eléctricos, microcontroladores, IoT y ciberseguridad.",
                     modules: [
-                        { name: "Módulo 1: Mecanismos y Prototipado", topics: ["Hardware Interno", "Software Libre vs Paga", "Edición Audio/Video", "Mecanismos Robóticos", "Circuitos Eléctricos", "Fundamentos Electrónica", "Entorno programación robótica"] },
+                        { name: "Módulo 1: Robótica Física", topics: ["Hardware Interno", "Software Libre vs Paga", "Compresión Archivos", "Edición Audio/Video", "Mecanismos Robóticos", "Circuitos Eléctricos", "Fundamentos Electrónica", "Entorno programación robótica"] },
                         { name: "Módulo 2: Datos y Sensores", topics: ["Hoja de Cálculo (Datos)", "Internet de las Cosas (IoT)", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "Herramientas Generativas"] }
                     ]
                 },
@@ -197,8 +197,8 @@
             methodology: {
                 title: "Metodología y Evaluación",
                 strategies: ["Aprendizaje Basado en Juegos (ABJ)", "Aprendizaje Basado en Retos (ABR)", "Design Thinking"],
-                role: "Facilitador que contextualiza las estrategias y prioriza la lógica algorítmica.",
-                eval: "Basada en indicadores de logro específicos."
+                role: "Facilitador que contextualiza las estrategias y prioriza la lógica algorítmica antes que la codificación pura.",
+                eval: "Basada en indicadores de logro específicos que miden desde la clasificación de componentes hasta el diseño de soluciones automatizadas complejas."
             },
             project: { phases: [{name:"Empatizar"}, {name:"Definir"}, {name:"Idear"}, {name:"Prototipar"}, {name:"Evaluar"}] }
         };
@@ -286,8 +286,9 @@
             }
         ];
 
-        // FUNCIONES DE SOPORTE
-        const setupRealtimeListeners = () => {
+        // --- 4. FUNCIONES DE LÓGICA (DEFINIDAS ANTES DE USARSE) ---
+        
+        async function setupRealtimeListeners() {
             const forumRef = collection(db, 'artifacts', appId, 'public', 'data', 'forum');
             const instRef = collection(db, 'artifacts', appId, 'public', 'data', 'institutions');
             onSnapshot(forumRef, (snapshot) => {
@@ -298,190 +299,52 @@
                 window.state.institutions = snapshot.docs.map(d => ({ code: d.id, ...d.data() }));
                 if (window.state.view === 'advisorDashboard') renderView('advisorDashboard');
             });
-        };
-
-        const initApp = async () => {
-            try { await signInAnonymously(auth); } catch (e) { console.log("Modo visitante"); }
-        };
-
-        onAuthStateChanged(auth, (user) => {
-            window.state.user = user;
-            if (user && !user.isAnonymous) {
-                window.state.advisor = ADVISOR_EMAILS.includes(user.email.toLowerCase());
-                document.getElementById('auth-status').innerText = window.state.advisor ? "Asesor Nacional ✅" : "Docente MEP ✅";
-            } else {
-                window.state.advisor = false;
-                document.getElementById('auth-status').innerText = "Invitado";
-            }
-            setupRealtimeListeners();
-            renderSidebar();
-            if (['forum', 'advisorDashboard'].includes(window.state.view)) renderView(window.state.view);
-        });
-
-        // FUNCIONES GLOBALES (Asignación a Window)
-        window.openTeacherAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
-        window.closeTeacherAuthModal = () => document.getElementById('auth-modal').classList.add('hidden');
-        window.closeAuthModal = window.closeTeacherAuthModal;
-
-        window.openForumModal = () => document.getElementById('forum-modal').classList.remove('hidden');
-        window.closeForumModal = () => document.getElementById('forum-modal').classList.add('hidden');
-        window.openReplyModal = (id) => { document.getElementById('reply-post-id').value = id; document.getElementById('reply-modal').classList.remove('hidden'); };
-        window.closeReplyModal = () => document.getElementById('reply-modal').classList.add('hidden');
-
-        window.handleAuth = async (mode) => {
-            const email = document.getElementById('auth-email').value.trim().toLowerCase();
-            const password = document.getElementById('auth-password').value;
-            const err = document.getElementById('auth-error');
-            const errText = document.getElementById('auth-error-text');
-
-            if (!email.endsWith('@mep.go.cr')) {
-                errText.innerText = "Solo correos @mep.go.cr";
-                err.classList.remove('hidden');
-                return;
-            }
-
-            try {
-                if (mode === 'register') {
-                    await createUserWithEmailAndPassword(auth, email, password);
-                    window.showToast("Cuenta creada. ¡Bienvenido!");
-                } else {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    window.showToast("Sesión iniciada correctamente.");
-                }
-                window.closeAuthModal();
-            } catch (e) {
-                errText.innerText = e.code === 'auth/wrong-password' ? "Contraseña incorrecta" : "Error de autenticación";
-                err.classList.remove('hidden');
-            }
-        };
-
-        window.logout = async () => {
-            await signOut(auth);
-            try { await signInAnonymously(auth); } catch(e){}
-            window.showToast("Sesión cerrada.");
-            window.renderView('dashboard');
-        };
-
-        window.savePost = async () => {
-            const title = document.getElementById('post-title').value;
-            const content = document.getElementById('post-content').value;
-            const tag = document.getElementById('post-tag').value;
-            if (!title || !content) return;
-            
-            const author = window.state.advisor ? "Asesor Nacional" : (window.state.user.email || "Docente");
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'forum'), { title, content, tag, author, date: new Date().toLocaleDateString(), timestamp: Date.now() });
-            window.closeForumModal(); window.showToast("Publicado.");
-        };
-
-        window.saveReply = async () => {
-            const id = document.getElementById('reply-post-id').value;
-            const content = document.getElementById('reply-content').value;
-            if(!content) return;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'forum', id), { reply: content });
-            window.closeReplyModal(); window.showToast("Respuesta enviada.");
-        };
-
-        window.deletePost = async (id) => {
-            if (confirm("¿Eliminar esta publicación?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'forum', id));
-        };
-
-        window.handleExcel = (e) => {
-            const file = e.target.files[0]; if(!file) return;
-            const advisorName = document.getElementById('import-advisor-select').value;
-            const reader = new FileReader();
-            reader.onload = async (evt) => {
-                const wb = XLSX.read(new Uint8Array(evt.target.result), {type: 'array'});
-                const data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-                for (const row of data) {
-                    const code = String(row["Código Presupuestario"] || Math.random().toString(36).substr(2, 9));
-                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), {
-                        code,
-                        name: row["CENTRO_EDUCATIVO"] || "Sin Nombre",
-                        email: row["Correo institucional"] || "",
-                        regional: row["REGIONAL"] || "",
-                        circuito: row["CIRCUITO"] || "",
-                        advisor: advisorName,
-                        status: 'pending',
-                        date: ""
-                    });
-                }
-                window.showToast("Nómina cargada exitosamente.");
-            };
-            reader.readAsArrayBuffer(file);
-        };
-
-        window.toggleStatus = async (code) => {
-            const inst = window.state.institutions.find(i => i.code === code);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), {
-                status: inst.status === 'done' ? 'pending' : 'done'
-            });
-        };
-
-        window.updateDate = async (code, val) => {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), { date: val });
-        };
-
-        window.analyzeAdvisorDashboard = async () => {
-            const r = document.getElementById('ai-advisor-results');
-            r.classList.remove('hidden');
-            r.innerHTML = '<span class="animate-pulse">✨ Analizando datos...</span>';
-            const data = window.state.institutions.map(i => `${i.name} (${i.regional}): ${i.status}`).join(', ');
-            const res = await callGemini(`Analiza cobertura regional (resumen ejecutivo): ${data.substring(0,2000)}. Responde de forma puntual y en viñetas.`);
-            r.innerHTML = `<div class="bg-indigo-900 text-white p-6 rounded-2xl text-xs font-medium">${res}</div>`;
-        };
-
-        window.askAI = async () => {
-            const q = document.getElementById('ai-q').value;
-            const r = document.getElementById('ai-r');
-            if(!q) return;
-            r.classList.remove('hidden');
-            r.innerHTML = '<span class="animate-pulse">✨ Pensando...</span>';
-            const res = await callGemini(`Consulta docente secundaria: ${q}. Responde de forma técnica, puntual, en viñetas y sin introducción.`);
-            r.innerHTML = `<div class="prose prose-sm text-slate-200 max-w-none shadow-inner p-2 font-bold">${res}</div>`;
-        };
-
-        window.generateProjectIdeas = async () => {
-            const level = window.state.guideLevel; const theme = document.getElementById('project-theme').value || "Contexto Educativo";
-            const topics = Array.from(document.querySelectorAll('.topic-checkbox:checked')).map(cb => cb.value);
-            if (topics.length === 0) { window.showToast("Seleccione al menos un saber"); return; }
-            const r = document.getElementById('project-ai-results'); r.classList.remove('hidden');
-            r.innerHTML = '<span class="animate-pulse">Generando propuestas...</span>';
-            const prompt = `Genera 3 situaciones problema de contexto educativo real para ${level}° año. Tema: ${theme}. Integra obligatoriamente estos saberes: ${topics.join(', ')}. Formato: Solo lista de viñetas. Sin introducción ni conclusión.`;
-            const res = await callGemini(prompt);
-            r.innerHTML = `<div class="bg-indigo-900 p-6 rounded-2xl text-slate-300 text-sm mt-4">${res}</div>`;
-        };
-
-        async function callGemini(prompt) {
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKeyGemini}`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ 
-                        contents: [{ parts: [{ text: prompt }] }],
-                        systemInstruction: { parts: [{ text: "Actúa como Asesor Nacional del MEP para Secundaria. Brinda respuestas técnicas. Se muy puntual, usa viñetas y no incluyas introducciones ni conclusiones innecesarias." }] }
-                    })
-                });
-                const data = await res.json();
-                return data.candidates[0].content.parts[0].text;
-            } catch (e) { return "Servicio no disponible momentáneamente."; }
         }
 
-        window.showToast = (msg) => { const t = document.createElement('div'); t.className = 'fixed bottom-4 right-4 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-xl z-50 font-bold text-xs fade-in'; t.innerHTML = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000); };
+        async function initApp() {
+            try { await signInAnonymously(auth); } 
+            catch (e) { document.getElementById('auth-status').innerText = "Modo Visitante"; }
+        }
 
-        // --- RENDER ---
-        const renderSidebar = () => {
+        async function callGeminiAPI(prompt, retries = 5, delay = 1000) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKeyGemini}`;
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const res = await fetch(url, { 
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' }, 
+                        body: JSON.stringify({ 
+                            contents: [{ parts: [{ text: prompt }] }], 
+                            systemInstruction: { parts: [{ text: "Actúa como Asesor Nacional del MEP para Secundaria. Brinda respuestas técnicas. Se muy puntual, usa viñetas y no incluyas introducciones ni conclusiones innecesarias." }] } 
+                        }) 
+                    });
+                    if (!res.ok) throw new Error("API Busy");
+                    const data = await res.json(); 
+                    return data.candidates[0].content.parts[0].text;
+                } catch (e) { 
+                    if (i === retries - 1) return "Servicio saturado. Intente luego."; 
+                    await new Promise(r => setTimeout(r, delay * Math.pow(2, i))); 
+                }
+            }
+        }
+
+        // --- 5. RENDERIZADO DE LA INTERFAZ ---
+
+        function renderSidebar() {
             const nav = document.getElementById('sidebar-nav');
             const items = [{id:'dashboard', icon:'ph-squares-four', label:'Inicio'}, {section:'Recursos'}, {id:'summary', icon:'ph-clipboard-text', label:'Orientaciones Docentes'}, {id:'teacherGuide', icon:'ph-graduation-cap', label:'Guía Docente'}, {id:'planner', icon:'ph-calendar-check', label:'Planeamiento 2026'}, {id:'forum', icon:'ph-users-three', label:'Comunidad Docente'}, {section:'Herramientas'}, {id:'ai', icon:'ph-sparkle', label:'Asistente IA'}];
             if (window.state.advisor) items.push({section:'Gestión'}, {id:'advisorDashboard', icon:'ph-chart-pie-slice', label:'Tablero Asesor'});
             nav.innerHTML = items.map(i => i.section ? 
                 `<div class="mt-6 mb-2 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">${i.section}</div>` : 
-                `<button onclick="renderView('${i.id}')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${window.state.view === i.id ? 'bg-teal-50 text-teal-700' : 'text-slate-600 hover:bg-slate-50'}"><i class="ph ${i.icon} text-lg"></i>${i.label}</button>`
+                `<button onclick="renderView('${i.id}')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${window.state.view === i.id ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:bg-slate-50'}"><i class="ph ${i.icon} text-lg"></i>${i.label}</button>`
             ).join('');
             
             nav.innerHTML += window.state.user && !window.state.user.isAnonymous ? 
                 `<button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 mt-4"><i class="ph ph-sign-out"></i>Cerrar Sesión</button>` :
                 `<button onclick="openTeacherAuthModal()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 mt-4"><i class="ph ph-sign-in"></i>Ingresar</button>`;
-        };
+        }
+
+        // --- 6. EXPOSICIÓN DE FUNCIONES A WINDOW ---
 
         window.renderView = (viewId) => {
             window.state.view = viewId; renderSidebar();
@@ -545,13 +408,192 @@
                 c.innerHTML = `<div class="text-center py-12"><div class="bg-white p-12 rounded-[3rem] border border-slate-200 shadow-xl inline-block"><i class="ph ph-file-text text-5xl text-indigo-600 mb-6"></i><h2 class="text-3xl font-black text-slate-800 mb-4">Planeamiento 2026</h2><p class="text-slate-500 mb-8">Herramienta oficial para secundaria.</p><a href="https://k3sb12.github.io/Recurso-Plantilla-Planeamiento-/" target="_blank" class="bg-slate-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-black transition-all">Ir a la Plantilla Web</a></div></div>`;
             } else if (viewId === 'forum') {
                 c.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black text-slate-800">Comunidad</h2>${window.state.user && !window.state.user.isAnonymous ? `<button onclick="openForumModal()" class="bg-teal-600 text-white px-6 py-3 rounded-xl font-bold">Publicar</button>` : `<button onclick="openTeacherAuthModal()" class="bg-slate-800 text-white px-6 py-3 rounded-xl font-bold">Ingresar</button>`}</div><div class="space-y-4">${window.state.posts.map(p => `<div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><div class="flex justify-between mb-2"><span class="bg-slate-100 px-2 py-1 rounded text-xs font-bold text-slate-600">${p.tag}</span><span class="text-xs text-slate-400 font-bold">${p.date}</span></div><h4 class="font-bold text-lg mb-2">${p.title}</h4><p class="text-sm text-slate-600 mb-4">${p.content}</p>${p.reply ? `<div class="bg-indigo-50 p-4 rounded-xl text-sm border-l-4 border-indigo-500 mb-4"><p class="font-bold text-indigo-800 text-xs mb-1">Respuesta Oficial</p>${p.reply}</div>` : ''}<div class="flex justify-between items-center pt-4 border-t"><span class="text-xs font-bold text-slate-400">Por: ${p.author}</span><div class="flex gap-2">${window.state.advisor ? `<button onclick="openReplyModal('${p.id}')" class="text-indigo-600 text-xs font-bold hover:underline">Responder</button><button onclick="deletePost('${p.id}')" class="text-red-500 text-xs font-bold hover:underline">Eliminar</button>` : ''}</div></div></div>`).join('')}</div>`;
+                window.logAccess(); // Auto log access to community
             } else if (viewId === 'ai') {
                 c.innerHTML = `<div class="max-w-4xl mx-auto"><div class="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-xl"><h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-3"><i class="ph-fill ph-sparkle text-purple-600"></i> Asistente Pedagógico</h2><textarea id="ai-q" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 mb-4 h-32 resize-none font-medium" placeholder="Consulta sobre normativa, didáctica o evaluación..."></textarea><div class="flex justify-end"><button onclick="askAI()" class="bg-purple-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-purple-700 transition-all">Consultar</button></div><div id="ai-r" class="mt-8 p-6 bg-slate-50 rounded-2xl border border-slate-100 hidden text-sm leading-relaxed text-slate-700"></div></div></div>`;
             } else if (viewId === 'advisorDashboard') {
                 const list = window.state.institutions.filter(i => i.advisor.includes(window.state.user.email.includes('alberto') ? 'Alberto' : 'Rodolfo'));
-                c.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black text-slate-800">Tablero de Gestión</h2><div class="flex gap-3"><div class="bg-white border p-2 rounded-xl flex items-center gap-2"><select id="import-advisor-select" class="text-xs font-bold bg-transparent outline-none"><option value="Alberto Bustos">Alberto</option><option value="Rodolfo Juárez">Rodolfo</option></select><label class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold cursor-pointer hover:bg-black"><i class="ph-bold ph-upload-simple mr-2"></i>Importar<input type="file" class="hidden" onchange="handleExcel(event)"></label></div><button onclick="analyzeAdvisorDashboard()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700">✨ Analizar</button></div></div><div id="ai-advisor-results" class="hidden mb-6 bg-indigo-50 p-6 rounded-2xl text-indigo-800 text-sm font-medium"></div><div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden"><table class="w-full text-left text-sm"><thead class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b"><tr><th class="p-4">Institución</th><th class="p-4">Estado</th><th class="p-4">Fecha</th><th class="p-4 text-right">Acción</th></tr></thead><tbody class="divide-y divide-slate-100">${list.map(i => `<tr class="hover:bg-slate-50"><td class="p-4 font-bold text-slate-700">${i.name}<br><span class="text-xs text-slate-400 font-normal">${i.code} | ${i.regional}</span></td><td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${i.status==='done'?'bg-green-100 text-green-700':'bg-orange-100 text-orange-700'}">${i.status==='done'?'VISITADO':'PENDIENTE'}</span></td><td class="p-4"><input type="date" value="${i.date||''}" onchange="updateDate('${i.code}',this.value)" class="text-xs border rounded p-1"></td><td class="p-4 text-right"><button onclick="toggleStatus('${i.code}')" class="text-slate-400 hover:text-teal-600"><i class="ph-bold ph-arrows-clockwise text-xl"></i></button></td></tr>`).join('')}</tbody></table></div>`;
+                // Sort logs: newest first
+                const logs = (window.state.accessLogs || []).sort((a,b) => b.timestamp - a.timestamp).slice(0, 50);
+
+                c.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black text-slate-800">Tablero de Gestión</h2><div class="flex gap-3"><div class="bg-white border p-2 rounded-xl flex items-center gap-2"><select id="import-advisor-select" class="text-xs font-bold bg-transparent outline-none"><option value="Alberto Bustos">Alberto</option><option value="Rodolfo Juárez">Rodolfo</option></select><label class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold cursor-pointer hover:bg-black"><i class="ph-bold ph-upload-simple mr-2"></i>Importar<input type="file" class="hidden" onchange="handleExcel(event)"></label></div><button onclick="analyzeAdvisorDashboard()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700">✨ Analizar</button></div></div><div id="ai-advisor-results" class="hidden mb-6 bg-indigo-50 p-6 rounded-2xl text-indigo-800 text-sm font-medium"></div>
+                
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden"><table class="w-full text-left text-sm"><thead class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b"><tr><th class="p-4">Institución</th><th class="p-4">Estado</th><th class="p-4">Fecha</th><th class="p-4 text-right">Acción</th></tr></thead><tbody class="divide-y divide-slate-100">${list.map(i => `<tr class="hover:bg-slate-50"><td class="p-4 font-bold text-slate-700">${i.name}<br><span class="text-xs text-slate-400 font-normal">${i.code} | ${i.regional}</span></td><td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${i.status==='done'?'bg-green-100 text-green-700':'bg-orange-100 text-orange-700'}">${i.status==='done'?'VISITADO':'PENDIENTE'}</span></td><td class="p-4"><input type="date" value="${i.date||''}" onchange="updateDate('${i.code}',this.value)" class="text-xs border rounded p-1"></td><td class="p-4 text-right"><button onclick="toggleStatus('${i.code}')" class="text-slate-400 hover:text-teal-600"><i class="ph-bold ph-arrows-clockwise text-xl"></i></button></td></tr>`).join('')}</tbody></table></div>
+                    
+                    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 overflow-hidden flex flex-col h-[500px]">
+                        <h3 class="font-bold text-slate-800 mb-4 text-sm uppercase tracking-wide">Reporte de Ingresos a Comunidad</h3>
+                        <div class="flex-1 overflow-y-auto pr-2 space-y-3">
+                             ${logs.length > 0 ? logs.map(l => `
+                                <div class="flex items-start gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                    <div class="p-2 bg-white rounded-lg text-slate-400 border border-slate-200"><i class="ph-bold ${l.type === 'Asesor' ? 'ph-crown text-purple-500' : 'ph-user'}"></i></div>
+                                    <div>
+                                        <p class="text-xs font-bold text-slate-700">${l.email}</p>
+                                        <p class="text-[10px] text-slate-400 flex gap-2"><span>${l.type}</span> • <span>${l.date}</span></p>
+                                    </div>
+                                </div>
+                             `).join('') : '<p class="text-xs text-slate-400 italic">No hay registros recientes.</p>'}
+                        </div>
+                    </div>
+                </div>`;
             }
         };
+
+        window.openTeacherAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
+        window.closeTeacherAuthModal = () => document.getElementById('auth-modal').classList.add('hidden');
+        window.closeAuthModal = window.closeTeacherAuthModal;
+
+        window.openForumModal = () => document.getElementById('forum-modal').classList.remove('hidden');
+        window.closeForumModal = () => document.getElementById('forum-modal').classList.add('hidden');
+        window.openReplyModal = (id) => { document.getElementById('reply-post-id').value = id; document.getElementById('reply-modal').classList.remove('hidden'); };
+        window.closeReplyModal = () => document.getElementById('reply-modal').classList.add('hidden');
+
+        window.handleAuth = async (mode) => {
+            const email = document.getElementById('auth-email').value.trim().toLowerCase();
+            const password = document.getElementById('auth-password').value;
+            const err = document.getElementById('auth-error');
+            const errText = document.getElementById('auth-error-text');
+            if (!email.endsWith('@mep.go.cr')) {
+                errText.innerText = "Solo correos @mep.go.cr";
+                err.classList.remove('hidden');
+                return;
+            }
+            try {
+                if (mode === 'register') {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    window.showToast("Cuenta creada. ¡Bienvenido!");
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    window.showToast("Sesión iniciada correctamente.");
+                }
+                window.closeAuthModal();
+            } catch (e) {
+                errText.innerText = e.code === 'auth/wrong-password' ? "Contraseña incorrecta" : "Error de autenticación";
+                err.classList.remove('hidden');
+            }
+        };
+
+        window.logout = async () => {
+            await signOut(auth);
+            try { await signInAnonymously(auth); } catch(e){}
+            window.showToast("Sesión cerrada.");
+            window.renderView('dashboard');
+        };
+
+        window.savePost = async () => {
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+            const tag = document.getElementById('post-tag').value;
+            if (!title || !content) return;
+            const author = window.state.advisor ? "Asesor Nacional" : (window.state.user.email || "Docente");
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'forum'), { title, content, tag, author, date: new Date().toLocaleDateString(), timestamp: Date.now() });
+            window.closeForumModal(); window.showToast("Publicado.");
+        };
+
+        window.saveReply = async () => {
+            const id = document.getElementById('reply-post-id').value;
+            const content = document.getElementById('reply-content').value;
+            if(!content) return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'forum', id), { reply: content });
+            window.closeReplyModal(); window.showToast("Respuesta enviada.");
+        };
+
+        window.deletePost = async (id) => {
+            if (confirm("¿Eliminar esta publicación?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'forum', id));
+        };
+
+        window.handleExcel = (e) => {
+            const file = e.target.files[0]; if(!file) return;
+            const advisorName = document.getElementById('import-advisor-select').value;
+            const reader = new FileReader();
+            reader.onload = async (evt) => {
+                const wb = XLSX.read(new Uint8Array(evt.target.result), {type: 'array'});
+                const data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                for (const row of data) {
+                    const code = String(row["Código Presupuestario"] || Math.random().toString(36).substr(2, 9));
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), {
+                        code,
+                        name: row["CENTRO_EDUCATIVO"] || "Sin Nombre",
+                        email: row["Correo institucional"] || "",
+                        regional: row["REGIONAL"] || "",
+                        circuito: row["CIRCUITO"] || "",
+                        advisor: advisorName,
+                        status: 'pending',
+                        date: ""
+                    });
+                }
+                window.showToast("Nómina cargada exitosamente.");
+            };
+            reader.readAsArrayBuffer(file);
+        };
+
+        window.toggleStatus = async (code) => {
+            const inst = window.state.institutions.find(i => i.code === code);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), {
+                status: inst.status === 'done' ? 'pending' : 'done'
+            });
+        };
+
+        window.updateDate = async (code, val) => {
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'institutions', code), { date: val });
+        };
+
+        window.analyzeAdvisorDashboard = async () => {
+            const r = document.getElementById('ai-advisor-results');
+            r.classList.remove('hidden');
+            r.innerHTML = '<span class="animate-pulse">✨ Analizando datos...</span>';
+            const data = window.state.institutions.map(i => `${i.name} (${i.regional}): ${i.status}`).join(', ');
+            const res = await callGeminiAPI(`Analiza cobertura regional (resumen ejecutivo): ${data.substring(0,2000)}. Responde de forma puntual y en viñetas.`);
+            r.innerHTML = `<div class="bg-indigo-900 text-white p-6 rounded-2xl text-xs font-medium">${res}</div>`;
+        };
+
+        window.askAI = async () => {
+            const q = document.getElementById('ai-q').value;
+            const r = document.getElementById('ai-r');
+            if(!q) return;
+            r.classList.remove('hidden');
+            r.innerHTML = '<span class="animate-pulse">✨ Pensando...</span>';
+            const res = await callGeminiAPI(`Consulta docente secundaria: ${q}. Responde de forma técnica, puntual, en viñetas y sin introducción.`);
+            r.innerHTML = `<div class="prose prose-sm text-slate-200 max-w-none shadow-inner p-2 font-bold">${res}</div>`;
+        };
+
+        window.generateProjectIdeas = async () => {
+            const level = window.state.guideLevel; const theme = document.getElementById('project-theme').value || "Contexto Educativo";
+            const topics = Array.from(document.querySelectorAll('.topic-checkbox:checked')).map(cb => cb.value);
+            if (topics.length === 0) { window.showToast("Seleccione al menos un saber"); return; }
+            const r = document.getElementById('project-ai-results'); r.classList.remove('hidden');
+            r.innerHTML = '<span class="animate-pulse">Generando propuestas...</span>';
+            const prompt = `Genera 3 situaciones problema de contexto educativo real para ${level}° año. Tema: ${theme}. Integra obligatoriamente estos saberes: ${topics.join(', ')}. Formato: Solo lista de viñetas. Sin introducción ni conclusión.`;
+            const res = await callGeminiAPI(prompt);
+            r.innerHTML = `<div class="bg-indigo-900 p-6 rounded-2xl text-slate-300 text-sm mt-4">${res}</div>`;
+        };
+
+        window.logAccess = async () => {
+            if (!window.state.user) return;
+            const userType = window.state.advisor ? "Asesor" : (window.state.user.isAnonymous ? "Invitado" : "Docente");
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'access_logs'), {
+                email: window.state.user.email || "Anónimo",
+                type: userType,
+                timestamp: Date.now(),
+                date: new Date().toLocaleString('es-CR')
+            });
+        };
+
+        window.showToast = (msg) => { const t = document.createElement('div'); t.className = 'fixed bottom-4 right-4 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-xl z-50 font-bold text-xs fade-in'; t.innerHTML = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000); };
+
+        onAuthStateChanged(auth, (user) => {
+            window.state.user = user;
+            if (user && !user.isAnonymous) {
+                window.state.advisor = ADVISOR_EMAILS.includes(user.email.toLowerCase());
+                document.getElementById('auth-status').innerText = window.state.advisor ? "Asesor Nacional ✅" : "Docente MEP ✅";
+            } else {
+                window.state.advisor = false;
+                document.getElementById('auth-status').innerText = "Invitado";
+            }
+            setupRealtimeListeners();
+            renderSidebar();
+            if (['forum', 'advisorDashboard'].includes(window.state.view)) renderView(window.state.view);
+        });
 
         initApp();
         renderView('dashboard');
