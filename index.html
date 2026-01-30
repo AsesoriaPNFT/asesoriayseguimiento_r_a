@@ -141,23 +141,14 @@
         // 1. CONFIGURACIÓN Y ESTADO
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'asesoriayseguimiento2026';
 
-        // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A",
-  authDomain: "asesoriayseguimiento2026.firebaseapp.com",
-  projectId: "asesoriayseguimiento2026",
-  storageBucket: "asesoriayseguimiento2026.firebasestorage.app",
-  messagingSenderId: "800061887135",
-  appId: "1:800061887135:web:bcd569a6a5813d425988aa"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+        const firebaseConfig = {
+            apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A",
+            authDomain: "asesoriayseguimiento2026.firebaseapp.com",
+            projectId: "asesoriayseguimiento2026",
+            storageBucket: "asesoriayseguimiento2026.firebasestorage.app",
+            messagingSenderId: "800061887135",
+            appId: "1:800061887135:web:f096970be5c69a465988aa"
+        };
         
         // --- CONFIGURACIÓN DE IA ---
         const MODEL_NAME = "gemini-1.5-flash"; 
@@ -165,10 +156,7 @@ const app = initializeApp(firebaseConfig);
         // CLAVE DE API GEMINI (HARDCODED)
         // IMPORTANTE: Debes restringir esta clave en Google Cloud Console a tu dominio web.
         // "AIza" (A mayúscula, I mayúscula, z, a)
-        const GEMINI_API_KEY = // TRUCO DE SEGURIDAD: Rompemos la clave para evitar traducción automática
-const PARTE_1 = "AI";  // A mayúscula + I mayúscula
-const PARTE_2 = "zaSyAj8ZMNnzunifD8AaIszD9PUD3pnoStv84";
-const GEMINI_API_KEY = PARTE_1 + PARTE_2;
+        const GEMINI_API_KEY = "AIzaSyAj8ZMNnzunifD8AaIszD9PUD3pnoStv84"; 
 
         const ADVISOR_EMAILS = ["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr"];
 
@@ -631,5 +619,3 @@ const GEMINI_API_KEY = PARTE_1 + PARTE_2;
     </script>
 </body>
 </html>
-
-
