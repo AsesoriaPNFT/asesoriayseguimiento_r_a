@@ -138,7 +138,7 @@
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 1. CONFIGURACIÓN Y ESTADO
+        // --- 1. CONFIGURACIÓN FIREBASE ---
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'asesoriayseguimiento2026';
 
         const firebaseConfig = {
@@ -150,23 +150,31 @@
             appId: "1:800061887135:web:f096970be5c69a465988aa"
         };
         
-        // --- CONFIGURACIÓN DE IA ---
+        // --- 2. CONFIGURACIÓN IA (ESTRATEGIA ANTI-CORRECTOR) ---
         const MODEL_NAME = "gemini-1.5-flash"; 
         
-        // CLAVE DE API GEMINI (HARDCODED)
-        // IMPORTANTE: Debes restringir esta clave en Google Cloud Console a tu dominio web.
-        // "AIza" (A mayúscula, I mayúscula, z, a)
-        const GEMINI_API_KEY = "AIzaSyAj8ZMNnzunifD8AaIszD9PUD3pnoStv84"; 
+        // CORRECCIÓN FINAL:
+        // Parte A: "AI" (Obligatorio de Google)
+        const PARTE_A = "AI"; 
+        
+        // Parte B: Resto de la clave.
+        // NOTA: Basado en tus capturas, después de 'D8Aa' va una 'l' (ele minúscula), NO una 'I' (i mayúscula).
+        const PARTE_B = "zaSyAj8ZMNnzunifD8AalszD9PUD3pnoStv84"; 
+        
+        // Concatenamos para formar la clave correcta y evitar traducción automática del navegador
+        const GEMINI_API_KEY = PARTE_A + PARTE_B; 
 
         const ADVISOR_EMAILS = ["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr"];
 
+        // Inicializar servicios
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // Estado Global
         window.state = { view: 'dashboard', user: null, advisor: false, posts: [], institutions: [], accessLogs: [], guideLevel: '7', guideTab: 'curriculum' };
 
-        // 2. DATOS ESTÁTICOS (CURRÍCULO)
+        // --- 3. DATOS ESTÁTICOS ---
         const TEACHER_GUIDE_DATA = {
             pillars: ["Apropiación Tecnológica y Digital", "Programación y Algoritmos", "Computación Física y Robótica", "Ciencia de Datos e Inteligencia Artificial"],
             axes: ["Pensamiento Computacional", "Ciudadanía y Ética Digital", "Emprendimiento e Innovación"],
@@ -218,7 +226,7 @@
             { title: "6. Planeamiento Didáctico", icon: "ph-pencil-line", subsections: [{ subtitle: "Lineamientos", points: ["Bimestral.", "Por nivel.", "Plantilla oficial 2026."] }] }
         ];
 
-        // --- 3. DEFINICIÓN DE FUNCIONES ---
+        // --- 4. FUNCIONES CORE ---
         
         async function setupRealtimeListeners() {
             if (!window.state.user) return; 
@@ -251,9 +259,10 @@
             catch (e) { document.getElementById('auth-status').innerText = "Modo Visitante"; }
         }
 
-        // CONEXIÓN IA: Usando la clave DIRECTA (Sin Base de Datos)
+        // --- 5. FUNCIÓN DE CONEXIÓN CON GEMINI (IA) ---
         async function callGeminiAPI(prompt) {
             try {
+                // Verificar que la clave exista antes de llamar
                 if (!GEMINI_API_KEY) return "⚠️ Error: Clave de API no configurada en el código.";
 
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${GEMINI_API_KEY}`, {
@@ -263,7 +272,6 @@
                 });
                 
                 if (!res.ok) {
-                    // Si falla, intentamos leer el error para depuración
                     const errorData = await res.json().catch(() => ({}));
                     console.error("Gemini API Error:", errorData);
                     throw new Error("API Error");
@@ -272,11 +280,11 @@
                 const data = await res.json();
                 return data.candidates[0].content.parts[0].text;
             } catch (e) { 
-                return "Error: No se pudo conectar con el asistente. Asegúrate de haber configurado las restricciones HTTP en Google Cloud para tu dominio."; 
+                return "Error: No se pudo conectar con el asistente. (Verifica consola para más detalles)"; 
             }
         }
 
-        // --- 4. FUNCIONES DE UI Y ACCIONES ---
+        // --- 6. FUNCIONES DE UI Y LÓGICA DE NEGOCIO ---
 
         window.openTeacherAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
         window.closeTeacherAuthModal = () => document.getElementById('auth-modal').classList.add('hidden');
@@ -298,7 +306,9 @@
                 if (mode === 'register') await createUserWithEmailAndPassword(auth, email, password);
                 else await signInWithEmailAndPassword(auth, email, password);
                 window.closeAuthModal();
-            } catch (e) { window.showToast("Error de credenciales"); }
+            } catch (e) { 
+                document.getElementById('auth-error').classList.remove('hidden');
+            }
         };
 
         window.logout = async () => {
@@ -442,7 +452,7 @@
 
         window.showToast = (msg) => { const t = document.createElement('div'); t.className = 'fixed bottom-4 right-4 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-xl z-50 font-bold text-xs fade-in'; t.innerHTML = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000); };
 
-        // --- 6. RENDERIZADO (VISTAS) ---
+        // --- 7. RENDERIZADO ---
         function renderSidebar() {
             const nav = document.getElementById('sidebar-nav');
             let html = [{id:'dashboard', icon:'ph-squares-four', label:'Inicio'}, {section:'Recursos'}, {id:'summary', icon:'ph-clipboard-text', label:'Orientaciones Docentes'}, {id:'teacherGuide', icon:'ph-graduation-cap', label:'Guía Docente'}, {id:'planner', icon:'ph-calendar-check', label:'Planeamiento 2026'}, {id:'forum', icon:'ph-users-three', label:'Comunidad Docente'}, {section:'Herramientas'}, {id:'ai', icon:'ph-sparkle', label:'Asistente IA'}].map(i => i.section ? 
@@ -599,7 +609,7 @@
             }
         };
 
-        // --- AUTH LISTENER ---
+        // --- 8. INICIALIZACIÓN ---
         onAuthStateChanged(auth, (user) => {
             window.state.user = user;
             if (user && !user.isAnonymous) {
