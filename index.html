@@ -131,8 +131,7 @@
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 1. CONFIGURACIÓN
-        // App ID Dinámico
+        // --- 1. CONFIGURACIÓN ---
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'asesoriayseguimiento2026';
 
         const firebaseConfig = {
@@ -144,87 +143,84 @@
             appId: "1:800061887135:web:f096970be5c69a465988aa"
         };
         
-        // SEGURIDAD: API Key ofuscada en Base64 para evitar robo por bots
-        // Clave real: AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A
+        // Clave de IA ofuscada (Base64) para funcionar automáticamente y sin configuración manual
+        // Decodificada: AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A
         const _0x1 = "QUl6YVN5QkFCck52UUgxWnUtcGVGM1JuMXVDZS1ZZmIyTEJHQzlB"; 
         
-        // Prioridad: 1. Clave manual en localStorage, 2. Clave ofuscada por defecto
+        // Prioridad: 1. Clave manual (si existiera), 2. Clave ofuscada por defecto
         const getGeminiKey = () => localStorage.getItem('gemini_api_key') || atob(_0x1);
         
-        // MODELO ESTÁNDAR 1.5 (Más compatible fuera de entornos de prueba)
         const MODEL_NAME = "gemini-1.5-flash"; 
-        
         const ADVISOR_EMAILS = ["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr"];
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // 2. ESTADO GLOBAL
+        // --- 2. ESTADO GLOBAL ---
         window.state = { view: 'dashboard', user: null, advisor: false, posts: [], institutions: [], accessLogs: [], guideLevel: '7', guideTab: 'curriculum' };
 
-        // 3. DATOS ESTÁTICOS COMPLETOS (2026)
+        // --- 3. DATOS ESTÁTICOS (Basados en PDF Guía Docente III Ciclo) ---
         const TEACHER_GUIDE_DATA = {
             pillars: [
-                "Apropiación Tecnológica: Hardware, software y herramientas de productividad.",
-                "Programación y Algoritmos: Desarrollo del pensamiento lógico.",
-                "Computación Física y Robótica: Electrónica, mecánica y creación de artefactos.",
-                "Ciencia de Datos e IA: Análisis de datos y comprensión de la inteligencia artificial."
+                "Apropiación Tecnológica: Hardware, software y herramientas.",
+                "Programación y Algoritmos: Pensamiento lógico.",
+                "Computación Física y Robótica: Electrónica y creación.",
+                "Ciencia de Datos e IA: Análisis y comprensión."
             ],
             axes: ["Pensamiento Computacional", "Ciudadanía Digital", "Emprendimiento"],
             knowledgeTypes: [
                 "Conceptuales: El 'saber' (temas técnicos).",
-                "Procedimentales: El 'saber hacer' (abstraer, depurar, programar).",
-                "Actitudinales: El 'ser' (tolerancia a la frustración, precisión y ética)."
+                "Procedimentales: El 'saber hacer' (abstraer, programar).",
+                "Actitudinales: El 'ser' (ética, tolerancia)."
             ],
             levels: {
                 "7": { 
                     title: "Sétimo Año: Fundamentos y Lógica", 
-                    focus: "Hardware/Software, tablas de verdad, algoritmos básicos, herramientas de nube y netiqueta.",
+                    focus: "Hardware/Software, algoritmos básicos, nube y netiqueta.",
                     modules: [
                         { 
                             name: "Módulo 1: Apropiación y Lógica", 
-                            topics: ["Computadora", "Hardware y Software", "Redes de comunicación", "Sistema Operativo", "Gestión de archivos", "Herramientas de productividad", "Algoritmo", "Tablas de Verdad", "Estructuras condicionales", "Operadores aritméticos y lógicos", "Evento"]
+                            topics: ["Computadora", "Hardware y Software", "Redes de comunicación", "Sistema Operativo", "Gestión de archivos", "Herramientas de productividad", "Algoritmo", "Tablas de Verdad", "Estructuras condicionales", "Operadores", "Evento"]
                         },
                         { 
                             name: "Módulo 2: Conectividad y Ciudadanía", 
-                            topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Asistentes virtuales", "Bucles (Estructuras repetitivas)", "Procedimientos y funciones"]
+                            topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Asistentes virtuales", "Bucles", "Procedimientos y funciones"]
                         }
                     ]
                 },
                 "8": { 
                     title: "Octavo Año: Multimedia y Robótica", 
-                    focus: "Edición de video, redes, circuitos eléctricos, microcontroladores, IoT y ciberseguridad.",
+                    focus: "Video, redes, circuitos, IoT y ciberseguridad.",
                     modules: [
                         { 
                             name: "Módulo 1: Mecanismos y Prototipado", 
-                            topics: ["Hardware Interno", "Software Libre vs Paga", "Compresión Archivos", "Edición Audio/Video", "Mecanismos Robóticos", "Circuitos Eléctricos", "Fundamentos Electrónica", "Entorno programación robótica"] 
+                            topics: ["Hardware Interno", "Software Libre/Paga", "Edición Audio/Video", "Mecanismos Robóticos", "Circuitos Eléctricos", "Fundamentos Electrónica", "Programación robótica"] 
                         },
                         { 
                             name: "Módulo 2: Datos y Sensores", 
-                            topics: ["Hoja de Cálculo (Datos)", "Internet de las Cosas (IoT)", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "Herramientas Generativas (IA)", "Plataformas de contenido", "Licencia digital", "Hackeo y Antivirus"] 
+                            topics: ["Hoja de Cálculo", "IoT", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "Herramientas Generativas (IA)", "Licencia digital", "Hackeo y Antivirus"] 
                         }
                     ]
                 },
                 "9": { 
                     title: "Noveno Año: Prototipado y Conectividad", 
-                    focus: "Domótica, prototipos avanzados, modelado 3D, bases de datos y ética en la IA.",
+                    focus: "Domótica, prototipos avanzados, bases de datos y ética IA.",
                     modules: [
                         { 
                             name: "Módulo 1: Automatización Avanzada", 
-                            topics: ["Microcontroladores Avanzados", "Domótica", "Prototipado Real", "Algoritmos Complejos", "Optimización SO", "Movimiento en mecanismos", "Sensores y Actuadores avanzados"] 
+                            topics: ["Microcontroladores Avanzados", "Domótica", "Prototipado Real", "Algoritmos Complejos", "Optimización SO", "Movimiento en mecanismos"] 
                         },
                         { 
                             name: "Módulo 2: Gestión y Ética", 
-                            topics: ["Gestores Base de Datos", "Protocolos Red (HTTP/TCP)", "Derechos de Autor", "Huella Digital", "Ética y Desafíos IA", "Modelado 3D", "Riesgos en línea"] 
+                            topics: ["Gestores Base de Datos", "Protocolos Red", "Derechos de Autor", "Huella Digital", "Ética y Desafíos IA", "Modelado 3D", "Riesgos en línea"] 
                         }
                     ]
                 }
             },
             methodology: {
-                title: "Metodología y Evaluación",
                 strategies: ["Aprendizaje Basado en Juegos (ABJ)", "Aprendizaje Basado en Retos (ABR)", "Design Thinking"],
-                role: "Facilitador que contextualiza las estrategias y prioriza la lógica algorítmica.",
+                role: "Facilitador que prioriza la lógica algorítmica.",
                 eval: "Basada en indicadores de logro específicos."
             },
             project: { phases: [{name:"Empatizar"}, {name:"Definir"}, {name:"Idear"}, {name:"Prototipar"}, {name:"Evaluar"}] }
@@ -232,70 +228,67 @@
 
         const DOCUMENT_SUMMARY = [
             { 
-                title: "1. Niveles de Implementación y Cobertura", 
+                title: "1. Niveles de Implementación", 
                 icon: "ph-buildings", 
                 subsections: [{ 
                     subtitle: "Modalidades 2026", 
                     points: [
-                        "III Ciclo (Académico): Implementación completa en los niveles de 7°, 8° y 9°.",
-                        "Educación Diversificada: No se implementará el currículo de Formación Tecnológica (FT) en el ciclo académico este año.",
-                        "CTP: No se imparte en III Ciclo ni Diversificada técnica. Sí se implementa en Ciclo Diversificado Vocacional (según matrícula).",
-                        "EPJA: Se implementará en IPEC, CINDEA, CAN y CONED, sujeto a la infraestructura y recursos."
+                        "III Ciclo (Académico): 7°, 8° y 9°.",
+                        "Educación Diversificada: NO se implementa este año.",
+                        "CTP: Solo en Ciclo Diversificado Vocacional.",
+                        "EPJA: IPEC, CINDEA, CAN y CONED."
                     ] 
                 }] 
             },
             { 
-                title: "2. Disposiciones Administrativas y Carga Horaria", 
+                title: "2. Disposiciones Administrativas", 
                 icon: "ph-user-gear", 
                 subsections: [{ 
                     subtitle: "Organización", 
                     points: [
-                        "Carga Horaria: Asignación basada en la matrícula (no cuota fija).",
-                        "Responsabilidad: El docente de Informática Educativa tiene la responsabilidad total de la lección.",
-                        "Lecciones: 2 lecciones semanales.",
-                        "Evaluación: Carácter sumativo."
+                        "Carga: Según matrícula (no cuota fija).",
+                        "Responsabilidad: Docente único (sin codocencia).",
+                        "Lecciones: 2 semanales.",
+                        "Evaluación: Sumativa."
                     ] 
                 }] 
             },
             { 
-                title: "3. Metodología: Enfoque en Proyectos", 
+                title: "3. Metodología: Proyectos", 
                 icon: "ph-chalkboard-teacher", 
                 subsections: [{ 
-                    subtitle: "Estrategias Pedagógicas", 
+                    subtitle: "Estrategias", 
                     points: [
-                        "Estrategia Base: Se recomienda el uso de Design Thinking.",
-                        "Flexibilidad: El docente puede optar por otras metodologías activas si incorpora componente de proyecto y evaluación sumativa (con propuesta previa).",
-                        "Estructura: Dos módulos anuales (uno por periodo) que integran Programación, Robótica, IA y Apropiación."
+                        "Base: Design Thinking.",
+                        "Flexibilidad: Otras metodologías activas permitidas.",
+                        "Estructura: 2 módulos anuales (Programación, Robótica, IA)."
                     ] 
                 }] 
             },
             { 
-                title: "4. Evaluación de los Aprendizajes", 
+                title: "4. Evaluación de Aprendizajes", 
                 icon: "ph-check-square", 
                 subsections: [
                     { 
                         subtitle: "Componente Proyecto", 
-                        points: [
-                            "Centrada en el Componente Proyecto, realizado íntegramente durante las lecciones.",
-                            "Fases: Etapa Inicial (Comprensión, investigación y planificación) y Etapa de Desarrollo/Cierre (Prototipado, evaluación y presentación final)."
-                        ] 
+                        points: ["Realizado 100% en clase.", "Fases: Inicial y Desarrollo/Cierre."] 
                     },
                     {
-                        subtitle: "Desglose de Calificación",
-                        points: ["Trabajo Cotidiano: 50%", "Proyecto (Uno solo): 30%", "Tareas: 10%", "Asistencia: 10%"]
+                        subtitle: "Desglose",
+                        points: ["Cotidiano: 50%", "Proyecto: 30%", "Tareas: 10%", "Asistencia: 10%"]
                     }
                 ] 
             },
             { 
-                title: "5. Gestión de Recursos y Responsabilidades", 
+                title: "5. Gestión de Recursos", 
                 icon: "ph-monitor-play", 
                 subsections: [{ 
-                    subtitle: "Control de Equipos", 
+                    subtitle: "Control", 
                     points: [
-                        "Docente es custodio legal de laboratorios y dispositivos.",
-                        "Obligatorio mantener actualizada la bitácora y el inventario en la plataforma TecnoPresta.",
-                        "Se debe mantener carpeta institucional (física o digital).",
-                        "Prioridad absoluta de las lecciones de IE sobre el uso del equipo."
+                        "Custodia de laboratorios y equipos.",
+                        "Bitácora y TecnoPresta obligatorios.",
+                        "Carpeta institucional al día.",
+                        "Prioridad de uso para lecciones de IE."
                     ] 
                 }] 
             },
@@ -306,23 +299,21 @@
                     subtitle: "Lineamientos",
                     points: [
                         "Periodicidad: Bimestral.",
-                        "Nivel: Planificación por nivel educativo, considerando particularidades.",
-                        "Herramientas: Obligatorio el uso de la plantilla actualizada 2026."
+                        "Nivel: Planificación por nivel educativo.",
+                        "Herramienta: Plantilla oficial 2026."
                     ]
                 }]
             }
         ];
 
-        // --- 4. FUNCIONES DE LÓGICA (DEFINIDAS ANTES DE USARSE) ---
+        // --- 4. FUNCIONES DE LÓGICA (DEFINIDAS ANTES) ---
         
         function setupRealtimeListeners() {
             if (!window.state.user) return; 
-
             try {
                 const forumRef = collection(db, 'artifacts', appId, 'public', 'data', 'forum');
                 const instRef = collection(db, 'artifacts', appId, 'public', 'data', 'institutions');
-                const logsRef = collection(db, 'artifacts', appId, 'public', 'data', 'access_logs');
-
+                
                 onSnapshot(query(forumRef, orderBy("timestamp", "desc")), (snapshot) => {
                     window.state.posts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
                     if (window.state.view === 'forum') renderView('forum');
@@ -334,6 +325,7 @@
                 }, (e) => console.log("Inst sync limited"));
                 
                 if (window.state.advisor) {
+                    const logsRef = collection(db, 'artifacts', appId, 'public', 'data', 'access_logs');
                     onSnapshot(query(logsRef, orderBy("timestamp", "desc")), (snapshot) => {
                         window.state.accessLogs = snapshot.docs.map(d => d.data());
                         if (window.state.view === 'advisorDashboard') renderView('advisorDashboard');
@@ -347,6 +339,19 @@
             catch (e) { document.getElementById('auth-status').innerText = "Modo Visitante"; }
         }
 
+        async function callGeminiAPI(prompt) {
+            const keyToUse = getGeminiKey();
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${keyToUse}`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                if (!res.ok) throw new Error("API Error");
+                const data = await res.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch (e) { return "Error: No se pudo conectar con la IA. Verifique conexión."; }
+        }
+
         // --- 5. FUNCIONES GLOBALES ---
 
         window.openTeacherAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
@@ -358,11 +363,12 @@
         window.openReplyModal = (id) => { document.getElementById('reply-post-id').value = id; document.getElementById('reply-modal').classList.remove('hidden'); };
         window.closeReplyModal = () => document.getElementById('reply-modal').classList.add('hidden');
 
+        // Se mantiene para compatibilidad pero ya no es necesaria
         window.saveApiKey = () => {
             const key = document.getElementById('api-key-input').value.trim();
             if (key) {
                 localStorage.setItem('gemini_api_key', key);
-                window.showToast("API Key guardada ✅");
+                window.showToast("Clave personalizada guardada");
             }
         };
 
@@ -465,23 +471,6 @@
             catch(e) { window.showToast("Error de permisos"); }
         };
 
-        async function callGeminiAPI(prompt) {
-            const keyToUse = getGeminiKey();
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${keyToUse}`, {
-                    method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
-                if (!res.ok) {
-                    const err = await res.json();
-                    console.error("Gemini Error:", err);
-                    throw new Error("API Error");
-                }
-                const data = await res.json();
-                return data.candidates[0].content.parts[0].text;
-            } catch (e) { return "Error: No se pudo conectar con la IA. Verifique su clave."; }
-        }
-
         window.askAI = async () => {
             const q = document.getElementById('ai-q').value;
             const r = document.getElementById('ai-r');
@@ -500,7 +489,7 @@
             r.innerHTML = '<span class="animate-pulse">Generando propuestas...</span>';
             const prompt = `Genera 3 situaciones problema de contexto educativo real para ${level}° año. Tema: ${theme}. Integra obligatoriamente estos saberes: ${topics.join(', ')}. Formato: Solo lista de viñetas. Sin introducción ni conclusión.`;
             const res = await callGeminiAPI(prompt);
-            r.innerHTML = `<div class="bg-indigo-900 p-6 rounded-2xl text-slate-300 text-sm mt-4">${res}</div>`;
+            r.innerHTML = `<div class="bg-indigo-900 p-6 rounded-2xl text-slate-300 text-sm mt-4 font-medium">${res}</div>`;
         };
 
         window.analyzeAdvisorDashboard = async () => {
@@ -509,16 +498,6 @@
             const data = window.state.institutions.map(i => `${i.name} (${i.regional}): ${i.status}`).join(', ');
             const res = await callGeminiAPI(`Analiza cobertura regional (resumen ejecutivo): ${data.substring(0,2000)}. Responde de forma puntual y en viñetas.`);
             r.innerHTML = `<div class="bg-indigo-900 text-white p-6 rounded-2xl text-xs font-medium">${res}</div>`;
-        };
-
-        window.logAccess = async () => {
-            if (!window.state.user) return;
-            try {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'access_logs'), {
-                    email: window.state.user.email || "Anónimo", type: window.state.advisor ? "Asesor" : "Docente",
-                    timestamp: Date.now(), date: new Date().toLocaleString()
-                });
-            } catch (e) {}
         };
 
         window.showToast = (msg) => { const t = document.createElement('div'); t.className = 'fixed bottom-4 right-4 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-xl z-50 font-bold text-xs fade-in'; t.innerHTML = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000); };
@@ -621,7 +600,7 @@
                                 <ul class="space-y-2 text-xs font-medium text-slate-600">${TEACHER_GUIDE_DATA.knowledgeTypes.map(k => `<li>• ${k}</li>`).join('')}</ul>
                             </div>
                         </div>
-                        <div class="bg-white p-6 rounded-3xl border border-slate-200"><h4 class="font-black text-slate-800 mb-4 uppercase text-xs tracking-widest">Módulos del Nivel ${window.state.guideLevel}°</h4><p class="text-sm text-slate-500 mb-4 font-bold">${data.focus}</p><div class="grid md:grid-cols-2 gap-6">${data.modules.map(m => `<div class="bg-slate-50 p-5 rounded-2xl"><h5 class="font-bold text-slate-800 mb-2">${m.name}</h5><ul class="space-y-1 text-xs text-slate-600">${m.topics.map(t => `<li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-teal-500 rounded-full"></div>${t}</li>`).join('')}</ul></div>`).join('')}</div></div>
+                        <div class="bg-white p-6 rounded-3xl border border-slate-200"><h4 class="font-black text-slate-800 mb-4 uppercase text-xs tracking-widest">Módulos del Nivel ${window.state.guideLevel}°</h4><div class="grid md:grid-cols-2 gap-6">${data.modules.map(m => `<div class="bg-slate-50 p-5 rounded-2xl"><h5 class="font-bold text-slate-800 mb-2">${m.name}</h5><ul class="space-y-1 text-xs text-slate-600">${m.topics.map(t => `<li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-teal-500 rounded-full"></div>${t}</li>`).join('')}</ul></div>`).join('')}</div></div>
                         <div class="bg-orange-50 p-6 rounded-3xl border border-orange-100"><h4 class="font-black text-orange-800 mb-3 uppercase text-xs tracking-widest">Metodología y Evaluación</h4><div class="text-sm text-slate-700 space-y-2"><p><strong>Estrategias:</strong> ${TEACHER_GUIDE_DATA.methodology.strategies.join(', ')}</p><p><strong>Rol Docente:</strong> ${TEACHER_GUIDE_DATA.methodology.role}</p><p><strong>Evaluación:</strong> ${TEACHER_GUIDE_DATA.methodology.eval}</p></div></div>
                     </div>`;
                 } else {
