@@ -156,19 +156,8 @@
         // CLAVE DE API GEMINI (HARDCODED)
         // IMPORTANTE: Debes restringir esta clave en Google Cloud Console a tu dominio web.
         // "AIza" (A mayúscula, I mayúscula, z, a)
-        // --- CONFIGURACIÓN DE IA (SOLUCIÓN ANTI-CORRECTOR) ---
-        const MODEL_NAME = "gemini-1.5-flash"; 
-        
-        // PARTE A: El inicio obligatorio de Google (A + i mayúscula)
-        const PARTE_A = "AI"; 
-        
-        // PARTE B: El resto de la clave (¡OJO: después de D8Aa va una ELE minúscula!)
-        const PARTE_B = "zaSyAj8ZMNnzunifD8AalszD9PUD3pnoStv84";
-        
-        // Unimos las partes
-        const GEMINI_API_KEY = PARTE_A + PARTE_B; 
+        const GEMINI_API_KEY = "AIzaSyAj8ZMNnzunifD8AaIszD9PUD3pnoStv84"; 
 
-        const ADVISOR_EMAILS = ["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr"];
         const ADVISOR_EMAILS = ["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr"];
 
         const app = initializeApp(firebaseConfig);
@@ -630,4 +619,3 @@
     </script>
 </body>
 </html>
-
