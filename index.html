@@ -131,7 +131,8 @@
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- 1. CONFIGURACIÓN ---
+        // 1. CONFIGURACIÓN Y ESTADO
+        // ID de aplicación dinámico para manejar entornos
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'asesoriayseguimiento2026';
 
         const firebaseConfig = {
@@ -143,195 +144,108 @@
             appId: "1:800061887135:web:f096970be5c69a465988aa"
         };
         
-        // Clave de IA ofuscada (Base64) para funcionar automáticamente y sin configuración manual
-        // Decodificada: AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A
+        // Clave ofuscada (Base64) - Se usa automáticamente
         const _0x1 = "QUl6YVN5QkFCck52UUgxWnUtcGVGM1JuMXVDZS1ZZmIyTEJHQzlB"; 
-        
-        // Prioridad: 1. Clave manual (si existiera), 2. Clave ofuscada por defecto
         const getGeminiKey = () => localStorage.getItem('gemini_api_key') || atob(_0x1);
         
+        // MODELO ESTÁNDAR PARA WEB EXTERNA (Más compatible)
         const MODEL_NAME = "gemini-1.5-flash"; 
+        
         const ADVISOR_EMAILS = ["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr"];
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- 2. ESTADO GLOBAL ---
         window.state = { view: 'dashboard', user: null, advisor: false, posts: [], institutions: [], accessLogs: [], guideLevel: '7', guideTab: 'curriculum' };
 
-        // --- 3. DATOS ESTÁTICOS (Basados en PDF Guía Docente III Ciclo) ---
+        // 2. DATOS ESTÁTICOS
         const TEACHER_GUIDE_DATA = {
             pillars: [
-                "Apropiación Tecnológica: Hardware, software y herramientas.",
-                "Programación y Algoritmos: Pensamiento lógico.",
-                "Computación Física y Robótica: Electrónica y creación.",
-                "Ciencia de Datos e IA: Análisis y comprensión."
+                "Apropiación Tecnológica y Digital",
+                "Programación y Algoritmos",
+                "Computación Física y Robótica",
+                "Ciencia de Datos e Inteligencia Artificial"
             ],
-            axes: ["Pensamiento Computacional", "Ciudadanía Digital", "Emprendimiento"],
+            axes: ["Pensamiento Computacional", "Ciudadanía y Ética Digital", "Emprendimiento e Innovación"],
             knowledgeTypes: [
                 "Conceptuales: El 'saber' (temas técnicos).",
-                "Procedimentales: El 'saber hacer' (abstraer, programar).",
-                "Actitudinales: El 'ser' (ética, tolerancia)."
+                "Procedimentales: El 'saber hacer' (abstraer, depurar, programar).",
+                "Actitudinales: El 'ser' (tolerancia a la frustración, precisión y ética)."
             ],
             levels: {
                 "7": { 
                     title: "Sétimo Año: Fundamentos y Lógica", 
-                    focus: "Hardware/Software, algoritmos básicos, nube y netiqueta.",
+                    focus: "Hardware/Software, tablas de verdad, algoritmos básicos, herramientas de nube y netiqueta.",
                     modules: [
-                        { 
-                            name: "Módulo 1: Apropiación y Lógica", 
-                            topics: ["Computadora", "Hardware y Software", "Redes de comunicación", "Sistema Operativo", "Gestión de archivos", "Herramientas de productividad", "Algoritmo", "Tablas de Verdad", "Estructuras condicionales", "Operadores", "Evento"]
-                        },
-                        { 
-                            name: "Módulo 2: Conectividad y Ciudadanía", 
-                            topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Asistentes virtuales", "Bucles", "Procedimientos y funciones"]
-                        }
+                        { name: "Módulo 1: Apropiación y Lógica", topics: ["Computadora", "Hardware y Software", "Redes de comunicación", "Sistema Operativo", "Gestión de archivos", "Herramientas de productividad", "Algoritmo", "Tablas de Verdad", "Estructuras condicionales", "Operadores aritméticos y lógicos", "Evento"] },
+                        { name: "Módulo 2: Conectividad y Ciudadanía", topics: ["Internet y Navegadores", "Almacenamiento Nube", "Netiqueta", "Ciberseguridad", "Multimedia Gráfica", "Fundamentos IA", "Asistentes virtuales", "Bucles", "Procedimientos y funciones"] }
                     ]
                 },
                 "8": { 
                     title: "Octavo Año: Multimedia y Robótica", 
-                    focus: "Video, redes, circuitos, IoT y ciberseguridad.",
+                    focus: "Edición de video, redes, circuitos eléctricos, microcontroladores, IoT y ciberseguridad.",
                     modules: [
-                        { 
-                            name: "Módulo 1: Mecanismos y Prototipado", 
-                            topics: ["Hardware Interno", "Software Libre/Paga", "Edición Audio/Video", "Mecanismos Robóticos", "Circuitos Eléctricos", "Fundamentos Electrónica", "Programación robótica"] 
-                        },
-                        { 
-                            name: "Módulo 2: Datos y Sensores", 
-                            topics: ["Hoja de Cálculo", "IoT", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "Herramientas Generativas (IA)", "Licencia digital", "Hackeo y Antivirus"] 
-                        }
+                        { name: "Módulo 1: Mecanismos y Prototipado", topics: ["Hardware Interno", "Software Libre vs Paga", "Compresión Archivos", "Edición Audio/Video", "Mecanismos Robóticos", "Circuitos Eléctricos", "Fundamentos Electrónica", "Entorno programación robótica"] },
+                        { name: "Módulo 2: Datos y Sensores", topics: ["Hoja de Cálculo (Datos)", "Internet de las Cosas (IoT)", "Sensores y Actuadores", "Microcontroladores", "Recolección de Datos", "Herramientas Generativas (IA)", "Licencia digital", "Hackeo y Antivirus"] }
                     ]
                 },
                 "9": { 
                     title: "Noveno Año: Prototipado y Conectividad", 
-                    focus: "Domótica, prototipos avanzados, bases de datos y ética IA.",
+                    focus: "Domótica, prototipos avanzados, modelado 3D, bases de datos y ética en la IA.",
                     modules: [
-                        { 
-                            name: "Módulo 1: Automatización Avanzada", 
-                            topics: ["Microcontroladores Avanzados", "Domótica", "Prototipado Real", "Algoritmos Complejos", "Optimización SO", "Movimiento en mecanismos"] 
-                        },
-                        { 
-                            name: "Módulo 2: Gestión y Ética", 
-                            topics: ["Gestores Base de Datos", "Protocolos Red", "Derechos de Autor", "Huella Digital", "Ética y Desafíos IA", "Modelado 3D", "Riesgos en línea"] 
-                        }
+                        { name: "Módulo 1: Automatización Avanzada", topics: ["Microcontroladores Avanzados", "Domótica", "Prototipado Real", "Algoritmos Complejos", "Optimización SO", "Movimiento en mecanismos", "Sensores y Actuadores avanzados"] },
+                        { name: "Módulo 2: Gestión y Ética", topics: ["Gestores Base de Datos", "Protocolos Red (HTTP/TCP)", "Derechos de Autor", "Huella Digital", "Ética y Desafíos IA", "Modelado 3D", "Riesgos en línea"] }
                     ]
                 }
             },
             methodology: {
+                title: "Metodología y Evaluación",
                 strategies: ["Aprendizaje Basado en Juegos (ABJ)", "Aprendizaje Basado en Retos (ABR)", "Design Thinking"],
-                role: "Facilitador que prioriza la lógica algorítmica.",
+                role: "Facilitador que contextualiza las estrategias y prioriza la lógica algorítmica.",
                 eval: "Basada en indicadores de logro específicos."
             },
             project: { phases: [{name:"Empatizar"}, {name:"Definir"}, {name:"Idear"}, {name:"Prototipar"}, {name:"Evaluar"}] }
         };
 
         const DOCUMENT_SUMMARY = [
-            { 
-                title: "1. Niveles de Implementación", 
-                icon: "ph-buildings", 
-                subsections: [{ 
-                    subtitle: "Modalidades 2026", 
-                    points: [
-                        "III Ciclo (Académico): 7°, 8° y 9°.",
-                        "Educación Diversificada: NO se implementa este año.",
-                        "CTP: Solo en Ciclo Diversificado Vocacional.",
-                        "EPJA: IPEC, CINDEA, CAN y CONED."
-                    ] 
-                }] 
-            },
-            { 
-                title: "2. Disposiciones Administrativas", 
-                icon: "ph-user-gear", 
-                subsections: [{ 
-                    subtitle: "Organización", 
-                    points: [
-                        "Carga: Según matrícula (no cuota fija).",
-                        "Responsabilidad: Docente único (sin codocencia).",
-                        "Lecciones: 2 semanales.",
-                        "Evaluación: Sumativa."
-                    ] 
-                }] 
-            },
-            { 
-                title: "3. Metodología: Proyectos", 
-                icon: "ph-chalkboard-teacher", 
-                subsections: [{ 
-                    subtitle: "Estrategias", 
-                    points: [
-                        "Base: Design Thinking.",
-                        "Flexibilidad: Otras metodologías activas permitidas.",
-                        "Estructura: 2 módulos anuales (Programación, Robótica, IA)."
-                    ] 
-                }] 
-            },
-            { 
-                title: "4. Evaluación de Aprendizajes", 
-                icon: "ph-check-square", 
-                subsections: [
-                    { 
-                        subtitle: "Componente Proyecto", 
-                        points: ["Realizado 100% en clase.", "Fases: Inicial y Desarrollo/Cierre."] 
-                    },
-                    {
-                        subtitle: "Desglose",
-                        points: ["Cotidiano: 50%", "Proyecto: 30%", "Tareas: 10%", "Asistencia: 10%"]
-                    }
-                ] 
-            },
-            { 
-                title: "5. Gestión de Recursos", 
-                icon: "ph-monitor-play", 
-                subsections: [{ 
-                    subtitle: "Control", 
-                    points: [
-                        "Custodia de laboratorios y equipos.",
-                        "Bitácora y TecnoPresta obligatorios.",
-                        "Carpeta institucional al día.",
-                        "Prioridad de uso para lecciones de IE."
-                    ] 
-                }] 
-            },
-            {
-                title: "6. Planeamiento Didáctico",
-                icon: "ph-pencil-line",
-                subsections: [{
-                    subtitle: "Lineamientos",
-                    points: [
-                        "Periodicidad: Bimestral.",
-                        "Nivel: Planificación por nivel educativo.",
-                        "Herramienta: Plantilla oficial 2026."
-                    ]
-                }]
-            }
+            { title: "1. Niveles de Implementación", icon: "ph-buildings", subsections: [{ subtitle: "Modalidades 2026", points: ["III Ciclo (Académico): 7°, 8° y 9°.", "Educación Diversificada: NO se implementa.", "CTP: Solo en Ciclo Diversificado Vocacional.", "EPJA: IPEC, CINDEA, CAN y CONED."] }] },
+            { title: "2. Disposiciones Administrativas", icon: "ph-user-gear", subsections: [{ subtitle: "Organización", points: ["Carga según matrícula.", "Responsable único.", "2 lecciones semanales.", "Evaluación sumativa.", "Sin GTP."] }] },
+            { title: "3. Metodología: Proyectos", icon: "ph-chalkboard-teacher", subsections: [{ subtitle: "Enfoque", points: ["Base: Design Thinking.", "Estructura modular.", "Flexibilidad metodológica."] }] },
+            { title: "4. Evaluación de Aprendizajes", icon: "ph-check-square", subsections: [
+                { subtitle: "Componente Proyecto", points: ["Centrada en el proyecto.", "Desarrollo en clase."] },
+                { subtitle: "Desglose", points: ["Cotidiano: 50%", "Proyecto: 30%", "Tareas: 10%", "Asistencia: 10%"] }
+            ]},
+            { title: "5. Gestión de Recursos", icon: "ph-monitor-play", subsections: [{ subtitle: "Responsabilidades", points: ["Control: Bitácora y TecnoPresta.", "Uso prioritario para IE.", "Planeamiento: Bimestral."] }] },
+            { title: "6. Planeamiento Didáctico", icon: "ph-pencil-line", subsections: [{ subtitle: "Lineamientos", points: ["Bimestral.", "Por nivel.", "Plantilla oficial 2026."] }] }
         ];
 
-        // --- 4. FUNCIONES DE LÓGICA (DEFINIDAS ANTES) ---
+        // --- 3. DEFINICIÓN DE FUNCIONES (HOISTING) ---
         
-        function setupRealtimeListeners() {
+        async function setupRealtimeListeners() {
             if (!window.state.user) return; 
             try {
                 const forumRef = collection(db, 'artifacts', appId, 'public', 'data', 'forum');
                 const instRef = collection(db, 'artifacts', appId, 'public', 'data', 'institutions');
-                
+                const logsRef = collection(db, 'artifacts', appId, 'public', 'data', 'access_logs');
+
                 onSnapshot(query(forumRef, orderBy("timestamp", "desc")), (snapshot) => {
                     window.state.posts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
                     if (window.state.view === 'forum') renderView('forum');
-                }, (e) => console.log("Forum sync limited"));
+                }, (e) => console.log("Sync limited"));
 
                 onSnapshot(instRef, (snapshot) => {
                     window.state.institutions = snapshot.docs.map(d => ({ code: d.id, ...d.data() }));
                     if (window.state.view === 'advisorDashboard') renderView('advisorDashboard');
-                }, (e) => console.log("Inst sync limited"));
+                }, (e) => console.log("Sync limited"));
                 
                 if (window.state.advisor) {
-                    const logsRef = collection(db, 'artifacts', appId, 'public', 'data', 'access_logs');
                     onSnapshot(query(logsRef, orderBy("timestamp", "desc")), (snapshot) => {
                         window.state.accessLogs = snapshot.docs.map(d => d.data());
                         if (window.state.view === 'advisorDashboard') renderView('advisorDashboard');
-                    }, (e) => console.log("Logs sync limited"));
+                    }, (e) => console.log("Sync limited"));
                 }
-            } catch (e) { console.log("Listener error", e); }
+            } catch (e) { console.log("Listener setup error", e); }
         }
 
         async function initApp() {
@@ -349,10 +263,10 @@
                 if (!res.ok) throw new Error("API Error");
                 const data = await res.json();
                 return data.candidates[0].content.parts[0].text;
-            } catch (e) { return "Error: No se pudo conectar con la IA. Verifique conexión."; }
+            } catch (e) { return "Error: No se pudo conectar con la IA."; }
         }
 
-        // --- 5. FUNCIONES GLOBALES ---
+        // --- 4. EXPOSICIÓN A WINDOW ---
 
         window.openTeacherAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
         window.closeTeacherAuthModal = () => document.getElementById('auth-modal').classList.add('hidden');
@@ -363,57 +277,45 @@
         window.openReplyModal = (id) => { document.getElementById('reply-post-id').value = id; document.getElementById('reply-modal').classList.remove('hidden'); };
         window.closeReplyModal = () => document.getElementById('reply-modal').classList.add('hidden');
 
-        // Se mantiene para compatibilidad pero ya no es necesaria
         window.saveApiKey = () => {
             const key = document.getElementById('api-key-input').value.trim();
             if (key) {
                 localStorage.setItem('gemini_api_key', key);
-                window.showToast("Clave personalizada guardada");
+                window.showToast("API Key guardada ✅");
             }
         };
 
         window.handleAuth = async (mode) => {
             const email = document.getElementById('auth-email').value.trim().toLowerCase();
             const password = document.getElementById('auth-password').value;
-            const err = document.getElementById('auth-error');
-            const errText = document.getElementById('auth-error-text');
             if (!email.endsWith('@mep.go.cr')) {
-                errText.innerText = "Solo correos @mep.go.cr";
-                err.classList.remove('hidden');
+                window.showToast("Solo correos @mep.go.cr");
                 return;
             }
             try {
-                if (mode === 'register') {
-                    await createUserWithEmailAndPassword(auth, email, password);
-                    window.showToast("Cuenta creada. ¡Bienvenido!");
-                } else {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    window.showToast("Sesión iniciada correctamente.");
-                }
+                if (mode === 'register') await createUserWithEmailAndPassword(auth, email, password);
+                else await signInWithEmailAndPassword(auth, email, password);
                 window.closeAuthModal();
-            } catch (e) {
-                errText.innerText = e.code === 'auth/wrong-password' ? "Contraseña incorrecta" : "Error de autenticación";
-                err.classList.remove('hidden');
-            }
+            } catch (e) { window.showToast("Error de credenciales"); }
         };
 
         window.logout = async () => {
             await signOut(auth);
             try { await signInAnonymously(auth); } catch(e){}
-            window.showToast("Sesión cerrada.");
+            window.showToast("Sesión cerrada");
             window.renderView('dashboard');
         };
 
         window.savePost = async () => {
-            const title = document.getElementById('post-title').value;
-            const content = document.getElementById('post-content').value;
+            const t = document.getElementById('post-title').value;
+            const c = document.getElementById('post-content').value;
             const tag = document.getElementById('post-tag').value;
-            if (!title || !content) return;
+            if (!t || !c) return;
             const author = window.state.advisor ? "Asesor Nacional" : (window.state.user.email || "Docente");
             try {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'forum'), { title, content, tag, author, date: new Date().toLocaleDateString(), timestamp: Date.now() });
-                window.closeForumModal(); window.showToast("Publicado.");
-            } catch(e) { window.showToast("Error de permisos/escritura"); }
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'forum'), { title: t, content: c, tag, author, date: new Date().toLocaleDateString(), timestamp: Date.now() });
+                window.closeForumModal(); window.showToast("Publicado");
+            } catch(e) { window.showToast("Error de permisos"); }
         };
 
         window.saveReply = async () => {
@@ -422,12 +324,12 @@
             if(!content) return;
             try {
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'forum', id), { reply: content });
-                window.closeReplyModal(); window.showToast("Respuesta enviada.");
+                window.closeReplyModal(); window.showToast("Respuesta enviada");
             } catch(e) { window.showToast("Error de permisos"); }
         };
 
         window.deletePost = async (id) => {
-            if (confirm("¿Eliminar esta publicación?")) {
+            if (confirm("¿Eliminar?")) {
                 try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'forum', id)); }
                 catch(e) { window.showToast("Error de permisos"); }
             }
@@ -477,7 +379,7 @@
             if(!q) return;
             r.classList.remove('hidden');
             r.innerHTML = '<span class="animate-pulse">✨ Pensando...</span>';
-            const res = await callGeminiAPI(`Consulta docente secundaria: ${q}. Responde de forma técnica, puntual, en viñetas y sin introducción.`);
+            const res = await callGeminiAPI(`Consulta docente secundaria: ${q}. Responde de forma técnica y puntual.`);
             r.innerHTML = `<div class="prose prose-sm text-slate-700 max-w-none shadow-inner p-2 font-medium">${res}</div>`;
         };
 
@@ -487,7 +389,7 @@
             if (topics.length === 0) { window.showToast("Seleccione al menos un saber"); return; }
             const r = document.getElementById('project-ai-results'); r.classList.remove('hidden');
             r.innerHTML = '<span class="animate-pulse">Generando propuestas...</span>';
-            const prompt = `Genera 3 situaciones problema de contexto educativo real para ${level}° año. Tema: ${theme}. Integra obligatoriamente estos saberes: ${topics.join(', ')}. Formato: Solo lista de viñetas. Sin introducción ni conclusión.`;
+            const prompt = `Genera 3 situaciones problema de contexto educativo real para ${level}° año. Tema: ${theme}. Integra obligatoriamente estos saberes: ${topics.join(', ')}. Formato: Solo lista de viñetas.`;
             const res = await callGeminiAPI(prompt);
             r.innerHTML = `<div class="bg-indigo-900 p-6 rounded-2xl text-slate-300 text-sm mt-4 font-medium">${res}</div>`;
         };
@@ -496,8 +398,18 @@
             const r = document.getElementById('ai-advisor-results'); r.classList.remove('hidden');
             r.innerHTML = '<span class="animate-pulse">✨ Analizando datos...</span>';
             const data = window.state.institutions.map(i => `${i.name} (${i.regional}): ${i.status}`).join(', ');
-            const res = await callGeminiAPI(`Analiza cobertura regional (resumen ejecutivo): ${data.substring(0,2000)}. Responde de forma puntual y en viñetas.`);
+            const res = await callGeminiAPI(`Analiza cobertura regional (resumen ejecutivo): ${data.substring(0,2000)}. Responde de forma puntual.`);
             r.innerHTML = `<div class="bg-indigo-900 text-white p-6 rounded-2xl text-xs font-medium">${res}</div>`;
+        };
+
+        window.logAccess = async () => {
+            if (!window.state.user) return;
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'access_logs'), {
+                    email: window.state.user.email || "Anónimo", type: window.state.advisor ? "Asesor" : "Docente",
+                    timestamp: Date.now(), date: new Date().toLocaleString()
+                });
+            } catch (e) {}
         };
 
         window.showToast = (msg) => { const t = document.createElement('div'); t.className = 'fixed bottom-4 right-4 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-xl z-50 font-bold text-xs fade-in'; t.innerHTML = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000); };
@@ -505,23 +417,21 @@
         // --- 6. RENDERIZADO ---
         function renderSidebar() {
             const nav = document.getElementById('sidebar-nav');
-            const items = [{id:'dashboard', icon:'ph-squares-four', label:'Inicio'}, {section:'Recursos'}, {id:'summary', icon:'ph-clipboard-text', label:'Orientaciones Docentes'}, {id:'teacherGuide', icon:'ph-graduation-cap', label:'Guía Docente'}, {id:'planner', icon:'ph-calendar-check', label:'Planeamiento 2026'}, {id:'forum', icon:'ph-users-three', label:'Comunidad Docente'}, {section:'Herramientas'}, {id:'ai', icon:'ph-sparkle', label:'Asistente IA'}];
-            if (window.state.advisor) items.push({section:'Gestión'}, {id:'advisorDashboard', icon:'ph-chart-pie-slice', label:'Tablero Asesor'});
-            
-            let html = items.map(i => i.section ? 
+            let html = [{id:'dashboard', icon:'ph-squares-four', label:'Inicio'}, {section:'Recursos'}, {id:'summary', icon:'ph-clipboard-text', label:'Orientaciones Docentes'}, {id:'teacherGuide', icon:'ph-graduation-cap', label:'Guía Docente'}, {id:'planner', icon:'ph-calendar-check', label:'Planeamiento 2026'}, {id:'forum', icon:'ph-users-three', label:'Comunidad Docente'}, {section:'Herramientas'}, {id:'ai', icon:'ph-sparkle', label:'Asistente IA'}].map(i => i.section ? 
                 `<div class="mt-6 mb-2 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">${i.section}</div>` : 
                 `<button onclick="renderView('${i.id}')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${window.state.view === i.id ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:bg-slate-50'}"><i class="ph ${i.icon} text-lg"></i>${i.label}</button>`
             ).join('');
 
-            // Agregar sección de Contacto con WhatsApp
+            if (window.state.advisor) {
+                html += `<div class="mt-6 mb-2 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Gestión</div>
+                         <button onclick="renderView('advisorDashboard')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${window.state.view === 'advisorDashboard' ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:bg-slate-50'}"><i class="ph ph-chart-pie-slice text-lg"></i>Tablero Asesor</button>`;
+            }
+
+            // Contacto WhatsApp
             html += `
                 <div class="mt-6 mb-2 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Contacto</div>
-                <a href="https://wa.me/50660602617" target="_blank" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-green-50 hover:text-green-600 transition-all">
-                    <i class="ph-bold ph-whatsapp-logo text-lg"></i> Alberto Bustos
-                </a>
-                <a href="https://wa.me/50688784526" target="_blank" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-green-50 hover:text-green-600 transition-all">
-                    <i class="ph-bold ph-whatsapp-logo text-lg"></i> Rodolfo Juárez
-                </a>
+                <a href="https://wa.me/50660602617" target="_blank" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-green-50 hover:text-green-600 transition-all"><i class="ph-bold ph-whatsapp-logo text-lg"></i> Alberto Bustos</a>
+                <a href="https://wa.me/50688784526" target="_blank" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-green-50 hover:text-green-600 transition-all"><i class="ph-bold ph-whatsapp-logo text-lg"></i> Rodolfo Juárez</a>
             `;
             
             html += window.state.user && !window.state.user.isAnonymous ? 
@@ -543,7 +453,7 @@
                             <i class="ph-bold ph-lock-key text-amber-600 text-xl"></i>
                             <div>
                                 <h4 class="font-bold text-amber-800 text-sm">Acceso Restringido a Herramientas</h4>
-                                <p class="text-xs text-amber-700 mt-1">Para utilizar el <strong>Asistente IA</strong> y participar en la <strong>Comunidad Docente</strong>, es necesario autenticarse con su cuenta institucional.</p>
+                                <p class="text-xs text-amber-700 mt-1">Para utilizar el <strong>Asistente IA</strong> y participar en la <strong>Comunidad Docente</strong>, es necesario autenticarse.</p>
                             </div>
                             <button onclick="openTeacherAuthModal()" class="ml-auto bg-amber-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-amber-700">Ingresar</button>
                         </div>
@@ -572,10 +482,7 @@
                     <h2 class="text-3xl font-black text-slate-800 mb-8">Orientaciones Generales 2026 (Secundaria)</h2>
                     <div class="bg-white p-6 rounded-2xl border border-slate-200 mb-8 flex items-center gap-4 shadow-sm">
                         <div class="p-3 bg-teal-50 text-teal-600 rounded-full"><i class="ph ph-speaker-high text-2xl"></i></div>
-                        <div class="flex-1">
-                            <h4 class="font-bold text-sm">Resumen en Audio</h4>
-                            <video controls class="w-full h-10 mt-2 rounded bg-slate-100"><source src="https://res.cloudinary.com/dljxx3chc/video/upload/v1769616584/Orientaciones_Docente_2026_t1q9so.mp4" type="video/mp4"></video>
-                        </div>
+                        <div class="flex-1"><h4 class="font-bold text-sm">Resumen en Audio</h4><video controls class="w-full h-10 mt-2 rounded bg-slate-100"><source src="https://res.cloudinary.com/dljxx3chc/video/upload/v1769616584/Orientaciones_Docente_2026_t1q9so.mp4" type="video/mp4"></video></div>
                     </div>
                     <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">${DOCUMENT_SUMMARY.map(s => `<div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm"><h3 class="font-bold text-lg mb-4 flex gap-2 items-center"><i class="ph ${s.icon} text-teal-600"></i>${s.title}</h3><ul class="list-disc pl-5 text-sm text-slate-600 space-y-2">${s.subsections[0].points.map(p => `<li>${p}</li>`).join('')}</ul>${s.title.includes("6.") ? `<div class="mt-4 pt-4 border-t border-slate-100 flex flex-col gap-3"><a href="https://res.cloudinary.com/dljxx3chc/image/upload/v1740624021/Formaci%C3%B3n_Tecnol%C3%B3gica_Gu%C3%ADa_de_Implementaci%C3%B3n_2026_id9wov.pdf" target="_blank" class="text-teal-600 font-bold text-sm flex items-center gap-2 hover:underline"><i class="ph ph-file-pdf"></i> Descargar Guía Resumen PDF</a><a href="https://adminmepcr-my.sharepoint.com/:b:/g/personal/alberto_bustos_ortega_mep_go_cr/IQB2V-ZCEVyHRaw6p6kqi6TsAUFYsCO3i6cWwMwPmsR-69U?e=7fz66K" target="_blank" class="text-indigo-600 font-bold text-sm flex items-center gap-2 hover:underline"><i class="ph ph-cloud-arrow-down"></i> Descargar Documento Oficial</a></div>` : ''}</div>`).join('')}</div>`;
             } else if (viewId === 'teacherGuide') {
