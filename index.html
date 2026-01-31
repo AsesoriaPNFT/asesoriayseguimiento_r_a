@@ -11,35 +11,44 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f1f5f9; }
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f1f5f9; margin: 0; overflow-x: hidden; }
         .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .btn-primary { background: #14b8a6; color: #0f172a; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-primary { background: #14b8a6; color: #0f172a; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
+        .btn-primary:hover { background: #06b6d4; transform: scale(1.02); }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .chart-container { position: relative; height: 200px; width: 100%; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
 <body>
     <div id="app" class="flex min-h-screen">
-        <aside class="w-72 border-r border-slate-800 p-6 flex flex-col fixed h-full bg-[#0f172a]">
-            <div class="flex items-center gap-3 mb-10">
-                <div class="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center text-slate-900 shadow-lg">
-                    <i class="ph-fill ph-rocket-launch text-2xl"></i>
+        <aside class="w-72 border-r border-slate-800 p-6 flex flex-col fixed h-full bg-[#0f172a] z-50 shadow-2xl">
+            <div class="flex items-center gap-3 mb-10 px-2">
+                <div class="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center text-slate-900 shadow-lg shadow-teal-500/20">
+                    <i class="ph-fill ph-shield-check text-2xl"></i>
                 </div>
-                <h2 class="font-black text-xl tracking-tighter">PNFT 2026</h2>
+                <div>
+                    <h2 class="font-black text-xl tracking-tighter">PNFT Core</h2>
+                    <span id="auth-status" class="text-[10px] font-bold text-teal-500 uppercase tracking-widest">Sincronizando...</span>
+                </div>
             </div>
             <nav id="sidebar-nav" class="flex-1 space-y-2"></nav>
-            <div id="user-info" class="pt-6 border-t border-slate-800 text-[10px] font-bold text-slate-500 uppercase"></div>
+            <div id="user-info" class="pt-6 border-t border-slate-800 text-[10px] font-bold text-slate-500 uppercase tracking-widest"></div>
         </aside>
 
         <main class="flex-1 ml-72 p-12">
-            <div id="app-content" class="max-w-6xl mx-auto"></div>
+            <div id="app-content" class="max-w-6xl mx-auto fade-in"></div>
         </main>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, query, orderBy, writeBatch, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Configuración de tu Firebase
+        // --- CONFIGURACIÓN FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A",
             authDomain: "asesoriayseguimiento2026.firebaseapp.com",
@@ -53,101 +62,213 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const ASESORES = {
-            "alberto.bustos.ortega@mep.go.cr": "Alberto José Bustos Ortega",
-            "rodolfo.juarez.perez@mep.go.cr": "Rodolfo Juárez Pérez"
+        // --- ASESORES Y FIRMAS DINÁMICAS ---
+        const ASESORES_INFO = {
+            "alberto.bustos.ortega@mep.go.cr": { nombre: "Alberto José Bustos Ortega", cargo: "Asesor Nacional de Recursos Tecnológicos en Educación" },
+            "rodolfo.juarez.perez@mep.go.cr": { nombre: "Rodolfo Juárez Pérez", cargo: "Asesor Nacional de Recursos Tecnológicos en Educación" }
         };
+        const ADMINS = Object.keys(ASESORES_INFO);
 
-        window.state = { view: 'dashboard', user: null, isAdmin: false };
+        window.state = { view: 'dashboard', user: null, isAdmin: false, statsChart: null };
 
-        // --- LÓGICA DE GENERACIÓN PEDAGÓGICA (Rúbricas y Listas) ---
+        // --- FUNCIONES DE IA (PEDAGOGÍA) ---
         window.generateTool = async () => {
             const nivel = document.getElementById('nivel-sel').value;
             const saber = document.getElementById('saber-input').value;
             const tipo = document.getElementById('tipo-sel').value;
             const resArea = document.getElementById('tool-results');
 
-            resArea.innerHTML = `<div class="animate-pulse text-teal-400 font-bold">✨ IA creando ${tipo} para ${nivel}° año...</div>`;
+            if(!saber) return alert("Indique el saber técnico.");
+            resArea.innerHTML = `<div class="p-8 glass rounded-3xl animate-pulse text-teal-400 font-bold">✨ IA analizando Guía Docente 2026 para generar ${tipo}...</div>`;
 
-            const prompt = `Como Asesor del PNFT, genera una ${tipo.toUpperCase()} para el saber "${saber}" en ${nivel}° año. 
-            Si es RÚBRICA: Incluye Indicador (Acción+Contenido+Condición) y Niveles (Inicial, Intermedio, Avanzado). 
-            Si es COTEJO: Indicador y escala Logrado/No Logrado. Usa los estándares de la Guía Docente 2026.`;
+            const prompt = `Como Asesor del PNFT, genera una ${tipo.toUpperCase()} para el saber "${saber}" en nivel ${nivel}. 
+            REGLA: Usa la estructura Acción+Contenido+Condición. Si es Rúbrica, incluye niveles Inicial, Intermedio y Avanzado.`;
 
             const docRef = await addDoc(collection(db, "docentes", auth.currentUser.uid, "consultas_ia"), { prompt, timestamp: Date.now() });
 
             onSnapshot(doc(db, "docentes", auth.currentUser.uid, "consultas_ia", docRef.id), (snap) => {
                 const res = snap.data()?.response;
                 if(res) {
-                    const firma = `\n\n__________________________________\n${ASESORES[auth.currentUser.email.toLowerCase()] || "Asesor Nacional"}\nAsesor Nacional de Recursos Tecnológicos en Educación`;
+                    const info = ASESORES_INFO[auth.currentUser.email?.toLowerCase()] || { nombre: "Asesor Nacional", cargo: "PNFT" };
+                    const firma = `\n\n__________________________________\n${info.nombre}\n${info.cargo}`;
                     resArea.innerHTML = `
-                        <div id="capture" class="glass p-10 rounded-[2.5rem] border-teal-500/20 text-slate-300 text-sm">
+                        <div id="pdf-area" class="glass p-10 rounded-[2.5rem] border-teal-500/20 text-slate-300 text-sm leading-relaxed">
                             ${res.replace(/\n/g, '<br>')}
-                            <div class="mt-8 pt-6 border-t border-white/5 text-slate-500 italic">${firma.replace(/\n/g, '<br>')}</div>
+                            <div class="mt-8 pt-6 border-t border-white/5 text-slate-500 italic uppercase text-[9px] tracking-widest">${firma.replace(/\n/g, '<br>')}</div>
                         </div>
-                        <button onclick="downloadPDF('capture', 'Herramienta_PNFT')" class="mt-6 btn-primary px-8 py-3 rounded-2xl w-full">Descargar PDF Oficial</button>`;
+                        <button onclick="downloadPDF('pdf-area', 'Instrumento_PNFT_2026')" class="mt-6 btn-primary px-8 py-4 rounded-2xl w-full flex items-center justify-center gap-2">
+                            <i class="ph ph-file-pdf text-xl"></i> Descargar PDF Oficial
+                        </button>`;
                 }
             });
         };
 
-        // --- RENDERIZADO DE VISTAS ---
-        window.renderView = (view) => {
+        // --- GESTIÓN ADMINISTRATIVA ---
+        window.processExcel = (event) => {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+                const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+                const batch = writeBatch(db);
+                rows.forEach(row => {
+                    batch.set(doc(collection(db, "gestion_asesoria")), {
+                        codigoSaber: row["Codigo Saber"] || "N/A",
+                        codigo: row["Código"] || "N/A",
+                        regional: row["Dirección Regional"] || "N/A",
+                        institucion: row["Nombre de la Institución"] || "N/A",
+                        docente: row["Nombre del docente"] || "N/A",
+                        esMITDE: false,
+                        asesor: auth.currentUser.email,
+                        timestamp: Date.now()
+                    });
+                });
+                await batch.commit();
+                alert("Importación de centros completada.");
+            };
+            reader.readAsArrayBuffer(file);
+        };
+
+        window.toggleMITDE = async (id, current) => {
+            await updateDoc(doc(db, "gestion_asesoria", id), { esMITDE: !current });
+        };
+
+        // --- GRÁFICOS Y REPORTES ---
+        window.updateStats = (data) => {
+            const ctx = document.getElementById('statsChart')?.getContext('2d');
+            if(!ctx) return;
+            const mitde = data.filter(i => i.esMITDE).length;
+            const regular = data.length - mitde;
+            if(window.state.statsChart) window.state.statsChart.destroy();
+            window.state.statsChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Centros MITDE', 'Regulares'],
+                    datasets: [{ data: [mitde, regular], backgroundColor: ['#14b8a6', '#334155'], borderWidth: 0 }]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 } } } } }
+            });
+        };
+
+        window.generateQuincenalReport = async () => {
+            const r = document.getElementById('report-status');
+            r.innerHTML = "✨ IA sintetizando gestión quincenal...";
+            onSnapshot(query(collection(db, "gestion_asesoria"), orderBy("timestamp", "desc")), async (snap) => {
+                const data = snap.docs.map(d => d.data());
+                const prompt = `Genera un INFORME QUINCENAL profesional. Datos: ${JSON.stringify(data.slice(0,10))}. Resalta centros MITDE.`;
+                const docRef = await addDoc(collection(db, "docentes", auth.currentUser.uid, "consultas_ia"), { prompt, timestamp: Date.now() });
+
+                onSnapshot(doc(db, "docentes", auth.currentUser.uid, "consultas_ia", docRef.id), (snapIA) => {
+                    const res = snapIA.data()?.response;
+                    if(res) {
+                        const info = ASESORES_INFO[auth.currentUser.email.toLowerCase()];
+                        const firma = `\n\n__________________________________\n${info.nombre}\n${info.cargo}`;
+                        document.getElementById('report-area').innerHTML = `
+                            <div id="rep-pdf" class="glass p-10 rounded-3xl text-xs leading-relaxed mb-4">${res.replace(/\n/g, '<br>')}${firma.replace(/\n/g, '<br>')}</div>
+                            <button onclick="downloadPDF('rep-pdf', 'Informe_Quincenal')" class="bg-teal-500 text-slate-900 px-6 py-2 rounded-xl font-bold">Descargar Informe</button>`;
+                        r.innerHTML = "✅ Informe listo.";
+                    }
+                });
+            }, { once: true });
+        };
+
+        // --- VISTAS ---
+        window.renderView = (viewId) => {
+            window.state.view = viewId;
             const c = document.getElementById('app-content');
-            if(view === 'pedagogia') {
+            window.renderSidebar();
+
+            if (viewId === 'dashboard') {
+                c.innerHTML = `<div class="bg-gradient-to-br from-slate-800 to-[#1e293b] p-20 rounded-[4rem] text-white shadow-2xl relative overflow-hidden">
+                    <h1 class="text-7xl font-black mb-4 tracking-tighter leading-none">PNFT CORE<br><span class="text-teal-500">2026</span></h1>
+                    <p class="text-slate-400 text-xl font-medium max-w-lg">Plataforma Nacional de Apoyo para la Gestión de Recursos Tecnológicos.</p>
+                    <i class="ph-fill ph-shield-check text-[25rem] absolute -right-20 -bottom-20 opacity-5"></i>
+                </div>`;
+            }
+
+            if (viewId === 'pedagogia') {
                 c.innerHTML = `
-                <div class="max-w-2xl fade-in">
-                    <h2 class="text-4xl font-black mb-10 tracking-tighter text-white">Generador Pedagógico 2026</h2>
+                <div class="max-w-3xl fade-in">
+                    <h2 class="text-4xl font-black mb-10 text-white tracking-tight">Evaluación PNFT 2026</h2>
                     <div class="glass p-10 rounded-[3rem] space-y-6">
                         <div class="grid grid-cols-2 gap-4">
-                            <select id="nivel-sel" class="bg-slate-800 p-4 rounded-xl border-none outline-none"><option value="7">Sétimo</option><option value="8">Octavo</option><option value="9">Noveno</option></select>
-                            <select id="tipo-sel" class="bg-slate-800 p-4 rounded-xl border-none outline-none"><option value="rubrica">Rúbrica</option><option value="cotejo">Lista de Cotejo</option></select>
+                            <select id="nivel-sel" class="bg-slate-800 p-4 rounded-xl border-none outline-none text-sm font-bold"><option value="7">Sétimo</option><option value="8">Octavo</option><option value="9">Noveno</option></select>
+                            <select id="tipo-sel" class="bg-slate-800 p-4 rounded-xl border-none outline-none text-sm font-bold"><option value="rubrica">Rúbrica</option><option value="cotejo">Lista de Cotejo</option></select>
                         </div>
-                        <input id="saber-input" class="w-full bg-slate-800 p-4 rounded-xl border-none outline-none" placeholder="Saber técnico (ej. Circuitos, IA, Redes)...">
-                        <button onclick="generateTool()" class="w-full btn-primary py-5 rounded-2xl shadow-lg shadow-teal-500/20">Generar Instrumento ✨</button>
+                        <input id="saber-input" class="w-full bg-slate-800 p-4 rounded-xl border-none outline-none" placeholder="Saber técnico (ej. Robótica, IA)...">
+                        <button onclick="generateTool()" class="w-full btn-primary py-5 rounded-2xl shadow-lg">Generar Instrumento ✨</button>
                     </div>
                     <div id="tool-results" class="mt-10"></div>
                 </div>`;
-            } else if (view === 'admin') {
-                c.innerHTML = `<h2 class="text-4xl font-black mb-6">Panel de Gestión Nacional</h2>
-                <div class="grid grid-cols-3 gap-6 mb-10">
-                    <div class="glass p-6 rounded-3xl"><h3 class="text-xs font-bold text-slate-500">ASIGNADOS A ALBERTO</h3><p class="text-3xl font-black text-teal-500">42 Centros</p></div>
-                    <div class="glass p-6 rounded-3xl"><h3 class="text-xs font-bold text-slate-500">ASIGNADOS A RODOLFO</h3><p class="text-3xl font-black text-indigo-500">38 Centros</p></div>
-                    <div class="glass p-6 rounded-3xl"><h3 class="text-xs font-bold text-slate-500">CENTROS MITDE</h3><p class="text-3xl font-black text-white">15 Total</p></div>
-                </div>`;
-            } else {
-                c.innerHTML = `<div class="bg-gradient-to-br from-slate-800 to-slate-900 p-20 rounded-[4rem] text-white relative overflow-hidden">
-                    <h1 class="text-7xl font-black tracking-tighter mb-4">PNFT CORE 2026</h1>
-                    <p class="text-slate-400 text-xl">Sistema Nacional de Formación Tecnológica - MEP.</p>
-                </div>`;
             }
-            renderSidebar();
+
+            if (viewId === 'admin') {
+                c.innerHTML = `
+                <div class="grid lg:grid-cols-3 gap-8 fade-in">
+                    <div class="lg:col-span-2 space-y-8">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-4xl font-black">Gestión Asesoría</h2>
+                            <label class="bg-indigo-600 px-6 py-3 rounded-2xl cursor-pointer font-bold text-xs uppercase flex items-center gap-2 hover:bg-indigo-500">
+                                <i class="ph ph-file-xls text-xl"></i> Importar Excel
+                                <input type="file" class="hidden" onchange="processExcel(event)">
+                            </label>
+                        </div>
+                        <div id="report-status" class="text-teal-500 font-bold text-xs uppercase tracking-widest"></div>
+                        <div id="report-area"></div>
+                        <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                    </div>
+                    <div class="glass p-8 rounded-[3rem] sticky top-12 h-fit">
+                        <h3 class="text-xs font-black text-slate-500 uppercase mb-8 text-center tracking-widest">Atención Centros MITDE</h3>
+                        <div class="chart-container"><canvas id="statsChart"></canvas></div>
+                        <button onclick="generateQuincenalReport()" class="w-full mt-10 btn-primary py-4 rounded-2xl text-[10px]">Informe Quincenal IA</button>
+                    </div>
+                </div>`;
+                onSnapshot(query(collection(db, "gestion_asesoria"), orderBy("timestamp", "desc")), (snap) => {
+                    const data = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                    window.updateStats(data);
+                    document.getElementById('cards-container').innerHTML = data.map(i => `
+                    <div class="glass p-6 rounded-[2rem] border-t-2 ${i.esMITDE ? 'border-teal-400' : 'border-slate-800'}">
+                        <div class="flex justify-between mb-4">
+                            <span class="bg-slate-900 px-2 py-1 rounded text-[8px] font-black">${i.regional}</span>
+                            <button onclick="toggleMITDE('${i.id}', ${i.esMITDE})" class="text-[8px] font-bold px-2 py-1 rounded ${i.esMITDE ? 'bg-teal-500 text-slate-900' : 'bg-slate-700'}">${i.esMITDE ? 'MITDE' : 'MARCAR'}</button>
+                        </div>
+                        <h4 class="font-bold text-sm mb-1">${i.institucion}</h4>
+                        <p class="text-[10px] text-slate-500">${i.docente}</p>
+                    </div>`).join('');
+                });
+            }
         };
 
         window.renderSidebar = () => {
             const nav = document.getElementById('sidebar-nav');
-            const items = [
+            const menu = [
                 { id: 'dashboard', icon: 'ph-house', label: 'Inicio' },
+                { section: 'Pedagogía' },
                 { id: 'pedagogia', icon: 'ph-article', label: 'Instrumentos IA' }
             ];
-            if(window.state.isAdmin) items.push({ id: 'admin', icon: 'ph-chart-pie', label: 'Gestión Asesoría' });
-            
-            nav.innerHTML = items.map(i => `<button onclick="renderView('${i.id}')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold ${window.state.view === i.id ? 'bg-teal-500/10 text-teal-400' : 'text-slate-400 hover:bg-white/5'}"><i class="ph ${i.icon}"></i> ${i.label}</button>`).join('');
+            if(window.state.isAdmin) {
+                menu.push({ section: 'Administración' });
+                menu.push({ id: 'admin', icon: 'ph-chart-pie', label: 'Gestión Nacional' });
+            }
+            nav.innerHTML = menu.map(i => i.section ? `<div class="mt-8 mb-2 px-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">${i.section}</div>` : 
+                `<button onclick="renderView('${i.id}')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold ${window.state.view === i.id ? 'bg-teal-500/10 text-teal-400' : 'text-slate-400 hover:bg-white/5'}"><i class="ph ${i.icon}"></i> ${i.label}</button>`
+            ).join('');
         };
 
         onAuthStateChanged(auth, async (u) => {
-            if(!u) await signInAnonymously(auth);
+            if(!u) { await signInAnonymously(auth); return; }
             window.state.user = u;
-            window.state.isAdmin = Object.keys(ASESORES).includes(u.email?.toLowerCase());
-            document.getElementById('user-info').innerText = window.state.isAdmin ? "Modo: Asesor Nacional" : "Modo: Docente";
-            renderView('dashboard');
+            window.state.isAdmin = ADMINS.includes(u.email?.toLowerCase());
+            document.getElementById('user-info').innerText = window.state.isAdmin ? "Rol: Asesor Nacional" : "Rol: Docente MEP";
+            window.renderView('dashboard');
         });
 
         window.downloadPDF = (id, title) => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            const text = document.getElementById(id).innerText;
-            doc.setFontSize(10);
-            const lines = doc.splitTextToSize(text, 180);
-            doc.text(lines, 15, 20);
+            doc.setFontSize(14); doc.text(title.replace(/_/g, ' '), 15, 20);
+            doc.setFontSize(10); const lines = doc.splitTextToSize(document.getElementById(id).innerText, 180);
+            doc.text(lines, 15, 30);
             doc.save(`${title}.pdf`);
         };
     </script>
