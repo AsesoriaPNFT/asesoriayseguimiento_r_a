@@ -464,31 +464,45 @@
             } catch (e) { alert("Error: " + e.message); }
         };
 
-        // --- LÓGICA IA (GEMINI) ---
+        // --- LÓGICA IA (GEMINI ACTUALIZADA 2026) ---
         async function llamarGemini(prompt) {
-            if (!window.geminiKey) return "⚠️ Error: Falta configurar la API Key de Gemini en el sistema.";
+            // Verificamos que exista la llave
+            if (!window.geminiKey) return "⚠️ Error: Falta configurar la API Key de Gemini.";
 
-            // Probamos con la versión más reciente y explícita
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${window.geminiKey}`;
+            // 👇 CAMBIO IMPORTANTE: Usamos la versión específica '002' o '2.0'
+            // gemini-1.5-flash-002 es la versión estable recomendada.
+            const MODEL_NAME = "gemini-1.5-flash-002"; 
+            
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${window.geminiKey}`;
+            
             try {
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    body: JSON.stringify({ 
+                        contents: [{ parts: [{ text: prompt }] }] 
+                    })
                 });
 
-                const data = await response.json();
-
                 if (!response.ok) {
-                    // Mostrar error detallado de Google
-                    console.error("Error Gemini:", data);
-                    return `⚠️ Error API (${response.status}): ${data.error?.message || response.statusText}`;
+                    // Si falla, mostramos el error técnico en consola para depurar
+                    const errData = await response.json();
+                    console.error("Error Detallado Gemini:", errData);
+                    throw new Error(`Error HTTP: ${response.status} - ${errData.error?.message || 'Desconocido'}`);
+                }
+
+                const data = await response.json();
+                
+                // Validación extra por si la IA no devuelve texto
+                if (!data.candidates || data.candidates.length === 0) {
+                    return "El Asesor IA está pensando, pero no generó respuesta. Intenta de nuevo.";
                 }
 
                 return data.candidates[0].content.parts[0].text;
+
             } catch (error) {
-                console.error(error);
-                return `⛔ Error de conexión: ${error.message}`;
+                console.error("Error IA:", error);
+                return `⚠️ Error de conexión con el Asesor IA. (Detalle: ${error.message})`;
             }
         }
 
@@ -677,3 +691,4 @@
 </body>
 
 </html>
+
