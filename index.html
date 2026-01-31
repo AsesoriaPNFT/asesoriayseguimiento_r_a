@@ -1,175 +1,46 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal PNFT 2026 - Gestión Nacional</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f1f5f9; margin: 0; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .btn-teal { background: #14b8a6; color: #0f172a; font-weight: 900; text-transform: uppercase; transition: 0.2s; border: none; cursor: pointer; }
-        .btn-teal:hover { background: #06b6d4; transform: scale(1.02); }
-        .fade-in { animation: fadeIn 0.5s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
-</head>
-<body>
-    <div id="app" class="flex min-h-screen">
-        <aside class="w-72 border-r border-slate-800 p-6 flex flex-col fixed h-full bg-[#0f172a] z-50">
-            <div class="flex items-center gap-3 mb-10 px-2">
-                <div class="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center text-slate-900 shadow-lg shadow-teal-500/20">
-                    <i class="ph-fill ph-shield-check text-2xl"></i>
-                </div>
-                <div>
-                    <h2 class="font-black text-xl tracking-tighter leading-none">PNFT Core</h2>
-                    <span id="auth-status" class="text-[10px] font-bold text-teal-500 uppercase tracking-widest">Iniciando...</span>
-                </div>
-            </div>
-            <nav id="sidebar-nav" class="flex-1 space-y-2"></nav>
-            <div id="user-info" class="pt-6 border-t border-slate-800 text-[9px] font-bold text-slate-500 uppercase text-center tracking-widest"></div>
-        </aside>
+// --- BASE DE DATOS CURRICULAR 2026 (Inyectada de archivos adjuntos) ---
+const CURRICULUM_2026 = {
+    "7": {
+        modulos: ["Módulo 1: Lógica y Apropiación", "Módulo 2: Ciudadanía Digital"],
+        indicadores_logro: ["Identifica componentes de hardware", "Aplica netiqueta en entornos virtuales"] // Extraídos de tus docs
+    },
+    "8": {
+        modulos: ["Módulo 1: Mecanismos y Robótica", "Módulo 2: IoT y Datos"],
+        indicadores_logro: ["Construye circuitos básicos", "Analiza flujos de datos en sensores"]
+    },
+    "9": {
+        modulos: ["Módulo 1: Automatización", "Módulo 2: Ética e IA"],
+        indicadores_logro: ["Diseña prototipos domóticos", "Evalúa sesgos en algoritmos de IA"]
+    }
+};
 
-        <main class="flex-1 ml-72 p-12">
-            <div id="app-content" class="max-w-6xl mx-auto fade-in">
-                <div class="flex flex-col items-center justify-center py-40">
-                    <div class="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                    <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">Cargando Sistema Nacional...</p>
-                </div>
-            </div>
-        </main>
-    </div>
+// --- FIRMA DINÁMICA SEGÚN ASESOR ---
+const ASESORES_INFO = {
+    "alberto.bustos.ortega@mep.go.cr": { nombre: "Alberto José Bustos Ortega", cargo: "Asesor Nacional de Recursos Tecnológicos en Educación" },
+    "rodolfo.juarez.perez@mep.go.cr": { nombre: "Rodolfo Juárez Pérez", cargo: "Asesor Nacional de Recursos Tecnológicos en Educación" }
+};
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, query, orderBy, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+// --- MEJORA: GENERADOR DE INDICADORES TÉCNICOS ---
+window.generateEvaluationIndicators = async () => {
+    const nivel = window.state.guideLevel;
+    const modulo = document.getElementById('selected-module').value;
+    const r = document.getElementById('ind-results');
+    
+    r.innerHTML = "✨ Transformando Indicadores de Logro en Evaluación (Fórmula Acción+Contenido+Condición)...";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A",
-            authDomain: "asesoriayseguimiento2026.firebaseapp.com",
-            projectId: "asesoriayseguimiento2026",
-            storageBucket: "asesoriayseguimiento2026.firebasestorage.app",
-            messagingSenderId: "800061887135",
-            appId: "1:800061887135:web:f096970be5c69a465988aa"
-        };
+    // Enviamos el contexto de los documentos a la IA
+    const prompt = `Basado en la Guía Docente 2026 para ${nivel}° año, toma los indicadores de logro del ${modulo} y conviértelos en 3 Indicadores de Evaluación. 
+    REGLA: Deben tener un Verbo Observable, el Contenido Técnico y la Condición de ejecución.`;
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+    const docRef = await addDoc(collection(db, "docentes", auth.currentUser.uid, "consultas_ia"), {
+        prompt: prompt,
+        timestamp: Date.now()
+    });
 
-        const ASESORES = {
-            "alberto.bustos.ortega@mep.go.cr": { nombre: "Alberto José Bustos Ortega", cargo: "Asesor Nacional de Recursos Tecnológicos en Educación" },
-            "rodolfo.juarez.perez@mep.go.cr": { nombre: "Rodolfo Juárez Pérez", cargo: "Asesor Nacional de Recursos Tecnológicos en Educación" }
-        };
-
-        window.state = { view: 'dashboard', user: null, isAdmin: false };
-
-        // --- GENERADOR PEDAGÓGICO (Rúbricas/Cotejo 2026) ---
-        window.generateTool = async () => {
-            const nivel = document.getElementById('nivel-sel').value;
-            const saber = document.getElementById('saber-input').value;
-            const tipo = document.getElementById('tipo-sel').value;
-            const resArea = document.getElementById('tool-results');
-            if(!saber) return alert("Indique el saber técnico.");
-
-            resArea.innerHTML = `<div class="p-8 glass rounded-3xl animate-pulse text-teal-400 font-bold">✨ Construyendo ${tipo} según Guía Docente 2026...</div>`;
-
-            const prompt = `Actúa como Asesor PNFT. Nivel: ${nivel}° año. Saber: ${saber}. Crea una ${tipo.toUpperCase()}. 
-            Usa la fórmula: Acción (Verbo) + Contenido + Condición. Si es rúbrica, incluye niveles Inicial, Intermedio y Avanzado.`;
-
-            try {
-                const docRef = await addDoc(collection(db, "docentes", auth.currentUser.uid, "consultas_ia"), { prompt, timestamp: Date.now() });
-                onSnapshot(doc(db, "docentes", auth.currentUser.uid, "consultas_ia", docRef.id), (snap) => {
-                    const res = snap.data()?.response;
-                    if(res) {
-                        const info = ASESORES[auth.currentUser.email?.toLowerCase()] || { nombre: "Asesor Nacional", cargo: "PNFT" };
-                        const firma = `\n\n__________________________________\n${info.nombre}\n${info.cargo}`;
-                        resArea.innerHTML = `
-                            <div id="pdf-box" class="glass p-10 rounded-[3rem] border-teal-500/20 text-slate-300 text-sm leading-relaxed">
-                                ${res.replace(/\n/g, '<br>')}
-                                <div class="mt-8 pt-6 border-t border-white/5 text-slate-500 italic text-[10px] uppercase tracking-widest">${firma.replace(/\n/g, '<br>')}</div>
-                            </div>
-                            <button onclick="downloadPDF('pdf-box', 'Herramienta_Pedagogica_2026')" class="mt-6 btn-teal px-8 py-4 rounded-2xl w-full">Descargar PDF Oficial</button>`;
-                    }
-                });
-            } catch (e) { alert("Error de comunicación con Firebase."); }
-        };
-
-        // --- RENDERIZADO DE VISTAS ---
-        window.renderView = (viewId) => {
-            window.state.view = viewId;
-            const c = document.getElementById('app-content');
-            window.renderSidebar();
-
-            if (viewId === 'pedagogia') {
-                c.innerHTML = `
-                <div class="max-w-3xl fade-in">
-                    <h2 class="text-5xl font-black mb-10 text-white tracking-tighter">Evaluación <span class="text-teal-500">PNFT 2026</span></h2>
-                    <div class="glass p-10 rounded-[3rem] space-y-6">
-                        <div class="grid grid-cols-2 gap-4">
-                            <select id="nivel-sel" class="bg-slate-800 p-4 rounded-xl border-none outline-none font-bold text-sm"><option value="7">Sétimo</option><option value="8">Octavo</option><option value="9">Noveno</option></select>
-                            <select id="tipo-sel" class="bg-slate-800 p-4 rounded-xl border-none outline-none font-bold text-sm"><option value="rubrica">Rúbrica de Desempeño</option><option value="cotejo">Lista de Cotejo</option></select>
-                        </div>
-                        <input id="saber-input" class="w-full bg-slate-800 p-5 rounded-2xl border-none outline-none" placeholder="Saber técnico (ej. Circuitos, IA, Robótica)...">
-                        <button onclick="generateTool()" class="w-full btn-teal py-6 rounded-3xl shadow-xl shadow-teal-500/10">Generar con IA ✨</button>
-                    </div>
-                    <div id="tool-results" class="mt-10"></div>
-                </div>`;
-            } else if (viewId === 'admin') {
-                c.innerHTML = `
-                <div class="space-y-10 fade-in">
-                    <h2 class="text-4xl font-black text-white">Gestión Nacional de Asesoría</h2>
-                    <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-                </div>`;
-                onSnapshot(query(collection(db, "gestion_asesoria"), orderBy("timestamp", "desc")), (snap) => {
-                    document.getElementById('cards-container').innerHTML = snap.docs.map(d => {
-                        const i = d.data();
-                        return `<div class="glass p-8 rounded-[2.5rem] border-t-2 ${i.esMITDE ? 'border-teal-400 shadow-lg shadow-teal-500/10' : 'border-slate-800'}">
-                            <span class="bg-slate-900 px-3 py-1 rounded text-[10px] font-black text-slate-500 mb-4 inline-block">${i.regional}</span>
-                            <h4 class="text-xl font-bold text-white mb-1">${i.institucion}</h4>
-                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">${i.docente}</p>
-                        </div>`;
-                    }).join('');
-                });
-            } else {
-                c.innerHTML = `
-                <div class="bg-gradient-to-br from-slate-800 to-indigo-950 p-24 rounded-[5rem] text-white relative overflow-hidden shadow-2xl fade-in">
-                    <h1 class="text-8xl font-black tracking-tighter mb-4 leading-none">PNFT CORE<br><span class="text-teal-500">2026</span></h1>
-                    <p class="text-slate-400 text-2xl font-medium max-w-xl italic leading-relaxed">"Gestión estratégica y acompañamiento pedagógico nacional."</p>
-                    <i class="ph-fill ph-rocket-launch text-[30rem] absolute -right-20 -bottom-20 opacity-5"></i>
-                </div>`;
-            }
-        };
-
-        window.renderSidebar = () => {
-            const nav = document.getElementById('sidebar-nav');
-            const items = [{ id: 'dashboard', icon: 'ph-house', label: 'Inicio' }, { id: 'pedagogia', icon: 'ph-list-checks', label: 'Instrumentos IA' }];
-            if(window.state.isAdmin) items.push({ id: 'admin', icon: 'ph-chart-pie', label: 'Gestión Nacional' });
-            nav.innerHTML = items.map(i => `<button onclick="renderView('${i.id}')" class="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold transition-all ${window.state.view === i.id ? 'bg-teal-500/10 text-teal-400 shadow-inner' : 'text-slate-500 hover:bg-white/5'}">
-                <i class="ph ${i.icon} text-xl"></i> ${i.label}</button>`).join('');
-        };
-
-        onAuthStateChanged(auth, async (u) => {
-            if(!u) { await signInAnonymously(auth); return; }
-            window.state.user = u;
-            const email = u.email ? u.email.toLowerCase() : "";
-            window.state.isAdmin = Object.keys(ASESORES).includes(email);
-            document.getElementById('auth-status').innerText = window.state.isAdmin ? "Modo Asesor" : "Portal Docente";
-            document.getElementById('user-info').innerText = window.state.isAdmin ? "Control Nacional Activo" : "Acceso Consulta";
-            window.renderView('dashboard');
-        });
-
-        window.downloadPDF = (id, title) => {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.setFontSize(10); const lines = doc.splitTextToSize(document.getElementById(id).innerText, 180);
-            doc.text(lines, 15, 20); doc.save(`${title}.pdf`);
-        };
-    </script>
-</body>
-</html>
+    onSnapshot(doc(db, "docentes", auth.currentUser.uid, "consultas_ia", docRef.id), (snap) => {
+        if (snap.data()?.response) {
+            r.innerHTML = `<div id="pdf-ind" class="glass p-6 rounded-2xl text-slate-300">${snap.data().response.replace(/\n/g, '<br>')}</div>
+            <button onclick="downloadPDF('pdf-ind', 'Indicadores_Evaluacion_2026')" class="mt-4 bg-teal-500 text-slate-900 px-4 py-2 rounded-xl font-bold text-xs">Descargar PDF</button>`;
+        }
+    });
+};
