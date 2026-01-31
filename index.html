@@ -468,8 +468,8 @@
         async function llamarGemini(prompt) {
             if (!window.geminiKey) return "⚠️ Error: Falta configurar la API Key de Gemini en el sistema.";
 
-            // Usamos gemini-1.5-flash que es más rápido y estable actualmente
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${window.geminiKey}`;
+            // Probamos con la versión más reciente y explícita
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${window.geminiKey}`;
             try {
                 const response = await fetch(url, {
                     method: 'POST',
