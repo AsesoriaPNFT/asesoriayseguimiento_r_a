@@ -13,58 +13,74 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap');
 
+        :root {
+            --primary: #0d9488;
+            /* Teal 600 */
+            --primary-light: #f0fdfa;
+            --accent: #f43f5e;
+            /* Rose 500 */
+            --bg-main: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+        }
+
         body {
             font-family: 'Outfit', sans-serif;
-            background-color: #020617;
-            color: #e2e8f0;
+            background-color: var(--bg-main);
+            color: var(--text-main);
             overflow: hidden;
         }
 
-        /* Glassmorphism */
+        /* Glassmorphism Light */
         .glass {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
         }
 
         .glass-panel {
-            background: rgba(30, 41, 59, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         /* Inputs & Tabs */
         .input-field {
-            background: #0f172a;
-            border: 1px solid #334155;
-            color: white;
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: var(--text-main);
             width: 100%;
             padding: 12px;
-            border-radius: 10px;
+            border-radius: 12px;
             margin-bottom: 10px;
             outline: none;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
         }
 
         .input-field:focus {
-            border-color: #14b8a6;
-            box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1);
+            transform: translateY(-1px);
         }
 
         .tab-btn {
-            padding: 10px;
+            padding: 12px;
             cursor: pointer;
-            border-bottom: 2px solid #1e293b;
-            color: #64748b;
-            font-weight: bold;
+            border-bottom: 3px solid transparent;
+            color: var(--text-muted);
+            font-weight: 700;
             width: 50%;
             text-align: center;
             transition: 0.3s;
+            letter-spacing: 0.05em;
         }
 
         .tab-btn.active {
-            border-color: #14b8a6;
-            color: #14b8a6;
-            background: rgba(20, 184, 166, 0.05);
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(13, 148, 136, 0.03);
         }
 
         /* Navegación Lateral */
@@ -72,23 +88,25 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            color: #94a3b8;
-            font-weight: 500;
-            transition: all 0.2s;
+            padding: 12px 18px;
+            border-radius: 14px;
+            color: var(--text-muted);
+            font-weight: 600;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .nav-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
+            background: rgba(13, 148, 136, 0.05);
+            color: var(--primary);
+            transform: translateX(4px);
         }
 
         .nav-item.active {
-            background: rgba(20, 184, 166, 0.15);
-            color: #2dd4bf;
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 8px 20px -6px rgba(13, 148, 136, 0.4);
         }
 
         .hidden {
@@ -96,13 +114,13 @@
         }
 
         .fade-in {
-            animation: fadeIn 0.4s ease-out;
+            animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(5px);
+                transform: translateY(10px);
             }
 
             to {
@@ -110,123 +128,154 @@
                 transform: translateY(0);
             }
         }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #cbd5e1;
+        }
     </style>
 </head>
 
 <body class="bg-slate-950">
 
     <div id="auth-screen"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#020617] to-black">
-        <div class="glass p-8 rounded-[2rem] max-w-md w-full shadow-2xl border-t-4 border-teal-500 fade-in">
-            <div class="text-center mb-6">
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-teal-50 via-slate-50 to-rose-50/30">
+        <div class="glass p-10 rounded-[2.5rem] max-w-md w-full shadow-2xl border-t-8 border-teal-500 fade-in">
+            <div class="text-center mb-10">
                 <div
-                    class="w-16 h-16 bg-teal-500/10 rounded-xl flex items-center justify-center text-teal-400 mx-auto mb-4">
-                    <i class="ph-bold ph-cube text-3xl"></i>
+                    class="w-20 h-20 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center text-white mx-auto mb-6 shadow-lg shadow-teal-500/30 transform -rotate-6">
+                    <i class="ph-bold ph-cube text-4xl"></i>
                 </div>
-                <h1 class="text-2xl font-black tracking-tight">Portal PNFT 2026</h1>
-                <p class="text-slate-400 text-xs uppercase tracking-widest font-bold">Gestión Nacional Docente</p>
+                <h1 class="text-3xl font-black tracking-tight text-slate-800">Portal PNFT 2026</h1>
+                <p class="text-slate-500 text-[10px] uppercase tracking-widest font-black mt-1">Ecosistema Digital
+                    Docente</p>
             </div>
 
-            <div class="flex mb-6">
-                <div id="tab-login" class="tab-btn active" onclick="switchAuthTab('login')">INGRESAR</div>
-                <div id="tab-register" class="tab-btn" onclick="switchAuthTab('register')">REGISTRARSE</div>
+            <div class="flex mb-8 bg-slate-100/50 p-1.5 rounded-2xl">
+                <div id="tab-login" class="tab-btn active rounded-xl" onclick="switchAuthTab('login')">INGRESAR</div>
+                <div id="tab-register" class="tab-btn rounded-xl" onclick="switchAuthTab('register')">REGISTRO</div>
             </div>
 
-            <div id="form-login">
-                <input type="email" id="login-email" class="input-field" placeholder="Correo (@mep.go.cr)">
-                <input type="password" id="login-pass" class="input-field" placeholder="Contraseña">
+            <div id="form-login" class="space-y-4">
+                <div class="relative group">
+                    <i
+                        class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600"></i>
+                    <input type="email" id="login-email" class="input-field !pl-12" placeholder="Correo (@mep.go.cr)">
+                </div>
+                <div class="relative group">
+                    <i
+                        class="ph ph-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600"></i>
+                    <input type="password" id="login-pass" class="input-field !pl-12" placeholder="Contraseña">
+                </div>
                 <button onclick="loginUser()"
-                    class="w-full bg-teal-500 hover:bg-teal-400 text-slate-900 font-bold py-3.5 rounded-xl transition mt-2 shadow-lg shadow-teal-500/20">Iniciar
-                    Sesión</button>
+                    class="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] mt-4 shadow-xl shadow-teal-600/20">
+                    Iniciar Sesión
+                </button>
             </div>
 
-            <div id="form-register" class="hidden">
+            <div id="form-register" class="hidden space-y-3">
                 <input type="text" id="reg-name" class="input-field" placeholder="Nombre Completo">
                 <input type="email" id="reg-email" class="input-field" placeholder="Correo (@mep.go.cr)">
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="text" id="reg-phone" class="input-field" placeholder="Celular (8 dígitos)"
-                        maxlength="8">
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="text" id="reg-phone" class="input-field" placeholder="Celular" maxlength="8">
                     <input type="text" id="reg-code" class="input-field" placeholder="Cód. Inst.">
                 </div>
-                <input type="password" id="reg-pass" class="input-field" placeholder="Crear Contraseña">
+                <input type="password" id="reg-pass" class="input-field" placeholder="Contraseña">
                 <button onclick="registerUser()"
-                    class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition mt-2 shadow-lg shadow-blue-600/20">Registrar
-                    Ficha</button>
+                    class="w-full bg-rose-500 hover:bg-rose-400 text-white font-bold py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] mt-4 shadow-xl shadow-rose-500/20">
+                    Crear Cuenta
+                </button>
             </div>
 
-            <p id="status-msg" class="mt-6 text-xs text-center font-mono text-slate-500 min-h-[1.5em]"></p>
+            <p id="status-msg" class="mt-8 text-xs text-center font-bold min-h-[1.5em] tracking-wide"></p>
         </div>
     </div>
 
-    <div id="app-layout" class="hidden flex h-screen w-full">
+    <div id="app-layout" class="hidden flex h-screen w-full bg-slate-50">
 
-        <aside class="w-72 bg-[#0b1120] border-r border-slate-800 flex flex-col justify-between p-4 z-40">
+        <aside class="w-72 bg-white border-r border-slate-200 flex flex-col justify-between p-6 z-40">
             <div>
-                <div class="flex items-center gap-3 px-2 mb-8 mt-2">
+                <div class="flex items-center gap-4 px-2 mb-10">
                     <div
-                        class="w-10 h-10 bg-teal-500 rounded-lg flex items-center justify-center text-slate-900 font-bold shadow-lg shadow-teal-500/20">
-                        <i class="ph-bold ph-stack"></i>
+                        class="w-12 h-12 bg-teal-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-teal-600/20">
+                        <i class="ph-fill ph-leaf text-2xl"></i>
                     </div>
                     <div>
-                        <h2 class="font-bold text-white text-lg leading-tight">PNFT Core</h2>
+                        <h2 class="font-black text-slate-800 text-xl leading-none">PNFT Core</h2>
                         <span id="user-role-badge"
-                            class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">DOCENTE</span>
+                            class="text-[9px] font-black text-teal-600 uppercase tracking-widest bg-teal-50 px-2 py-0.5 rounded-full mt-1 inline-block">DOCENTE</span>
                     </div>
                 </div>
 
                 <nav class="space-y-1">
                     <div onclick="router('dashboard')" id="nav-dashboard" class="nav-item active">
-                        <i class="ph-bold ph-house text-lg"></i> <span>Inicio</span>
+                        <i class="ph-bold ph-grid-four text-lg"></i> <span>Panel Central</span>
                     </div>
                     <div onclick="router('orientaciones')" id="nav-orientaciones" class="nav-item">
-                        <i class="ph-bold ph-compass text-lg"></i> <span>Orientaciones</span>
+                        <i class="ph-bold ph-compass-rose text-lg"></i> <span>Orientaciones</span>
                     </div>
                     <div onclick="router('guia')" id="nav-guia" class="nav-item">
-                        <i class="ph-bold ph-book-open text-lg"></i> <span>Guía Docente & IA</span>
+                        <i class="ph-bold ph-sparkle text-lg"></i> <span>Guía & IA</span>
                     </div>
                     <div onclick="router('foro')" id="nav-foro" class="nav-item">
-                        <i class="ph-bold ph-chats-circle text-lg"></i> <span>Foro Nacional</span>
+                        <i class="ph-bold ph-globe-hemisphere-west text-lg"></i> <span>Foro Nacional</span>
                     </div>
                     <div onclick="router('ia')" id="nav-ia" class="nav-item">
-                        <i class="ph-bold ph-magic-wand text-lg"></i> <span>Asesor IA</span>
+                        <i class="ph-bold ph-magic-wand text-lg"></i> <span>Asesor Virtual</span>
                     </div>
                     <div onclick="router('admin')" id="nav-admin"
-                        class="nav-item hidden text-amber-500 hover:text-amber-400">
-                        <i class="ph-bold ph-shield-check text-lg"></i> <span>Panel Admin</span>
+                        class="nav-item hidden !text-rose-500 hover:!bg-rose-50">
+                        <i class="ph-bold ph-shield-star text-lg"></i> <span>Administración</span>
                     </div>
                 </nav>
             </div>
 
-            <div class="border-t border-slate-800 pt-4 px-2">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold"
+            <div class="bg-slate-50 rounded-3xl p-5 border border-slate-100">
+                <div class="flex items-center gap-4 mb-5">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center text-slate-600 font-black shadow-sm"
                         id="sidebar-avatar">U</div>
                     <div class="flex-1 min-w-0">
-                        <p id="sidebar-name" class="text-sm font-bold text-white truncate">Usuario</p>
-                        <p id="sidebar-email" class="text-[10px] text-slate-500 truncate">...</p>
+                        <p id="sidebar-name" class="text-sm font-black text-slate-800 truncate">Usuario</p>
+                        <p id="sidebar-email" class="text-[10px] text-slate-500 font-bold truncate">...</p>
                     </div>
                 </div>
                 <button onclick="logout()"
-                    class="w-full flex items-center justify-center gap-2 text-xs font-bold text-red-400 hover:bg-red-500/10 py-2 rounded-lg transition">
-                    <i class="ph-bold ph-sign-out"></i> Cerrar Sesión
+                    class="w-full flex items-center justify-center gap-2 text-xs font-black text-rose-500 hover:bg-rose-50 py-3 rounded-xl transition-colors border border-rose-100">
+                    <i class="ph-bold ph-sign-out"></i> CERRAR SESIÓN
                 </button>
             </div>
         </aside>
 
-        <main
-            class="flex-1 relative bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-900 via-[#020617] to-[#020617] overflow-y-auto">
+        <main class="flex-1 relative bg-slate-50 overflow-y-auto">
             <header
-                class="h-20 flex items-center justify-between px-8 border-b border-white/5 bg-slate-900/50 backdrop-blur-md sticky top-0 z-30">
-                <h2 id="page-title" class="text-2xl font-black tracking-tight text-white">Panel Principal</h2>
+                class="h-24 flex items-center justify-between px-10 border-b border-slate-200 bg-white/70 backdrop-blur-xl sticky top-0 z-30">
+                <div>
+                    <h2 id="page-title" class="text-2xl font-black tracking-tight text-slate-800">Panel Principal</h2>
+                    <p class="text-[10px] text-teal-600 font-black uppercase tracking-widest mt-0.5">Gestión Educativa
+                        2026</p>
+                </div>
                 <div class="flex gap-4">
                     <span
-                        class="text-xs font-mono text-teal-500 bg-teal-500/10 px-3 py-1 rounded-full flex items-center gap-2">
-                        <span class="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></span> Sistema En Línea
+                        class="text-[10px] font-black uppercase tracking-widest text-teal-600 bg-teal-50 px-4 py-2 rounded-2xl flex items-center gap-3 border border-teal-100/50">
+                        <span class="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></span> Sistema Activo
                     </span>
                 </div>
             </header>
 
-            <div id="content-area" class="p-8 max-w-7xl mx-auto fade-in">
+            <div id="content-area" class="p-10 max-w-7xl mx-auto fade-in">
             </div>
         </main>
     </div>
@@ -260,149 +309,207 @@
 
             const container = document.getElementById('content-area');
             const title = document.getElementById('page-title');
-            container.innerHTML = '<div class="text-center mt-20"><div class="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto"></div></div>';
+            container.innerHTML = '<div class="flex flex-col items-center justify-center mt-32 space-y-4"><div class="w-16 h-16 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div><p class="text-teal-600 font-black uppercase tracking-widest text-[10px] animate-pulse">Sincronizando ecosistema...</p></div>';
 
             // --- VISTA: DASHBOARD ---
             if (view === 'dashboard') {
-                title.innerText = "Inicio";
+                title.innerText = "Bienvenido al Centro Core";
                 container.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 fade-in">
-                        <div class="md:col-span-2 glass p-8 rounded-3xl relative overflow-hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 fade-in">
+                        <div class="md:col-span-2 glass p-10 rounded-[2.5rem] relative overflow-hidden bg-gradient-to-br from-white to-teal-50/30">
                             <div class="relative z-10">
-                                <h3 class="text-3xl font-bold mb-2">Hola, ${window.currentUserData?.nombre.split(' ')[0]} 👋</h3>
-                                <p class="text-slate-400 max-w-lg">Bienvenido al ecosistema PNFT 2026. Accede a las herramientas de IA y recursos desde el menú lateral.</p>
-                                <button onclick="router('ia')" class="mt-6 bg-teal-500 hover:bg-teal-400 text-slate-900 font-bold py-2 px-6 rounded-xl transition flex items-center gap-2">
-                                    <i class="ph-bold ph-magic-wand"></i> Consultar Asesor IA
-                                </button>
+                                <span class="bg-teal-600 text-white text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-4 inline-block shadow-lg shadow-teal-500/20">Portal Activo</span>
+                                <h3 class="text-4xl font-black mb-3 text-slate-800">¡Hola, ${window.currentUserData?.nombre.split(' ')[0]}! ✨</h3>
+                                <p class="text-slate-500 leading-relaxed max-w-lg font-medium">Estamos aquí para apoyarte en el ciclo 2026. Tu Asesor IA y las orientaciones están listas para optimizar tu trabajo docente.</p>
+                                <div class="flex gap-4 mt-8">
+                                    <button onclick="router('ia')" class="bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 px-8 rounded-2xl transition-all shadow-xl shadow-teal-600/20 flex items-center gap-2 hover:scale-105">
+                                        <i class="ph-fill ph-sparkle text-xl"></i> Consultar IA
+                                    </button>
+                                    <button onclick="router('orientaciones')" class="bg-white border-2 border-slate-100 hover:border-teal-100 text-slate-600 font-bold py-3 px-8 rounded-2xl transition-all flex items-center gap-2">
+                                        Ver Documentación
+                                    </button>
+                                </div>
                             </div>
-                            <i class="ph-fill ph-plant text-[10rem] absolute -right-10 -bottom-10 text-teal-500/5"></i>
+                            <i class="ph-fill ph-plant text-[15rem] absolute -right-10 -bottom-10 text-teal-600/5 rotate-12"></i>
                         </div>
-                        <div class="glass p-6 rounded-3xl flex flex-col items-center justify-center text-center hover:bg-slate-800/50 transition cursor-pointer" onclick="router('orientaciones')">
-                            <div class="w-14 h-14 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-400 mb-4"><i class="ph-duotone ph-book-bookmark text-3xl"></i></div>
-                            <h4 class="font-bold text-lg">Orientaciones</h4>
-                            <p class="text-xs text-slate-500 mt-1">Normativa 2026</p>
+                        <div class="space-y-6">
+                            <div class="glass p-8 rounded-[2rem] flex flex-col items-center justify-center text-center hover:scale-[1.02] transition-transform cursor-pointer group" onclick="router('orientaciones')">
+                                <div class="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 mb-6 group-hover:bg-rose-500 group-hover:text-white transition-all shadow-sm"><i class="ph-duotone ph-newspaper text-3xl"></i></div>
+                                <h4 class="font-black text-slate-800 text-lg">Orientaciones</h4>
+                                <p class="text-xs text-slate-400 font-bold uppercase tracking-tight mt-1">Normativa Vigente 2026</p>
+                            </div>
+                            <div class="glass p-8 rounded-[2rem] flex flex-col items-center justify-center text-center hover:scale-[1.02] transition-transform cursor-pointer group" onclick="router('guia')">
+                                <div class="w-16 h-16 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-500 mb-6 group-hover:bg-teal-600 group-hover:text-white transition-all shadow-sm"><i class="ph-duotone ph-book-open-text text-3xl"></i></div>
+                                <h4 class="font-black text-slate-800 text-lg">Guía de Aula</h4>
+                                <p class="text-xs text-slate-400 font-bold uppercase tracking-tight mt-1">Planificación Creativa</p>
+                            </div>
                         </div>
                     </div>
                 `;
 
                 // --- VISTA: ORIENTACIONES ---
             } else if (view === 'orientaciones') {
-                title.innerText = "Orientaciones 2026";
+                title.innerText = "Orientaciones Técnicas";
                 container.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fade-in">
-                        <div class="glass p-6 rounded-2xl hover:border-teal-500/50 transition group cursor-pointer">
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center text-purple-400"><i class="ph-bold ph-files text-2xl"></i></div>
-                                <i class="ph-bold ph-arrow-right -rotate-45 text-slate-600 group-hover:text-teal-500 transition"></i>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 fade-in">
+                        <div class="glass p-8 rounded-[2rem] hover:border-teal-200 transition-all group cursor-pointer bg-white relative overflow-hidden">
+                            <div class="flex justify-between items-start mb-6">
+                                <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-500 shadow-sm"><i class="ph-fill ph-files text-3xl"></i></div>
+                                <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-teal-600 group-hover:text-white transition-all"><i class="ph ph-arrow-up-right"></i></div>
                             </div>
-                            <h3 class="text-xl font-bold mb-2">Lineamientos Generales</h3>
-                            <p class="text-sm text-slate-400">Documento base para la implementación del PNFT en el ciclo 2026.</p>
+                            <h3 class="text-2xl font-black text-slate-800 mb-3">Lineamientos Generales</h3>
+                            <p class="text-slate-500 font-medium leading-relaxed">Documentación central para la implementación curricular del PNFT en el ciclo 2026.</p>
+                            <div class="mt-6 flex gap-2">
+                                <span class="text-[9px] font-black bg-slate-100 text-slate-500 px-3 py-1 rounded-lg uppercase">PDF Oficial</span>
+                                <span class="text-[9px] font-black bg-teal-50 text-teal-600 px-3 py-1 rounded-lg uppercase">Actualizado</span>
+                            </div>
                         </div>
-                        <div class="glass p-6 rounded-2xl hover:border-teal-500/50 transition group cursor-pointer">
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center text-orange-400"><i class="ph-bold ph-graduation-cap text-2xl"></i></div>
-                                <i class="ph-bold ph-arrow-right -rotate-45 text-slate-600 group-hover:text-teal-500 transition"></i>
+                        <div class="glass p-8 rounded-[2rem] hover:border-teal-200 transition-all group cursor-pointer bg-white relative overflow-hidden">
+                            <div class="flex justify-between items-start mb-6">
+                                <div class="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-500 shadow-sm"><i class="ph-fill ph-identification-card text-3xl"></i></div>
+                                <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-teal-600 group-hover:text-white transition-all"><i class="ph ph-arrow-up-right"></i></div>
                             </div>
-                            <h3 class="text-xl font-bold mb-2">Evaluación Docente</h3>
-                            <p class="text-sm text-slate-400">Protocolos y rúbricas para el seguimiento del desempeño profesional.</p>
+                            <h3 class="text-2xl font-black text-slate-800 mb-3">Evaluación Docente</h3>
+                            <p class="text-slate-500 font-medium leading-relaxed">Protocolos, rúbricas y criterios de desempeño técnico establecidos para el año en curso.</p>
+                            <div class="mt-6 flex gap-2">
+                                <span class="text-[9px] font-black bg-slate-100 text-slate-500 px-3 py-1 rounded-lg uppercase">Rúbricas</span>
+                                <span class="text-[9px] font-black bg-rose-50 text-rose-500 px-3 py-1 rounded-lg uppercase">Importante</span>
+                            </div>
                         </div>
                     </div>
                 `;
 
                 // --- VISTA: GUÍA DOCENTE + IA #1 ---
             } else if (view === 'guia') {
-                title.innerText = "Guía Docente & IA";
+                title.innerText = "Laboratorio Creativo & IA";
                 container.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 fade-in">
-                        <div class="glass p-8 rounded-3xl">
-                            <h3 class="font-bold text-2xl mb-4">Generador de Situaciones Problema</h3>
-                            <p class="text-slate-400 text-sm mb-6">Herramienta potenciada por Gemini para crear contextos de aprendizaje situados.</p>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 fade-in">
+                        <div class="glass p-10 rounded-[2.5rem] bg-white">
+                            <h3 class="font-black text-3xl text-slate-800 mb-6 flex items-center gap-3">
+                                <i class="ph-fill ph-lightning text-teal-500"></i> Diseñador de Retos
+                            </h3>
+                            <p class="text-slate-500 mb-8 font-medium">Usa la potencia de <b>Gemini 2.5</b> para generar situaciones problema situadas y motivadoras.</p>
                             
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tema o Contenido Curricular</label>
-                            <input type="text" id="ia-tema" class="input-field mb-4" placeholder="Ej: Funciones Lineales, Revolución Francesa...">
-                            
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Nivel Educativo</label>
-                            <select id="ia-nivel" class="input-field mb-6 bg-[#0f172a]">
-                                <option>Primaria - I Ciclo</option>
-                                <option>Primaria - II Ciclo</option>
-                                <option>Secundaria - III Ciclo</option>
-                                <option>Educación Diversificada</option>
-                            </select>
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-[10px] font-black text-teal-600 uppercase tracking-widest mb-3 ml-1">Tema del Contenido Curricular</label>
+                                    <input type="text" id="ia-tema" class="input-field shadow-sm" placeholder="Ej: Energía Renovable, Sintaxis...">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-[10px] font-black text-teal-600 uppercase tracking-widest mb-3 ml-1">Nivel Académico</label>
+                                    <select id="ia-nivel" class="input-field border-slate-200">
+                                        <option>Primaria - I Ciclo</option>
+                                        <option>Primaria - II Ciclo</option>
+                                        <option>Secundaria - III Ciclo</option>
+                                        <option>Educación Diversificada</option>
+                                    </select>
+                                </div>
 
-                            <button onclick="generarSituacion()" class="w-full bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-900 font-bold py-4 rounded-xl shadow-lg shadow-teal-500/20 transition relative overflow-hidden group">
-                                <span class="relative z-10 flex items-center justify-center gap-2"><i class="ph-bold ph-lightning"></i> Generar con IA</span>
-                            </button>
+                                <button onclick="generarSituacion()" class="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:scale-[1.02] text-white font-black py-5 rounded-2xl shadow-xl shadow-teal-700/20 transition-all flex items-center justify-center gap-3 mt-4">
+                                    <i class="ph-bold ph-magic-wand text-xl"></i> GENERAR DESAFÍO IA
+                                </button>
+                            </div>
                         </div>
 
-                        <div class="glass p-8 rounded-3xl border-2 border-dashed border-slate-700 flex items-center justify-center min-h-[400px]">
-                            <div id="ia-result" class="text-center text-slate-500">
-                                <i class="ph-duotone ph-sparkle text-5xl mb-4 opacity-50"></i>
-                                <p>El resultado aparecerá aquí...</p>
+                        <div class="glass p-10 rounded-[2.5rem] border-4 border-dashed border-teal-100 flex items-center justify-center min-h-[450px] bg-teal-50/20">
+                            <div id="ia-result" class="text-center w-full">
+                                <div class="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-teal-500 mx-auto mb-6 shadow-xl shadow-teal-500/10">
+                                    <i class="ph-duotone ph-sparkle text-5xl"></i>
+                                </div>
+                                <h4 class="font-black text-slate-400 text-lg uppercase tracking-tight">Esperando parámetros</h4>
+                                <p class="text-sm text-slate-400 mt-2 max-w-[200px] mx-auto">Configura un tema y nivel para que la IA diseñe tu material.</p>
                             </div>
                         </div>
                     </div>
                 `;
 
             } else if (view === 'foro') {
-                title.innerText = "Foro Nacional";
-                // Cargar posts
+                title.innerText = "Comunidad PNFT";
                 let postsHtml = '';
                 try {
-                    const q = window.query(window.collection(db, "foro_posts"), window.orderBy("fecha", "desc"), window.limit(10));
+                    const q = window.query(window.collection(db, "foro_posts"), window.orderBy("fecha", "desc"), window.limit(8));
                     const querySnapshot = await window.getDocs(q);
                     querySnapshot.forEach((doc) => {
                         const p = doc.data();
                         const date = p.fecha?.toDate().toLocaleDateString() || 'Hoy';
                         postsHtml += `
-                            <div class="glass p-6 rounded-2xl mb-4 border-l-4 border-teal-500">
-                                <div class="flex justify-between mb-2">
-                                    <span class="font-bold text-teal-400 text-sm">${p.autor}</span>
-                                    <span class="text-xs text-slate-500">${date}</span>
+                            <div class="glass p-8 rounded-3xl mb-6 bg-white border-l-8 border-teal-500 shadow-sm hover:shadow-md transition-shadow">
+                                <div class="flex justify-between items-center mb-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 bg-teal-50 rounded-full flex items-center justify-center text-teal-600 font-black">${p.autor.charAt(0)}</div>
+                                        <span class="font-black text-slate-800 text-sm">${p.autor}</span>
+                                    </div>
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-full">${date}</span>
                                 </div>
-                                <p class="text-slate-200 text-sm">${p.mensaje}</p>
+                                <p class="text-slate-600 font-medium leading-relaxed">${p.mensaje}</p>
                             </div>`;
                     });
-                } catch (e) { console.log(e); postsHtml = '<p class="text-slate-500">Error cargando posts.</p>'; }
+                } catch (e) { postsHtml = '<p class="text-slate-400 text-center font-bold">Inicia una conversación compartiendo algo arriba.</p>'; }
 
                 container.innerHTML = `
-                    <div class="fade-in max-w-3xl mx-auto">
-                        <div class="glass p-6 rounded-2xl mb-8">
-                            <textarea id="foro-msg" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-4 text-white text-sm focus:border-teal-500 outline-none resize-none" rows="3" placeholder="Comparte una experiencia o duda..."></textarea>
-                            <div class="flex justify-end mt-2">
-                                <button onclick="publicarForo()" class="bg-teal-600 hover:bg-teal-500 text-white px-6 py-2 rounded-lg font-bold text-sm transition">Publicar</button>
+                    <div class="fade-in max-w-4xl mx-auto">
+                        <div class="glass p-8 rounded-[2.5rem] mb-12 bg-white relative shadow-xl overflow-hidden">
+                            <div class="absolute top-0 right-0 p-8 opacity-5"><i class="ph ph-chat-circle-dots text-8xl"></i></div>
+                            <textarea id="foro-msg" class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-6 text-slate-800 text-lg focus:border-teal-500 focus:bg-white outline-none resize-none transition-all placeholder:text-slate-300 font-medium" rows="3" placeholder="¿Qué éxito has tenido hoy en clase? Comparte..."></textarea>
+                            <div class="flex justify-between items-center mt-6">
+                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest pl-2">Se compartirá con la Red Nacional Docente</p>
+                                <button onclick="publicarForo()" class="bg-teal-600 hover:bg-teal-500 text-white px-10 py-3 rounded-2xl font-black text-sm transition-all shadow-lg shadow-teal-600/20 flex items-center gap-3">
+                                    Publicar Experiencia <i class="ph ph-paper-plane-tilt"></i>
+                                </button>
                             </div>
                         </div>
-                        <div id="foro-feed">${postsHtml || '<p class="text-center text-slate-600">Sé el primero en publicar.</p>'}</div>
+                        <div id="foro-feed">${postsHtml}</div>
                     </div>
                 `;
 
                 // --- VISTA: ASESOR IA (IA #2) ---
             } else if (view === 'ia') {
-                title.innerText = "Asesor IA PNFT";
+                title.innerText = "Asistente Estratégico";
                 container.innerHTML = `
-                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-180px)] fade-in">
-                        <div class="lg:col-span-3 glass rounded-3xl flex flex-col overflow-hidden">
-                            <div id="chat-history" class="flex-1 p-6 overflow-y-auto space-y-4">
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 h-[calc(100vh-220px)] fade-in">
+                        <div class="lg:col-span-3 glass rounded-[2.5rem] flex flex-col overflow-hidden bg-white">
+                            <header class="px-8 py-5 border-b border-slate-100 flex items-center gap-4 bg-teal-50/30">
+                                <div class="w-10 h-10 bg-teal-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-teal-600/10">
+                                    <i class="ph-fill ph-robot text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-black text-slate-800 text-sm">IA PNFT 2.5</h4>
+                                    <p class="text-[9px] text-teal-600 font-black uppercase tracking-widest">En línea y listo para apoyarte</p>
+                                </div>
+                            </header>
+                            <div id="chat-history" class="flex-1 p-8 overflow-y-auto space-y-6">
                                 <div class="flex gap-4">
-                                    <div class="w-8 h-8 rounded-full bg-teal-500 flex-shrink-0 flex items-center justify-center text-slate-900 font-bold"><i class="ph-bold ph-robot"></i></div>
-                                    <div class="bg-slate-800 p-4 rounded-2xl rounded-tl-none max-w-[80%] text-sm text-slate-300">
-                                        Hola, soy tu Asistente Virtual del PNFT. Puedo ayudarte con dudas sobre normativas, estrategias didácticas o uso del portal. ¿Qué necesitas hoy?
+                                    <div class="w-8 h-8 rounded-full bg-teal-100 flex-shrink-0 flex items-center justify-center text-teal-600"><i class="ph-fill ph-check-circle"></i></div>
+                                    <div class="bg-slate-50 p-6 rounded-3xl rounded-tl-none max-w-[85%] text-sm font-medium text-slate-600 leading-relaxed shadow-sm">
+                                        Me alegra saludarte. Soy tu asistente virtual impulsado por la visión 2026. Puedo resolver dudas normativas, metodológicas o simplemente escucharte. <br><br> ¿En qué podemos avanzar hoy?
                                     </div>
                                 </div>
                             </div>
-                            <div class="p-4 bg-slate-900/50 border-t border-white/5">
-                                <div class="flex gap-2">
-                                    <input type="text" id="chat-input" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:border-teal-500 outline-none text-white" placeholder="Escribe tu consulta aquí...">
-                                    <button onclick="enviarChatIA()" class="w-12 h-12 bg-teal-500 hover:bg-teal-400 rounded-xl flex items-center justify-center text-slate-900 transition"><i class="ph-bold ph-paper-plane-right text-xl"></i></button>
+                            <div class="p-6 bg-slate-50/50 border-t border-slate-100">
+                                <div class="flex gap-4 bg-white p-2 rounded-[2rem] shadow-lg border border-slate-100">
+                                    <input type="text" id="chat-input" class="flex-1 bg-transparent px-6 py-4 text-sm font-medium outline-none text-slate-800" placeholder="Escribe tu consulta pedagógica aquí...">
+                                    <button onclick="enviarChatIA()" class="w-14 h-14 bg-teal-600 hover:bg-teal-500 rounded-3xl flex items-center justify-center text-white shadow-xl shadow-teal-600/20 transition-all active:scale-90 flex-shrink-0">
+                                        <i class="ph-bold ph-paper-plane-right text-2xl"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                        <div class="glass p-6 rounded-3xl hidden lg:block">
-                            <h4 class="font-bold text-slate-400 text-xs uppercase mb-4">Temas Sugeridos</h4>
-                            <ul class="space-y-2">
-                                <li class="text-xs text-teal-400 hover:underline cursor-pointer" onclick="setInputChat('¿Cómo evalúo competencias?')">¿Cómo evalúo competencias?</li>
-                                <li class="text-xs text-teal-400 hover:underline cursor-pointer" onclick="setInputChat('Estrategias para matemáticas')">Estrategias matemáticas</li>
-                                <li class="text-xs text-teal-400 hover:underline cursor-pointer" onclick="setInputChat('Reglamento de licencias')">Reglamento licencias</li>
+                        <div class="glass p-8 rounded-[2.5rem] hidden lg:block bg-gradient-to-b from-white to-teal-50/50">
+                            <h4 class="font-black text-teal-600 text-[10px] uppercase tracking-widest mb-6 px-1">Consultas Frecuentes</h4>
+                            <ul class="space-y-4">
+                                <li class="text-xs font-bold text-slate-500 hover:text-teal-600 bg-white p-4 rounded-xl shadow-sm border border-slate-100 transition-all cursor-pointer flex items-center gap-3" onclick="setInputChat('¿Cómo evalúo competencias?')">
+                                    <i class="ph ph-circles-three-plus text-lg"></i> Redacción de Competencias
+                                </li>
+                                <li class="text-xs font-bold text-slate-500 hover:text-teal-600 bg-white p-4 rounded-xl shadow-sm border border-slate-100 transition-all cursor-pointer flex items-center gap-3" onclick="setInputChat('Estrategias de mediación tecnológica')">
+                                    <i class="ph ph-cpu text-lg"></i> Mediación Tecnológica
+                                </li>
+                                <li class="text-xs font-bold text-slate-500 hover:text-teal-600 bg-white p-4 rounded-xl shadow-sm border border-slate-100 transition-all cursor-pointer flex items-center gap-3" onclick="setInputChat('Reglamento de licencias actual')">
+                                    <i class="ph ph-scales text-lg"></i> Base Normativa
+                                </li>
+                                <li class="text-xs font-bold text-slate-500 hover:text-teal-600 bg-white p-4 rounded-xl shadow-sm border border-slate-100 transition-all cursor-pointer flex items-center gap-3" onclick="setInputChat('Ideas para un recreo creativo')">
+                                    <i class="ph ph-popcorn text-lg"></i> Inspiración Diaria
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -410,35 +517,42 @@
 
                 // --- VISTA: ADMIN PANEL ---
             } else if (view === 'admin') {
-                title.innerText = "Gestión Administrativa";
+                title.innerText = "Centro de Gestión";
                 container.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fade-in">
-                        <div class="glass p-6 rounded-3xl border border-amber-500/30">
-                            <div class="flex items-center gap-4 mb-4">
-                                <div class="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center text-amber-500"><i class="ph-bold ph-file-xls text-2xl"></i></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 fade-in">
+                        <div class="glass p-10 rounded-[2.5rem] bg-white relative overflow-hidden">
+                            <div class="absolute top-0 right-0 p-10 opacity-5"><i class="ph ph-users-three text-8xl"></i></div>
+                            <div class="flex items-center gap-6 mb-10">
+                                <div class="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 shadow-sm"><i class="ph-fill ph-file-xls text-3xl"></i></div>
                                 <div>
-                                    <h3 class="font-bold text-lg">Carga Masiva Docentes</h3>
-                                    <p class="text-xs text-slate-400">Actualizar base de datos desde Excel</p>
+                                    <h3 class="font-black text-2xl text-slate-800">Sincronización Masiva</h3>
+                                    <p class="text-xs text-rose-500 font-bold uppercase tracking-widest mt-1">Base de Datos PNFT</p>
                                 </div>
                             </div>
                             <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden" onchange="procesarExcel(this)">
-                            <button onclick="document.getElementById('excel-upload').click()" class="w-full border border-dashed border-slate-600 hover:border-amber-500 text-slate-400 hover:text-amber-500 rounded-xl py-8 transition flex flex-col items-center gap-2">
-                                <i class="ph-bold ph-upload-simple text-2xl"></i>
-                                <span class="text-sm font-bold">Clic para subir archivo Excel</span>
+                            <button onclick="document.getElementById('excel-upload').click()" class="w-full border-4 border-dashed border-rose-100 hover:border-rose-400 text-rose-300 hover:text-rose-500 rounded-3xl py-12 transition-all flex flex-col items-center gap-4 group">
+                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg transition-transform group-hover:scale-110"><i class="ph-bold ph-upload-simple text-3xl"></i></div>
+                                <span class="text-sm font-black uppercase tracking-widest">Seleccionar Archivo Excel</span>
                             </button>
-                            <p id="excel-status" class="mt-2 text-center text-xs text-slate-500"></p>
+                            <p id="excel-status" class="mt-6 text-center text-[10px] text-slate-400 font-black uppercase tracking-widest"></p>
                         </div>
                         
-                        <div class="glass p-6 rounded-3xl">
-                            <h3 class="font-bold text-lg mb-4">Estadísticas Rápidas</h3>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="bg-slate-800/50 p-4 rounded-xl">
-                                    <span class="text-slate-400 text-xs">Total Docentes</span>
-                                    <p class="text-2xl font-black text-white">0</p>
+                        <div class="glass p-10 rounded-[2.5rem] bg-white">
+                            <h3 class="font-black text-2xl text-slate-800 mb-8">Estado Global</h3>
+                            <div class="grid grid-cols-1 gap-6">
+                                <div class="bg-teal-50/50 p-8 rounded-3xl border border-teal-100/50 flex items-center justify-between">
+                                    <div>
+                                        <p class="text-teal-600 text-[10px] font-black uppercase tracking-widest mb-1">Docentes Registrados</p>
+                                        <p class="text-5xl font-black text-slate-800">1,240</p>
+                                    </div>
+                                    <i class="ph-fill ph-users-four text-5xl text-teal-100"></i>
                                 </div>
-                                <div class="bg-slate-800/50 p-4 rounded-xl">
-                                    <span class="text-slate-400 text-xs">Instituciones</span>
-                                    <p class="text-2xl font-black text-teal-400">0</p>
+                                <div class="bg-rose-50/50 p-8 rounded-3xl border border-rose-100/50 flex items-center justify-between">
+                                    <div>
+                                        <p class="text-rose-500 text-[10px] font-black uppercase tracking-widest mb-1">Instituciones Activas</p>
+                                        <p class="text-5xl font-black text-slate-800">48</p>
+                                    </div>
+                                    <i class="ph-fill ph-buildings text-5xl text-rose-100"></i>
                                 </div>
                             </div>
                         </div>
@@ -498,7 +612,11 @@
             const resDiv = document.getElementById('ia-result');
 
             if (!tema) return;
-            resDiv.innerHTML = '<div class="animate-pulse">✨ Diseñando situación de aprendizaje...</div>';
+            resDiv.innerHTML = `
+                <div class="flex flex-col items-center fade-in">
+                    <div class="w-16 h-16 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                    <p class="text-teal-600 font-black uppercase tracking-widest text-[10px] animate-pulse">La IA está diseñando tu reto pedagógico...</p>
+                </div>`;
 
             const prompt = `Actúa como especialista curricular del MEP Costa Rica. Crea una "Situación Problema" detallada para el tema: "${tema}" dirigida a estudiantes de ${nivel}. Incluye: 1. Contexto, 2. Reto/Problema, 3. Preguntas generadoras. Formato breve y directo.`;
 
@@ -506,7 +624,13 @@
 
             // Formatear Markdown simple a HTML
             const htmlRes = respuesta.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
-            resDiv.innerHTML = `<div class="text-left text-sm text-slate-200 overflow-y-auto max-h-[400px] leading-relaxed">${htmlRes}</div>`;
+            resDiv.innerHTML = `
+                <div class="prose prose-slate max-w-none text-left h-[400px] overflow-y-auto p-6 bg-white rounded-3xl shadow-inner custom-scrollbar">
+                    <div class="text-slate-600 font-medium leading-relaxed whitespace-pre-wrap">${htmlRes}</div>
+                    <div class="mt-8 flex justify-end">
+                        <button onclick="window.print()" class="text-[10px] font-black text-teal-600 uppercase border border-teal-100 px-4 py-2 rounded-xl hover:bg-teal-50 transition-colors">Imprimir Guía</button>
+                    </div>
+                </div>`;
         };
 
         window.enviarChatIA = async () => {
@@ -516,13 +640,22 @@
 
             const hist = document.getElementById('chat-history');
             // User msg
-            hist.innerHTML += `<div class="flex gap-4 flex-row-reverse"><div class="w-8 h-8 rounded-full bg-indigo-500 flex-shrink-0 flex items-center justify-center text-white font-bold">Tú</div><div class="bg-indigo-500/20 p-4 rounded-2xl rounded-tr-none max-w-[80%] text-sm text-white">${txt}</div></div>`;
+            hist.innerHTML += `
+                <div class="flex justify-end gap-3 fade-in">
+                    <div class="bg-teal-600 text-white p-6 rounded-[2rem] rounded-tr-none max-w-[85%] text-sm font-bold shadow-xl shadow-teal-600/10">
+                        ${txt}
+                    </div>
+                </div>`;
             input.value = "";
             hist.scrollTop = hist.scrollHeight;
 
             // IA thinking
             const loadingId = "load-" + Date.now();
-            hist.innerHTML += `<div id="${loadingId}" class="flex gap-4"><div class="w-8 h-8 rounded-full bg-teal-500 flex-shrink-0 flex items-center justify-center text-slate-900 font-bold"><i class="ph-bold ph-robot"></i></div><div class="bg-slate-800 p-4 rounded-2xl rounded-tl-none text-sm text-slate-400 animate-pulse">Escribiendo...</div></div>`;
+            hist.innerHTML += `
+                <div id="${loadingId}" class="flex gap-4 fade-in">
+                    <div class="w-8 h-8 rounded-full bg-teal-100 flex-shrink-0 flex items-center justify-center text-teal-600"><i class="ph-fill ph-check-circle animate-pulse"></i></div>
+                    <div class="bg-slate-50 p-6 rounded-[2rem] rounded-tl-none text-sm font-black text-teal-600 uppercase tracking-widest animate-pulse">Analizando...</div>
+                </div>`;
             hist.scrollTop = hist.scrollHeight;
 
             const contexto = "Eres un Asesor del PNFT (Plan Nacional de Formación Tecnológica) de Costa Rica. Responde dudas docentes de forma amable y técnica.";
@@ -531,7 +664,13 @@
             document.getElementById(loadingId).remove();
             const htmlRes = respuesta.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
 
-            hist.innerHTML += `<div class="flex gap-4"><div class="w-8 h-8 rounded-full bg-teal-500 flex-shrink-0 flex items-center justify-center text-slate-900 font-bold"><i class="ph-bold ph-robot"></i></div><div class="bg-slate-800 p-4 rounded-2xl rounded-tl-none max-w-[80%] text-sm text-slate-300 leading-relaxed">${htmlRes}</div></div>`;
+            hist.innerHTML += `
+                <div class="flex gap-4 fade-in">
+                    <div class="w-8 h-8 rounded-full bg-teal-100 flex-shrink-0 flex items-center justify-center text-teal-600"><i class="ph-fill ph-check-circle"></i></div>
+                    <div class="bg-white p-6 rounded-[2rem] rounded-tl-none max-w-[85%] text-sm font-medium text-slate-600 leading-relaxed shadow-sm border border-slate-100">
+                        ${htmlRes}
+                    </div>
+                </div>`;
             hist.scrollTop = hist.scrollHeight;
         };
 
