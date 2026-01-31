@@ -464,46 +464,31 @@
             } catch (e) { alert("Error: " + e.message); }
         };
 
-        // --- LÓGICA IA (GEMINI ACTUALIZADA 2026) ---
+        // --- LÓGICA IA (GEMINI) ---
         async function llamarGemini(prompt) {
-            // Verificamos que exista la llave
-            if (!window.geminiKey) return "⚠️ Error: Falta configurar la API Key de Gemini.";
+            if (!window.geminiKey) return "⚠️ Error: Falta configurar la API Key de Gemini en el sistema.";
 
-// --- LÓGICA IA (GEMINI 2.0 - ESTÁNDAR 2026) ---
-        async function llamarGemini(prompt) {
-            if (!window.geminiKey) return "⚠️ Error: Falta configurar la API Key de Gemini.";
-
-            // 👇 CAMBIO CRÍTICO: Usamos el modelo vigente en 2026
-            const MODEL_NAME = "gemini-2.0-flash"; 
-            
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${window.geminiKey}`;
-            
+            // Usamos Gemini 2.0 Flash (Experimental) para mayor rendimiento y longevidad del proyecto (ciclo 2026)
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${window.geminiKey}`;
             try {
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        contents: [{ parts: [{ text: prompt }] }] 
-                    })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
 
-                if (!response.ok) {
-                    const errData = await response.json();
-                    console.error("Error Gemini:", errData);
-                    throw new Error(`Error ${response.status}: ${errData.error?.message || response.statusText}`);
-                }
-
                 const data = await response.json();
-                
-                if (!data.candidates || data.candidates.length === 0) {
-                    return "El sistema está activo pero no generó texto. Intenta reformular.";
+
+                if (!response.ok) {
+                    // Mostrar error detallado de Google
+                    console.error("Error Gemini:", data);
+                    return `⚠️ Error API (${response.status}): ${data.error?.message || response.statusText}`;
                 }
 
                 return data.candidates[0].content.parts[0].text;
-
             } catch (error) {
-                console.error("Fallo Conexión IA:", error);
-                return `⚠️ Error de conexión con el modelo ${MODEL_NAME}. Verifica tu API Key.`;
+                console.error(error);
+                return `⛔ Error de conexión: ${error.message}`;
             }
         }
 
@@ -692,5 +677,3 @@
 </body>
 
 </html>
-
-
