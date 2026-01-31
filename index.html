@@ -10,10 +10,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f1f5f9; margin: 0; }
         .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .btn-primary { background: #14b8a6; color: #0f172a; font-weight: 900; text-transform: uppercase; transition: all 0.2s; }
+        .btn-primary { background: #14b8a6; color: #0f172a; font-weight: 900; text-transform: uppercase; transition: all 0.2s; border: none; cursor: pointer; }
         .btn-primary:hover { background: #06b6d4; transform: translateY(-2px); }
         .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -28,17 +28,18 @@
                 </div>
                 <div>
                     <h2 class="font-black text-xl tracking-tighter leading-none">PNFT Core</h2>
-                    <span id="auth-status" class="text-[10px] font-bold text-teal-500 uppercase tracking-widest">Sincronizando...</span>
+                    <span id="auth-status" class="text-[10px] font-bold text-teal-500 uppercase tracking-widest italic">Iniciando...</span>
                 </div>
             </div>
             <nav id="sidebar-nav" class="flex-1 space-y-2"></nav>
-            <div id="user-info" class="pt-6 border-t border-slate-800 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center"></div>
+            <div id="user-info" class="pt-6 border-t border-slate-800 text-[9px] font-bold text-slate-500 uppercase tracking-widest text-center"></div>
         </aside>
 
         <main class="flex-1 ml-72 p-12">
             <div id="app-content" class="max-w-6xl mx-auto fade-in">
-                <div class="text-center py-20">
-                    <p class="animate-pulse text-slate-500 font-bold">Iniciando Portal Nacional...</p>
+                <div class="flex flex-col items-center justify-center py-40">
+                    <div class="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                    <p class="text-slate-400 font-bold uppercase tracking-widest text-xs">Cargando Módulos Nacionales...</p>
                 </div>
             </div>
         </main>
@@ -49,6 +50,7 @@
         import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, doc, query, orderBy, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // CONFIGURACIÓN DE FIREBASE (PROYECTO: asesoriayseguimiento2026)
         const firebaseConfig = {
             apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A",
             authDomain: "asesoriayseguimiento2026.firebaseapp.com",
@@ -62,47 +64,51 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const ASESORES = {
+        // FIRMAS DINÁMICAS SEGÚN EL ASESOR LOGUEADO
+        const ASESORES_INFO = {
             "alberto.bustos.ortega@mep.go.cr": { nombre: "Alberto José Bustos Ortega", cargo: "Asesor Nacional de Recursos Tecnológicos en Educación" },
             "rodolfo.juarez.perez@mep.go.cr": { nombre: "Rodolfo Juárez Pérez", cargo: "Asesor Nacional de Recursos Tecnológicos en Educación" }
         };
 
-        window.state = { view: 'dashboard', user: null, isAdmin: false, chart: null };
+        window.state = { view: 'dashboard', user: null, isAdmin: false };
 
-        // --- GESTIÓN PEDAGÓGICA ---
+        // --- GENERADOR PEDAGÓGICO (Rúbricas y Listas de Cotejo) ---
         window.generateTool = async () => {
             const nivel = document.getElementById('nivel-sel').value;
             const saber = document.getElementById('saber-input').value;
             const tipo = document.getElementById('tipo-sel').value;
             const resArea = document.getElementById('tool-results');
-            if(!saber) return alert("Indique el saber técnico.");
+            if(!saber) return alert("Por favor, indique el saber técnico.");
 
-            resArea.innerHTML = `<div class="p-8 glass rounded-3xl animate-pulse text-teal-400 font-bold">✨ El Asesor Virtual está construyendo su ${tipo}...</div>`;
+            resArea.innerHTML = `<div class="p-10 glass rounded-[2.5rem] animate-pulse text-teal-400 font-bold">✨ Generando ${tipo} bajo estándares de la Guía Docente 2026...</div>`;
 
-            const prompt = `Actúa como Asesor PNFT. Nivel: ${nivel}° año. Saber: ${saber}. Crea una ${tipo.toUpperCase()} pedagógica. 
-            Si es RÚBRICA: Indicador (Acción+Contenido+Condición) + Niveles (Inicial, Intermedio, Avanzado). 
-            Si es COTEJO: Indicador + Sí/No. Básate en la Guía Docente 2026.`;
+            // Prompt optimizado con la estructura Acción + Contenido + Condición
+            const prompt = `Actúa como Asesor Nacional del MEP. Crea una ${tipo.toUpperCase()} para ${nivel}° año. Saber: ${saber}. 
+            REGLA: Usa Indicadores de Evaluación con estructura Acción+Contenido+Condición. 
+            Si es Rúbrica: Niveles Inicial, Intermedio y Avanzado. Si es Cotejo: Sí/No.`;
 
-            const docRef = await addDoc(collection(db, "docentes", auth.currentUser.uid, "consultas_ia"), { prompt, timestamp: Date.now() });
+            try {
+                const docRef = await addDoc(collection(db, "docentes", auth.currentUser.uid, "consultas_ia"), { prompt, timestamp: Date.now() });
 
-            onSnapshot(doc(db, "docentes", auth.currentUser.uid, "consultas_ia", docRef.id), (snap) => {
-                const res = snap.data()?.response;
-                if(res) {
-                    const info = ASESORES[auth.currentUser.email?.toLowerCase()] || { nombre: "Asesor Nacional", cargo: "PNFT" };
-                    const firma = `\n\n__________________________________\n${info.nombre}\n${info.cargo}`;
-                    resArea.innerHTML = `
-                        <div id="pdf-box" class="glass p-10 rounded-[2.5rem] border-teal-500/20 text-slate-300 text-sm leading-relaxed">
-                            ${res.replace(/\n/g, '<br>')}
-                            <div class="mt-8 pt-6 border-t border-white/5 text-slate-500 italic uppercase text-[9px] tracking-widest">${firma.replace(/\n/g, '<br>')}</div>
-                        </div>
-                        <button onclick="downloadPDF('pdf-box', 'Herramienta_PNFT_2026')" class="mt-6 btn-primary px-8 py-4 rounded-2xl w-full flex items-center justify-center gap-2">
-                            <i class="ph ph-file-pdf text-xl"></i> Descargar Documento
-                        </button>`;
-                }
-            });
+                onSnapshot(doc(db, "docentes", auth.currentUser.uid, "consultas_ia", docRef.id), (snap) => {
+                    const res = snap.data()?.response;
+                    if(res) {
+                        const info = ASESORES_INFO[auth.currentUser.email?.toLowerCase()] || { nombre: "Asesor Nacional", cargo: "PNFT" };
+                        const firma = `\n\n__________________________________\n${info.nombre}\n${info.cargo}`;
+                        resArea.innerHTML = `
+                            <div id="pdf-content" class="glass p-10 rounded-[3rem] border-teal-500/20 text-slate-300 text-sm leading-relaxed shadow-2xl">
+                                ${res.replace(/\n/g, '<br>')}
+                                <div class="mt-8 pt-6 border-t border-white/5 text-slate-500 italic text-[10px] uppercase tracking-widest">${firma.replace(/\n/g, '<br>')}</div>
+                            </div>
+                            <button onclick="downloadPDF('pdf-content', 'Instrumento_PNFT_2026')" class="mt-6 btn-primary px-8 py-5 rounded-3xl w-full flex items-center justify-center gap-3">
+                                <i class="ph-bold ph-file-pdf text-xl"></i> DESCARGAR DOCUMENTO OFICIAL
+                            </button>`;
+                    }
+                });
+            } catch (e) { alert("Error al conectar con la IA de Firebase."); }
         };
 
-        // --- GESTIÓN DE DATOS ---
+        // --- GESTIÓN ADMINISTRATIVA (Excel y MITDE) ---
         window.processExcel = (event) => {
             const reader = new FileReader();
             reader.onload = async (e) => {
@@ -111,106 +117,124 @@
                 const batch = writeBatch(db);
                 rows.forEach(row => {
                     batch.set(doc(collection(db, "gestion_asesoria")), {
-                        institucion: row["Nombre de la Institución"] || row["Institución"] || "N/A",
-                        docente: row["Nombre del docente"] || "N/A",
+                        institucion: row["Nombre de la Institución"] || row["Institución"] || "Sin Nombre",
+                        docente: row["Nombre del docente"] || "No asignado",
                         regional: row["Dirección Regional"] || "N/A",
                         esMITDE: false,
-                        timestamp: Date.now(),
-                        asesor: auth.currentUser.email
+                        asesor: auth.currentUser.email,
+                        timestamp: Date.now()
                     });
                 });
                 await batch.commit();
-                alert("Centros cargados con éxito.");
+                alert("Centros cargados exitosamente.");
             };
             reader.readAsArrayBuffer(event.target.files[0]);
         };
 
-        // --- VISTAS ---
+        // --- NAVEGACIÓN ---
         window.renderView = (viewId) => {
             window.state.view = viewId;
             const c = document.getElementById('app-content');
             window.renderSidebar();
 
-            if (viewId === 'dashboard') {
-                c.innerHTML = `
-                <div class="bg-gradient-to-br from-slate-800 to-indigo-950 p-20 rounded-[4rem] text-white shadow-2xl relative overflow-hidden">
-                    <h1 class="text-7xl font-black mb-4 tracking-tighter leading-tight">PNFT CORE<br><span class="text-teal-500">2026</span></h1>
-                    <p class="text-slate-400 text-xl font-medium max-w-lg italic">"Acompañamiento estratégico para la educación del futuro."</p>
-                    <i class="ph-fill ph-cpu text-[25rem] absolute -right-20 -bottom-20 opacity-5"></i>
-                </div>`;
-            } else if (viewId === 'pedagogia') {
+            if (viewId === 'pedagogia') {
                 c.innerHTML = `
                 <div class="max-w-3xl fade-in">
-                    <h2 class="text-4xl font-black mb-10 text-white tracking-tight">Evaluación PNFT 2026</h2>
-                    <div class="glass p-10 rounded-[3rem] space-y-6">
-                        <div class="grid grid-cols-2 gap-4">
-                            <select id="nivel-sel" class="bg-slate-800 p-4 rounded-xl border-none outline-none text-sm font-bold"><option value="7">Sétimo</option><option value="8">Octavo</option><option value="9">Noveno</option></select>
-                            <select id="tipo-sel" class="bg-slate-800 p-4 rounded-xl border-none outline-none text-sm font-bold"><option value="rubrica">Rúbrica</option><option value="cotejo">Lista de Cotejo</option></select>
+                    <h2 class="text-5xl font-black mb-10 tracking-tighter text-white leading-none">Instrumentos de<br><span class="text-teal-500">Evaluación 2026</span></h2>
+                    <div class="glass p-12 rounded-[3.5rem] space-y-8">
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <label class="text-[10px] font-black text-teal-500 uppercase mb-2 block tracking-widest">Nivel Curricular</label>
+                                <select id="nivel-sel" class="w-full bg-slate-800 p-4 rounded-2xl border-none outline-none text-sm font-bold"><option value="7">Sétimo Año</option><option value="8">Octavo Año</option><option value="9">Noveno Año</option></select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-black text-teal-500 uppercase mb-2 block tracking-widest">Herramienta</label>
+                                <select id="tipo-sel" class="w-full bg-slate-800 p-4 rounded-2xl border-none outline-none text-sm font-bold"><option value="rubrica">Rúbrica de Desempeño</option><option value="cotejo">Lista de Cotejo</option></select>
+                            </div>
                         </div>
-                        <input id="saber-input" class="w-full bg-slate-800 p-4 rounded-xl border-none outline-none" placeholder="Saber técnico (ej. Circuitos, IA, Datos)...">
-                        <button onclick="generateTool()" class="w-full btn-primary py-5 rounded-2xl shadow-lg">Generar con IA ✨</button>
+                        <div>
+                            <label class="text-[10px] font-black text-teal-500 uppercase mb-2 block tracking-widest">Saber Técnico (Referencia Guía 2026)</label>
+                            <input id="saber-input" class="w-full bg-slate-800 p-5 rounded-2xl border-none outline-none text-sm" placeholder="Ej: Algoritmos, Robótica, IA, Ciudadanía Digital...">
+                        </div>
+                        <button onclick="generateTool()" class="w-full btn-primary py-6 rounded-3xl shadow-xl shadow-teal-500/10 text-sm">Generar Instrumento con IA ✨</button>
                     </div>
-                    <div id="tool-results" class="mt-10"></div>
+                    <div id="tool-results" class="mt-12"></div>
                 </div>`;
             } else if (viewId === 'admin') {
                 c.innerHTML = `
-                <div class="space-y-10 fade-in">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-4xl font-black">Gestión Nacional de Asesoría</h2>
-                        <label class="bg-slate-800 px-6 py-3 rounded-2xl cursor-pointer font-bold text-xs uppercase flex items-center gap-2 hover:bg-slate-700">
-                            <i class="ph ph-file-xls text-xl"></i> Cargar Excel
+                <div class="fade-in space-y-10">
+                    <div class="flex justify-between items-end">
+                        <h2 class="text-5xl font-black text-white tracking-tighter">Gestión de<br>Asesoría Nacional</h2>
+                        <label class="bg-indigo-600 px-8 py-4 rounded-2xl cursor-pointer font-bold text-xs uppercase flex items-center gap-3 hover:bg-indigo-500 transition-all">
+                            <i class="ph ph-file-xls text-xl"></i> Cargar Centros (Excel)
                             <input type="file" class="hidden" onchange="processExcel(event)">
                         </label>
                     </div>
-                    <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                    <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </div>`;
                 onSnapshot(query(collection(db, "gestion_asesoria"), orderBy("timestamp", "desc")), (snap) => {
                     document.getElementById('cards-container').innerHTML = snap.docs.map(d => {
                         const i = d.data();
                         return `
-                        <div class="glass p-8 rounded-[2.5rem] border-t-2 ${i.esMITDE ? 'border-teal-400' : 'border-slate-800'}">
-                            <div class="flex justify-between mb-4">
-                                <span class="bg-slate-900 px-3 py-1 rounded text-[10px] font-black text-slate-500 uppercase">${i.regional}</span>
-                                <span class="text-[9px] font-bold text-teal-500 uppercase tracking-widest">${i.esMITDE ? 'CENTRO MITDE' : ''}</span>
+                        <div class="glass p-8 rounded-[2.5rem] border-t-2 ${i.esMITDE ? 'border-teal-400 shadow-teal-500/10 shadow-lg' : 'border-slate-800'}">
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="bg-slate-900 px-3 py-1 rounded-lg text-[10px] font-black text-slate-500 uppercase">${i.regional}</span>
+                                <span class="text-[9px] font-bold text-teal-400 uppercase tracking-widest">${i.esMITDE ? 'CENTRO MITDE' : ''}</span>
                             </div>
-                            <h4 class="text-xl font-bold mb-1">${i.institucion}</h4>
-                            <p class="text-xs text-slate-500 mb-2">${i.docente}</p>
+                            <h4 class="text-xl font-black text-white leading-tight mb-2">${i.institucion}</h4>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Docente: ${i.docente}</p>
                         </div>`;
                     }).join('');
                 });
+            } else {
+                c.innerHTML = `
+                <div class="bg-gradient-to-br from-slate-800 to-indigo-950 p-24 rounded-[5rem] text-white relative overflow-hidden shadow-2xl fade-in border border-white/5">
+                    <h1 class="text-8xl font-black tracking-tighter mb-6 leading-none">PNFT CORE<br><span class="text-teal-500">2026</span></h1>
+                    <p class="text-slate-400 text-2xl font-medium max-w-xl leading-relaxed italic">"Transformando la educación tecnológica a través del acompañamiento estratégico."</p>
+                    <i class="ph-fill ph-rocket-launch text-[30rem] absolute -right-20 -bottom-20 opacity-5"></i>
+                </div>`;
             }
+            window.renderSidebar();
         };
 
         window.renderSidebar = () => {
             const nav = document.getElementById('sidebar-nav');
-            const menu = [
+            const items = [
                 { id: 'dashboard', icon: 'ph-house', label: 'Inicio' },
                 { section: 'Pedagogía' },
-                { id: 'pedagogia', icon: 'ph-article', label: 'Instrumentos IA' }
+                { id: 'pedagogia', icon: 'ph-list-checks', label: 'Instrumentos IA' }
             ];
             if(window.state.isAdmin) {
-                menu.push({ section: 'Asesoría' });
-                menu.push({ id: 'admin', icon: 'ph-chart-pie', label: 'Gestión Nacional' });
+                items.push({ section: 'Asesoría' });
+                items.push({ id: 'admin', icon: 'ph-chart-pie', label: 'Gestión Nacional' });
             }
-            nav.innerHTML = menu.map(i => i.section ? `<div class="mt-8 mb-2 px-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">${i.section}</div>` : 
-                `<button onclick="renderView('${i.id}')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${window.state.view === i.id ? 'bg-teal-500/10 text-teal-400' : 'text-slate-400 hover:bg-white/5'}"><i class="ph ${i.icon} text-lg"></i> ${i.label}</button>`
+            nav.innerHTML = items.map(i => i.section ? `<div class="mt-8 mb-2 px-4 text-[10px] font-black text-slate-600 uppercase tracking-widest">${i.section}</div>` : 
+                `<button onclick="renderView('${i.id}')" class="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold transition-all ${window.state.view === i.id ? 'bg-teal-500/10 text-teal-400 shadow-inner' : 'text-slate-500 hover:bg-white/5 hover:text-slate-200'}">
+                    <i class="ph ${i.icon} text-xl"></i> ${i.label}
+                </button>`
             ).join('');
         };
 
-        onAuthStateChanged(auth, async (user) => {
-            if(!user) { await signInAnonymously(auth); return; }
-            window.state.user = user;
-            window.state.isAdmin = Object.keys(ASESORES).includes(user.email?.toLowerCase());
-            document.getElementById('user-info').innerText = window.state.isAdmin ? "Modo: Asesor Nacional" : "Modo: Docente MEP";
+        // --- AUTH & INITIALIZATION ---
+        onAuthStateChanged(auth, async (u) => {
+            if(!u) {
+                try { await signInAnonymously(auth); } catch(e) { console.error("Error Auth", e); }
+                return;
+            }
+            window.state.user = u;
+            const email = u.email ? u.email.toLowerCase() : "";
+            window.state.isAdmin = Object.keys(ASESORES_INFO).includes(email);
+            document.getElementById('auth-status').innerText = window.state.isAdmin ? "Control Asesor" : "Portal Docente";
+            document.getElementById('user-info').innerText = window.state.isAdmin ? "Modo Administrador" : "Modo Consulta";
             window.renderView('dashboard');
         });
 
         window.downloadPDF = (id, title) => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            doc.setFontSize(14); doc.text("PORTAL PNFT 2026 - INSTRUMENTO OFICIAL", 15, 20);
-            doc.setFontSize(10); const lines = doc.splitTextToSize(document.getElementById(id).innerText, 180);
-            doc.text(lines, 15, 30);
+            doc.setFontSize(14); doc.text("RECURSOS TECNOLÓGICOS - INSTRUMENTO OFICIAL", 15, 20);
+            doc.setFontSize(10); const splitText = doc.splitTextToSize(document.getElementById(id).innerText, 180);
+            doc.text(splitText, 15, 30);
             doc.save(`${title}.pdf`);
         };
     </script>
