@@ -349,35 +349,129 @@
 
                 // --- VISTA: ORIENTACIONES ---
             } else if (view === 'orientaciones') {
-                title.innerText = "Orientaciones Técnicas";
+                title.innerText = "Orientaciones Docente 2026";
                 container.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 fade-in">
-                        <div class="glass p-8 rounded-[2rem] hover:border-teal-200 transition-all group cursor-pointer bg-white relative overflow-hidden">
-                            <div class="flex justify-between items-start mb-6">
-                                <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-500 shadow-sm"><i class="ph-fill ph-files text-3xl"></i></div>
-                                <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-teal-600 group-hover:text-white transition-all"><i class="ph ph-arrow-up-right"></i></div>
+                    <div class="fade-in space-y-12 pb-20">
+                        <!-- Hero & Audio -->
+                        <div class="glass p-10 rounded-[2.5rem] bg-gradient-to-br from-white to-teal-50/50 relative overflow-hidden">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                                <div>
+                                    <span class="bg-rose-500 text-white text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-6 inline-block">Actualización 2026</span>
+                                    <h3 class="text-4xl font-black text-slate-800 mb-4">Hoja de Ruta Secundaria</h3>
+                                    <p class="text-slate-500 font-medium leading-relaxed text-lg">
+                                        Bienvenido docente de III Ciclo y Educación Diversificada. Esta sección desglosa los andamiajes necesarios para tu éxito administrativo y pedagógico en el PNFT.
+                                    </p>
+                                </div>
+                                <div class="bg-white p-6 rounded-3xl shadow-xl shadow-teal-900/5">
+                                    <p class="text-[10px] font-black text-teal-600 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                        <i class="ph-fill ph-play-circle text-lg"></i> Resumen introductorio en audio
+                                    </p>
+                                    <video controls class="w-full rounded-2xl bg-slate-900 aspect-video shadow-inner">
+                                        <source src="https://res.cloudinary.com/dljxx3chc/video/upload/v1769616584/Orientaciones_Docente_2026_t1q9so.mp4" type="video/mp4">
+                                        Tu navegador no soporta el reproductor de video.
+                                    </video>
+                                </div>
                             </div>
-                            <h3 class="text-2xl font-black text-slate-800 mb-3">Lineamientos Generales</h3>
-                            <p class="text-slate-500 font-medium leading-relaxed">Documentación central para la implementación curricular del PNFT en el ciclo 2026.</p>
-                            <div class="mt-6 flex gap-2">
-                                <span class="text-[9px] font-black bg-slate-100 text-slate-500 px-3 py-1 rounded-lg uppercase">PDF Oficial</span>
-                                <span class="text-[9px] font-black bg-teal-50 text-teal-600 px-3 py-1 rounded-lg uppercase">Actualizado</span>
+                            <i class="ph-fill ph-quotes text-[12rem] absolute -left-10 -bottom-10 text-teal-600/5 rotate-12"></i>
+                        </div>
+
+                        <!-- Los 3 Pilares Secundaria -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="glass p-8 rounded-[2rem] bg-white border-b-8 border-teal-500 hover:scale-[1.02] transition-transform">
+                                <div class="w-14 h-14 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-600 mb-6 shadow-sm"><i class="ph-fill ph-brain text-3xl"></i></div>
+                                <h4 class="text-xl font-black text-slate-800 mb-3">Eje Pedagógico</h4>
+                                <ul class="text-sm text-slate-500 space-y-3 font-medium">
+                                    <li class="flex items-start gap-2"><i class="ph ph-check-circle text-teal-500 mt-1"></i> Aprendizaje Basado en Retos Situados para jóvenes.</li>
+                                    <li class="flex items-start gap-2"><i class="ph ph-check-circle text-teal-500 mt-1"></i> Fomento del pensamiento crítico y computacional.</li>
+                                    <li class="flex items-start gap-2"><i class="ph ph-check-circle text-teal-500 mt-1"></i> Evaluación por competencias MEP 2026.</li>
+                                </ul>
+                            </div>
+                            <div class="glass p-8 rounded-[2rem] bg-white border-b-8 border-rose-500 hover:scale-[1.02] transition-transform">
+                                <div class="w-14 h-14 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 mb-6 shadow-sm"><i class="ph-fill ph-clipboard-text text-3xl"></i></div>
+                                <h4 class="text-xl font-black text-slate-800 mb-3">Eje Administrativo</h4>
+                                <ul class="text-sm text-slate-500 space-y-3 font-medium">
+                                    <li class="flex items-start gap-2"><i class="ph ph-check-circle text-rose-500 mt-1"></i> Gestión de bitácoras digitales mensuales.</li>
+                                    <li class="flex items-start gap-2"><i class="ph ph-check-circle text-rose-500 mt-1"></i> Registro de evidencias en plataforma Core.</li>
+                                    <li class="flex items-start gap-2"><i class="ph ph-check-circle text-rose-500 mt-1"></i> Cumplimiento de calendarios de reporte técnico.</li>
+                                </ul>
+                            </div>
+                            <div class="glass p-8 rounded-[2rem] bg-white border-b-8 border-indigo-500 hover:scale-[1.02] transition-transform">
+                                <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-500 mb-6 shadow-sm"><i class="ph-fill ph-cpu text-3xl"></i></div>
+                                <h4 class="text-xl font-black text-slate-800 mb-3">Eje Técnico</h4>
+                                <ul class="text-sm text-slate-500 space-y-3 font-medium">
+                                    <li class="flex items-start gap-2"><i class="ph ph-check-circle text-indigo-500 mt-1"></i> Dominio de entornos de programación avanzada.</li>
+                                    <li class="flex items-start gap-2"><i class="ph ph-check-circle text-indigo-500 mt-1"></i> Mantenimiento preventivo de equipo de laboratorio.</li>
+                                    <li class="flex items-start gap-2"><i class="ph ph-check-circle text-indigo-500 mt-1"></i> Integración de IA Generativa en el aula.</li>
+                                </ul>
                             </div>
                         </div>
-                        <div class="glass p-8 rounded-[2rem] hover:border-teal-200 transition-all group cursor-pointer bg-white relative overflow-hidden">
-                            <div class="flex justify-between items-start mb-6">
-                                <div class="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-500 shadow-sm"><i class="ph-fill ph-identification-card text-3xl"></i></div>
-                                <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-teal-600 group-hover:text-white transition-all"><i class="ph ph-arrow-up-right"></i></div>
+
+                        <!-- AI Interaction Box -->
+                        <div class="glass p-10 rounded-[2.5rem] bg-slate-900 text-white relative shadow-2xl overflow-hidden border-4 border-teal-500/20">
+                            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-5 gap-10 items-center">
+                                <div class="lg:col-span-2">
+                                    <h4 class="text-3xl font-black mb-4">¿Dudas con la Normativa?</h4>
+                                    <p class="text-slate-400 font-medium mb-6">Pregúntale a nuestra IA especializada en las Orientaciones 2026. Obtén respuestas instantáneas sobre procedimientos administrativos o técnicos.</p>
+                                    <div class="flex flex-wrap gap-2 mb-4">
+                                        <span class="text-[9px] font-black bg-teal-500/10 text-teal-400 px-3 py-1 rounded-lg border border-teal-500/20 cursor-pointer hover:bg-teal-500/20" onclick="window.askOrientIA('¿Cuál es el proceso de reporte de evidencias?')">Reporte de Evidencias</span>
+                                        <span class="text-[9px] font-black bg-teal-500/10 text-teal-400 px-3 py-1 rounded-lg border border-teal-500/20 cursor-pointer hover:bg-teal-500/20" onclick="window.askOrientIA('¿Cómo se evalúa en Secundaria III Ciclo?')">Evaluación Secundaria</span>
+                                    </div>
+                                </div>
+                                <div class="lg:col-span-3 bg-slate-800/50 p-6 rounded-3xl border border-slate-700 min-h-[250px] flex flex-col">
+                                    <div id="orient-ia-res" class="flex-1 text-sm font-medium text-slate-300 leading-relaxed overflow-y-auto max-h-[200px] mb-4 p-2 custom-scrollbar">
+                                        <div class="flex items-center gap-3 text-slate-500 italic">
+                                            <i class="ph ph-smiley-wink text-xl"></i> Selecciona un tema arriba o consulta algo específico...
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <input type="text" id="orient-ia-input" class="flex-1 bg-slate-950 border border-slate-700 rounded-2xl px-6 py-4 text-sm font-medium outline-none text-white focus:border-teal-500" placeholder="Escribe tu duda administrativa aquí...">
+                                        <button onclick="window.askOrientIA()" class="w-14 h-14 bg-teal-600 hover:bg-teal-500 text-white rounded-2xl flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-teal-500/20">
+                                            <i class="ph-bold ph-paper-plane-right text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <h3 class="text-2xl font-black text-slate-800 mb-3">Evaluación Docente</h3>
-                            <p class="text-slate-500 font-medium leading-relaxed">Protocolos, rúbricas y criterios de desempeño técnico establecidos para el año en curso.</p>
-                            <div class="mt-6 flex gap-2">
-                                <span class="text-[9px] font-black bg-slate-100 text-slate-500 px-3 py-1 rounded-lg uppercase">Rúbricas</span>
-                                <span class="text-[9px] font-black bg-rose-50 text-rose-500 px-3 py-1 rounded-lg uppercase">Importante</span>
+                        </div>
+
+                        <!-- Descargas & Notas -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Recursos para Descargar</h4>
+                                <div class="flex flex-col gap-4">
+                                    <a href="https://adminmepcr-my.sharepoint.com/:b:/g/personal/alberto_bustos_ortega_mep_go_cr/IQB2V-ZCEVyHRaw6p6kqi6TsAUFYsCO3i6cWwMwPmsR-69U?e=Kp7SHw" target="_blank" class="glass px-8 py-5 rounded-2xl bg-white flex items-center gap-4 group hover:border-teal-400 transition-all border border-slate-100 shadow-sm">
+                                        <div class="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-all"><i class="ph-fill ph-file-pdf text-2xl"></i></div>
+                                        <div class="text-left">
+                                            <p class="font-black text-slate-800 leading-none">Documento Oficial</p>
+                                            <p class="text-[9px] font-black text-slate-400 uppercase mt-1">PDF Completo · 2026</p>
+                                        </div>
+                                    </a>
+                                    <a href="https://adminmepcr-my.sharepoint.com/:b:/g/personal/alberto_bustos_ortega_mep_go_cr/IQB2V-ZCEVyHRaw6p6kqi6TsAUFYsCO3i6cWwMwPmsR-69U?e=Kp7SHw" target="_blank" class="glass px-8 py-5 rounded-2xl bg-white flex items-center gap-4 group hover:border-rose-400 transition-all border border-slate-100 shadow-sm">
+                                        <div class="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-all"><i class="ph-fill ph-lightning text-2xl"></i></div>
+                                        <div class="text-left">
+                                            <p class="font-black text-slate-800 leading-none">Resumen Ejecutivo</p>
+                                            <p class="text-[9px] font-black text-slate-400 uppercase mt-1">Guía Rápida · Interactiva</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden">
+                                <h4 class="text-[10px] font-black text-teal-600 uppercase tracking-widest mb-4">Mis Apuntes de Normativa</h4>
+                                <textarea id="orient-notes" class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-5 text-sm text-slate-600 font-medium placeholder:text-slate-300 outline-none focus:bg-white focus:border-teal-500 transition-all resize-none" rows="5" placeholder="Anota aquí tus reflexiones o dudas pendientes sobre las orientaciones..."></textarea>
+                                <div class="flex justify-between items-center mt-4">
+                                    <p class="text-[8px] text-slate-400 font-bold uppercase">Se guarda automáticamente en tu navegador</p>
+                                    <button onclick="window.saveOrientNotes()" class="bg-teal-600 text-white px-5 py-2 rounded-xl font-black text-[10px] uppercase shadow-lg shadow-teal-600/20 hover:scale-105 transition-all">Guardar Notas</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 `;
+
+                // Cargar notas guardadas
+                setTimeout(() => {
+                    const saved = localStorage.getItem('pnft_orient_notes');
+                    if (saved) document.getElementById('orient-notes').value = saved;
+                }, 100);
 
                 // --- VISTA: GUÍA DOCENTE + IA #1 ---
             } else if (view === 'guia') {
@@ -605,6 +699,27 @@
                 return `⛔ Error de conexión: ${error.message}`;
             }
         }
+
+        window.askOrientIA = async (preSet) => {
+            const input = document.getElementById('orient-ia-input');
+            const resDiv = document.getElementById('orient-ia-res');
+            const txt = preSet || input.value.trim();
+            if (!txt) return;
+
+            resDiv.innerHTML = '<div class="flex items-center gap-3 text-teal-500 font-black uppercase tracking-widest text-[10px] animate-pulse"><i class="ph ph-cpu"></i> Escaneando Normativa 2026...</div>';
+            if (!preSet) input.value = "";
+
+            const contexto = "Eres un Asistente Experto en las 'Orientaciones Docente 2026' del PNFT Secundaria del MEP Costa Rica. Tu objetivo es explicar de forma clara los aspectos pedagógicos (ABP, retos), administrativos (evidencias, bitácoras) y técnicos. Sé directo, amable y profesional.";
+            const respuesta = await llamarGemini(contexto + " Consulta técnica sobre el documento: " + txt);
+
+            const htmlRes = respuesta.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+            resDiv.innerHTML = `<div class="fade-in bg-teal-50/10 border border-teal-500/20 p-5 rounded-2xl text-slate-300 shadow-sm">${htmlRes}</div>`;
+        };
+
+        window.saveOrientNotes = () => {
+            const val = document.getElementById('orient-notes').value;
+            localStorage.setItem('pnft_orient_notes', val);
+        };
 
         window.generarSituacion = async () => {
             const tema = document.getElementById('ia-tema').value;
