@@ -469,9 +469,12 @@
             // Verificamos que exista la llave
             if (!window.geminiKey) return "⚠️ Error: Falta configurar la API Key de Gemini.";
 
-            // 👇 CAMBIO IMPORTANTE: Usamos la versión específica '002' o '2.0'
-            // gemini-1.5-flash-002 es la versión estable recomendada.
-            const MODEL_NAME = "gemini-1.5-flash-002"; 
+// --- LÓGICA IA (GEMINI 2.0 - ESTÁNDAR 2026) ---
+        async function llamarGemini(prompt) {
+            if (!window.geminiKey) return "⚠️ Error: Falta configurar la API Key de Gemini.";
+
+            // 👇 CAMBIO CRÍTICO: Usamos el modelo vigente en 2026
+            const MODEL_NAME = "gemini-2.0-flash"; 
             
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${window.geminiKey}`;
             
@@ -485,24 +488,22 @@
                 });
 
                 if (!response.ok) {
-                    // Si falla, mostramos el error técnico en consola para depurar
                     const errData = await response.json();
-                    console.error("Error Detallado Gemini:", errData);
-                    throw new Error(`Error HTTP: ${response.status} - ${errData.error?.message || 'Desconocido'}`);
+                    console.error("Error Gemini:", errData);
+                    throw new Error(`Error ${response.status}: ${errData.error?.message || response.statusText}`);
                 }
 
                 const data = await response.json();
                 
-                // Validación extra por si la IA no devuelve texto
                 if (!data.candidates || data.candidates.length === 0) {
-                    return "El Asesor IA está pensando, pero no generó respuesta. Intenta de nuevo.";
+                    return "El sistema está activo pero no generó texto. Intenta reformular.";
                 }
 
                 return data.candidates[0].content.parts[0].text;
 
             } catch (error) {
-                console.error("Error IA:", error);
-                return `⚠️ Error de conexión con el Asesor IA. (Detalle: ${error.message})`;
+                console.error("Fallo Conexión IA:", error);
+                return `⚠️ Error de conexión con el modelo ${MODEL_NAME}. Verifica tu API Key.`;
             }
         }
 
@@ -691,4 +692,5 @@
 </body>
 
 </html>
+
 
