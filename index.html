@@ -118,14 +118,14 @@
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- 1. CONFIGURACIÓN (Rellena con tus datos reales de Firebase Console) ---
-        const firebaseConfig = {
-            apiKey: "TU_API_KEY_AQUI", // ⚠️ IMPORTANTE: Pon tu API Key real
-            authDomain: "asesoriayseguimiento2026.firebaseapp.com",
-            projectId: "asesoriayseguimiento2026",
-            storageBucket: "asesoriayseguimiento2026.firebasestorage.app",
-            messagingSenderId: "800061887135",
-            appId: "1:800061887135:web:f096970be5c69a465988aa"
-        };
+       const firebaseConfig = {
+    apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A", // <--- ¡AQUÍ ESTABA EL ERROR!
+    authDomain: "asesoriayseguimiento2026.firebaseapp.com",
+    projectId: "asesoriayseguimiento2026",
+    storageBucket: "asesoriayseguimiento2026.firebasestorage.app",
+    messagingSenderId: "800061887135",
+    appId: "1:800061887135:web:f096970be5c69a465988aa"
+};
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -407,3 +407,4 @@
     </script>
 </body>
 </html>
+
