@@ -181,7 +181,8 @@
                     <i class="ph-bold ph-cube text-4xl"></i>
                 </div>
                 <h1 class="text-3xl font-black tracking-tight text-slate-800">Recurso de A y S Dimensión 1 PNFT</h1>
-                <p class="text-slate-500 text-[10px] uppercase tracking-widest font-black mt-1">Asesores PNFT Rodolfo Juárez - Alberto Bustos</p>
+                <p class="text-slate-500 text-[10px] uppercase tracking-widest font-black mt-1">Asesores PNFT Rodolfo
+                    Juárez - Alberto Bustos</p>
             </div>
 
             <div class="flex mb-8 bg-slate-100/50 p-1.5 rounded-2xl">
@@ -328,6 +329,32 @@
     </div>
 
     <script type="module">
+        // --- CONSTANTES DE DATOS CURRICULARES ---
+        const SABERES_DATA = {
+            'sétimo': {
+                title: 'Sétimo Año: Fundamentos y Apropiación',
+                modulos: [
+                    { n: 'Módulo 1', s: ['Computadora', 'Gestión de archivos', 'Estructuras condicionales', 'Estructuras repetitivas', 'Operadores aritméticos', 'Operadores relacionales', 'Operadores lógicos', 'Evento', 'Hardware', 'Software', 'Redes de comunicación', 'Sistema operativo', 'Lógica de programación', 'Dato', 'Variable', 'Algoritmo', 'Crea Contenido', 'Entorno de Programación'] },
+                    { n: 'Módulo 2', s: ['Productividad', 'Referencias bibliográficas', 'Operadores lógicos', 'Funciones', 'Riesgos en línea', 'Asistentes virtuales', 'Internet', 'Criptomonedas', 'Malware', 'Fundamentos IA', 'Navegador', 'Netiqueta', 'Nube', 'Seguridad', 'Buscador', 'Colaboración'] }
+                ]
+            },
+            'octavo': {
+                title: 'Octavo Año: Comunicación e Interconexión',
+                modulos: [
+                    { n: 'Módulo 1', s: ['Gestión archivos', 'Programación Textual', 'Conexión dispositivos', 'Circuito eléctrico', 'Electrónica', 'Robot', 'Mecanismos', 'Crea Contenido', 'Buscador', 'Hardware/Software', 'Mecánica Robótica', 'Microcontrolador', 'S.O.'] },
+                    { n: 'Módulo 2', s: ['Malware', 'Colección de datos', 'Redes', 'Licencias', 'Hackeo Ético', 'Fundamentos de IA', 'Plataformas Contenido', 'Sensor', 'Actuador', 'Herramientas Generativas', 'Internet de las cosas', 'Productividad'] }
+                ]
+            },
+            'noveno': {
+                title: 'Noveno Año: Automatización y Prototipado',
+                modulos: [
+                    { n: 'Módulo 1', s: ['Microcontrolador', 'Mecanismos', 'Dato', 'Almacenamiento', 'Prog. Textual', 'Algoritmo', 'Domótica', 'Prototipos', 'Sensor', 'Actuador'] },
+                    { n: 'Módulo 2', s: ['Sistema Operativo', 'IA Generativa', 'Redes', 'Derechos Autor', 'Desafíos IA', 'Productividad', 'Crea Contenido', 'Huella Digital', 'Riesgos en línea', 'Plataformas'] }
+                ]
+            }
+        };
+        window.SABERES_DATA = SABERES_DATA;
+
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -514,22 +541,26 @@
                                 <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-xl sticky top-24">
                                     <h4 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-3">
                                         <div class="w-10 h-10 bg-[#f1f8f9] rounded-xl flex items-center justify-center text-[#025964]"><i class="ph-fill ph-sparkle"></i></div>
-                                        Generador de Situaciones
+                                        Creador de Situaciones Problema
                                     </h4>
                                     
                                     <div class="space-y-6">
                                         <div class="group">
                                             <label class="block text-xs font-black text-[#025964] uppercase tracking-widest mb-3 ml-1">Contexto de la situación</label>
-                                            <textarea id="ia-tema" rows="4" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-medium outline-none focus:bg-white focus:border-[#025964] transition-all shadow-inner" placeholder="Ej: Estudiantes de zona rural que necesitan automatizar un riego..."></textarea>
+                                            <textarea id="ia-tema" rows="4" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-medium outline-none focus:bg-white focus:border-[#025964] transition-all shadow-inner" placeholder="Pocos laboratorios, baja conectividad, estudiantes de zona rural..."></textarea>
                                         </div>
 
                                         <div class="group">
                                             <label class="block text-xs font-black text-[#025964] uppercase tracking-widest mb-3 ml-1">Nivel Seleccionado</label>
-                                            <select id="ia-nivel" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium outline-none focus:bg-white focus:border-[#025964] transition-all appearance-none cursor-pointer">
-                                                <option value="Sétimo Año">Sétimo Año</option>
-                                                <option value="Octavo Año">Octavo Año</option>
-                                                <option value="Noveno Año">Noveno Año</option>
+                                            <select id="ia-nivel" onchange="updateIASelectors()" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium outline-none focus:bg-white focus:border-[#025964] transition-all appearance-none cursor-pointer">
+                                                <option value="sétimo">Sétimo Año</option>
+                                                <option value="octavo">Octavo Año</option>
+                                                <option value="noveno">Noveno Año</option>
                                             </select>
+                                        </div>
+
+                                        <div id="ia-dynamic-selectors" class="space-y-6">
+                                            <!-- Injected via updateIASelectors -->
                                         </div>
 
                                         <button onclick="window.generarSituacion()" class="w-full bg-[#025964] hover:bg-[#008e9b] text-white rounded-3xl py-5 font-black text-sm transition-all shadow-lg shadow-[#025964]/10 flex items-center justify-center gap-3 group uppercase tracking-widest">
@@ -650,8 +681,11 @@
                         </div>
                     </div>
                 `;
-                // Inicializar con Sétimo
-                setTimeout(() => window.switchLevelTab('sétimo'), 50);
+                // Inicializar con Sétimo y activar selectores IA
+                setTimeout(() => {
+                    window.switchLevelTab('sétimo');
+                    window.updateIASelectors();
+                }, 50);
 
 
             } else if (view === 'foro') {
@@ -803,31 +837,7 @@
                 activeBtn.classList.add('bg-[#025964]', 'text-white', 'shadow-lg', 'shadow-[#025964]/10');
                 activeBtn.classList.remove('text-slate-400');
             }
-            const data = {
-                'sétimo': {
-                    title: 'Sétimo Año: Fundamentos y Apropiación',
-                    modulos: [
-                        { n: 'Módulo 1', s: ['Computadora', 'Gestión de archivos', 'Estructuras condicionales', 'Estructuras repetitivas', 'Operadores aritméticos', 'Operadores relacionales', 'Operadores lógicos', 'Evento', 'Hardware', 'Software', 'Redes de comunicación', 'Sistema operativo', 'Lógica de programación', 'Dato', 'Variable', 'Algoritmo', 'Crea Contenido', 'Entorno de Programación'] },
-                        { n: 'Módulo 2', s: ['Productividad', 'Referencias bibliográficas', 'Operadores lógicos', 'Funciones', 'Riesgos en línea', 'Asistentes virtuales', 'Internet', 'Criptomonedas', 'Malware', 'Fundamentos IA', 'Navegador', 'Netiqueta', 'Nube', 'Seguridad', 'Buscador', 'Colaboración'] }
-                    ]
-                },
-                'octavo': {
-                    title: 'Octavo Año: Comunicación e Interconexión',
-                    modulos: [
-                        { n: 'Módulo 1', s: ['Gestión archivos', 'Programación Textual', 'Conexión dispositivos', 'Circuito eléctrico', 'Electrónica', 'Robot', 'Mecanismos', 'Crea Contenido', 'Buscador', 'Hardware/Software', 'Mecánica Robótica', 'Microcontrolador', 'S.O.'] },
-                        { n: 'Módulo 2', s: ['Malware', 'Colección de datos', 'Redes', 'Licencias', 'Hackeo Ético', 'Fundamentos de IA', 'Plataformas Contenido', 'Sensor', 'Actuador', 'Herramientas Generativas', 'Internet de las cosas', 'Productividad'] }
-                    ]
-                },
-                'noveno': {
-                    title: 'Noveno Año: Automatización y Prototipado',
-                    modulos: [
-                        { n: 'Módulo 1', s: ['Microcontrolador', 'Mecanismos', 'Dato', 'Almacenamiento', 'Prog. Textual', 'Algoritmo', 'Domótica', 'Prototipos', 'Sensor', 'Actuador'] },
-                        { n: 'Módulo 2', s: ['Sistema Operativo', 'IA Generativa', 'Redes', 'Derechos Autor', 'Desafíos IA', 'Productividad', 'Crea Contenido', 'Huella Digital', 'Riesgos en línea', 'Plataformas'] }
-                    ]
-                }
-            };
-
-            const info = data[level];
+            const info = window.SABERES_DATA[level];
             let html = `<h4 class="text-2xl font-black text-slate-800 mb-8 flex items-center gap-3">${info.title}</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">`;
 
@@ -1100,28 +1110,87 @@
             localStorage.setItem('pnft_orient_notes', val);
         };
 
+        window.updateIASelectors = () => {
+            const nivel = document.getElementById('ia-nivel').value;
+            const container = document.getElementById('ia-dynamic-selectors');
+            const modulos = window.SABERES_DATA[nivel].modulos;
+
+            container.innerHTML = `
+                <div class="group">
+                    <label class="block text-xs font-black text-[#025964] uppercase tracking-widest mb-3 ml-1">Módulo</label>
+                    <select id="ia-modulo" onchange="updateIASaberes()" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium outline-none focus:bg-white focus:border-[#025964] transition-all appearance-none cursor-pointer">
+                        ${modulos.map((m, idx) => `<option value="${idx}">${m.n}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="group">
+                    <label class="block text-xs font-black text-[#025964] uppercase tracking-widest mb-3 ml-1">Saberes a vincular</label>
+                    <div id="ia-saberes-list" class="flex flex-wrap gap-2 max-h-[150px] overflow-y-auto p-2 bg-slate-50 rounded-2xl border border-slate-100">
+                        <!-- Saberes appear here -->
+                    </div>
+                </div>
+            `;
+            window.updateIASaberes();
+        };
+
+        window.updateIASaberes = () => {
+            const nivel = document.getElementById('ia-nivel').value;
+            const moduloIdx = document.getElementById('ia-modulo').value;
+            const saberes = window.SABERES_DATA[nivel].modulos[moduloIdx].s;
+            const list = document.getElementById('ia-saberes-list');
+
+            list.innerHTML = saberes.map(s => `
+                <label class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-slate-100 cursor-pointer hover:border-[#025964]/30 transition-all text-[11px] font-bold text-slate-600">
+                    <input type="checkbox" name="ia-saber" value="${s}" class="accent-[#025964]">
+                    ${s}
+                </label>
+            `).join('');
+        };
+
         window.generarSituacion = async () => {
             const tema = document.getElementById('ia-tema').value;
             const nivel = document.getElementById('ia-nivel').value;
-            const vibe = document.getElementById('ia-vibe').value;
-            const resDiv = document.getElementById('ia-result');
+            const moduloIdx = document.getElementById('ia-modulo').value;
+            const moduloName = window.SABERES_DATA[nivel].modulos[moduloIdx].n;
 
-            if (!tema) return alert("Por favor, ingresa un tema.");
+            const selectedSaberes = Array.from(document.querySelectorAll('input[name="ia-saber"]:checked')).map(cb => cb.value);
+            const resDiv = document.getElementById('ia-result');
+            const resContainer = document.getElementById('ia-result-container');
+
+            if (!tema) return alert("Por favor, describe el contexto o problema.");
+
+            resContainer.classList.remove('hidden');
             resDiv.innerHTML = `
-                <div class="flex flex-col items-center fade-in">
-                    <div class="w-16 h-16 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                    <p class="text-teal-600 font-black uppercase tracking-widest text-[10px] animate-pulse">La IA está diseñando tu reto ${vibe}...</p>
+                <div class="flex flex-col items-center fade-in py-10">
+                    <div class="w-16 h-16 border-4 border-[#025964] border-t-transparent rounded-full animate-spin mb-4"></div>
+                    <p class="text-[#025964] font-black uppercase tracking-widest text-[10px] animate-pulse">Diseñando situaciones para ${nivel} / ${moduloName}...</p>
                 </div>`;
 
-            const respuesta = await llamarGemini(tema, 'situacion');
-            const htmlRes = respuesta.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+            // Scroll to results
+            resDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            const promptFinal = `REQUERIMIENTO: Crea 4 situaciones problema detalladas.
+            CONTEXTO DOCENTE: "${tema}"
+            NIVEL: ${nivel}
+            MODULO: ${moduloName}
+            SABERES A INTEGRAR: ${selectedSaberes.join(', ') || 'Relacionados al módulo'}
+            FORMATO: Usa párrafos numerados, lenguaje profesional y enfoque en Design Thinking.`;
+
+            const respuesta = await llamarGemini(promptFinal, 'situacion');
+
+            // Format response: separate double newlines into paragraphs, preserve bolds
+            const paragraphs = respuesta.split(/\n\s*\n/).filter(p => p.trim());
+            const formattedHtml = paragraphs.map(p => {
+                let text = p.replace(/\*\*(.*?)\*\*/g, '<b class="text-[#025964]">$1</b>').replace(/\n/g, '<br>');
+                return `<div class="mb-8 p-6 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">${text}</div>`;
+            }).join('');
+
             resDiv.innerHTML = `
-                <div class="prose prose-slate max-w-none text-left h-[500px] overflow-y-auto p-8 bg-white rounded-[2rem] shadow-inner custom-scrollbar">
-                    <div class="text-slate-600 font-medium leading-relaxed">${htmlRes}</div>
-                    <div class="mt-8 flex justify-between gap-4 border-t border-slate-100 pt-6">
-                        <p class="text-[9px] text-slate-400 font-black uppercase">Nivel: ${nivel} | Tono: ${vibe}</p>
-                        <button onclick="window.print()" class="text-[10px] font-black text-[#025964] uppercase border border-[#025964]/20 px-6 py-2 rounded-xl hover:bg-[#f1f8f9] transition-all">Imprimir Material</button>
+                <div class="fade-in space-y-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="text-[10px] font-black text-[#025964] uppercase tracking-widest bg-[#f1f8f9] px-4 py-2 rounded-full border border-[#025964]/10">Resultados para ${nivel}</span>
+                        <button onclick="window.print()" class="text-[10px] font-black text-slate-400 hover:text-[#025964] uppercase flex items-center gap-2"><i class="ph ph-printer"></i> Imprimir</button>
                     </div>
+                    ${formattedHtml}
                 </div>`;
         };
 
@@ -1454,4 +1523,3 @@
 </body>
 
 </html>
-
