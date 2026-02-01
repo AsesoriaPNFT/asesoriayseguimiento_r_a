@@ -1781,14 +1781,16 @@
         };
 
         // Necesitamos exponer funciones de firebase a window para usarlas dentro de router() que es global
-        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
-        import { collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
+        import { collection, addDoc, getDocs, query, orderBy, limit, getDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         window.collection = collection;
         window.addDoc = addDoc;
         window.getDocs = getDocs;
         window.query = query;
         window.orderBy = orderBy;
         window.limit = limit;
+        window.getDoc = getDoc;
+        window.doc = doc;
         window.getFunctions = getFunctions;
         window.httpsCallable = httpsCallable;
 
@@ -1845,24 +1847,44 @@
                 durante: `
                     <div class="lg:col-span-2 glass p-10 rounded-[2.5rem] bg-[#025964] text-white relative overflow-hidden">
                         <i class="ph-fill ph-circles-three absolute -right-10 -bottom-10 text-white/5 text-[15rem] rotate-12"></i>
-                        <h4 class="text-3xl font-black mb-4">Liderazgo Pedagógico</h4>
+                        <h4 class="text-3xl font-black mb-4 uppercase tracking-tighter">Liderazgo Pedagógico</h4>
                         <p class="text-teal-100 font-medium leading-relaxed mb-6">El docente de secundaria lidera la mediación técnica dentro del aula para potenciar el aprendizaje autónomo.</p>
                         <ul class="space-y-4">
                             <li class="flex items-center gap-3 text-sm font-bold"><i class="ph-bold ph-check-circle text-teal-400"></i> Modelado de procesos algorítmicos.</li>
                             <li class="flex items-center gap-3 text-sm font-bold"><i class="ph-bold ph-check-circle text-teal-400"></i> Apoyo en la resolución de problemas (debugging).</li>
                         </ul>
                     </div>
-                    <div class="lg:col-span-2 glass p-10 rounded-[2.5rem] bg-white border border-slate-100">
-                        <h4 class="text-2xl font-black text-slate-800 mb-4">Laboratorio de Creación</h4>
-                        <p class="text-slate-500 font-medium leading-relaxed mb-8">Uso intensivo de hardware y software bajo la metodología Design Thinking.</p>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-center">
-                                <p class="text-2xl font-black text-[#025964]">60%</p>
-                                <p class="text-[9px] font-black uppercase text-slate-400">Construcción</p>
-                            </div>
-                            <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-center">
-                                <p class="text-2xl font-black text-[#025964]">40%</p>
-                                <p class="text-[9px] font-black uppercase text-slate-400">Reflexión</p>
+
+                    <div class="glass p-8 rounded-[2rem] bg-white border border-slate-100 flex flex-col justify-between hover:border-[#025964]/20 transition-all">
+                        <div class="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center text-[#025964] mb-4"><i class="ph-bold ph-projector-screen text-2xl"></i></div>
+                        <h5 class="font-black text-slate-800 text-sm uppercase mb-2">Componente Proyecto</h5>
+                        <p class="text-[10px] text-slate-500 font-medium italic">Vinculado a saberes específicos.</p>
+                    </div>
+
+                    <div class="glass p-8 rounded-[2rem] bg-white border border-slate-100 flex flex-col justify-between hover:border-[#025964]/20 transition-all">
+                        <div class="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center text-[#025964] mb-4"><i class="ph-bold ph-list-checks text-2xl"></i></div>
+                        <h5 class="font-black text-slate-800 text-sm uppercase mb-2">Tareas</h5>
+                        <p class="text-[10px] text-slate-500 font-medium italic">Actividades de evaluación.</p>
+                    </div>
+
+                    <div class="glass p-8 rounded-[2rem] bg-white border border-slate-100 flex flex-col justify-between hover:border-[#025964]/20 transition-all">
+                        <div class="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center text-[#025964] mb-4"><i class="ph-bold ph-briefcase text-2xl"></i></div>
+                        <h5 class="font-black text-slate-800 text-sm uppercase mb-2">Trabajo Cotidiano</h5>
+                        <p class="text-[10px] text-slate-500 font-medium italic">Mediación sobre saberes.</p>
+                    </div>
+
+                    <div class="glass p-8 rounded-[2rem] bg-white border border-slate-100 flex flex-col justify-between hover:border-[#025964]/20 transition-all">
+                        <div class="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center text-[#025964] mb-4"><i class="ph-bold ph-users-three text-2xl"></i></div>
+                        <h5 class="font-black text-slate-800 text-sm uppercase mb-2">Asistencia</h5>
+                        <p class="text-[10px] text-slate-500 font-medium italic">Registro de permanencia.</p>
+                    </div>
+
+                    <div class="lg:col-span-4 glass p-8 rounded-[2rem] bg-slate-50/50 border border-dashed border-slate-200 mt-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-[#025964] rounded-lg flex items-center justify-center text-white"><i class="ph-bold ph-clock-countdown text-xl"></i></div>
+                            <div>
+                                <h6 class="text-xs font-black text-slate-800 uppercase">Gestión del Tiempo y Ajustes</h6>
+                                <p class="text-[10px] text-slate-500">Recordatorio: 10 min. de inicio, 10 min. de cierre y ajustes según ritmo de grupo.</p>
                             </div>
                         </div>
                     </div>
@@ -1891,7 +1913,7 @@
                     </div>
                 `
             };
-            container.innerHTML = `<div class="fade-in grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">${phases[phase]}</div>`;
+            container.innerHTML = phases[phase];
         };
 
         window.switchAuthTab = (t) => {
