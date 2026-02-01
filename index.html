@@ -9,6 +9,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
@@ -31,12 +32,17 @@
             color: var(--text-main);
             overflow: hidden;
             line-height: 1.6;
-            /* Improved global leading */
+            letter-spacing: 0.02em;
+            /* Added global tracking */
+            word-spacing: 0.05em;
+            /* Improved word separation */
         }
 
         p {
             line-height: 1.75;
-            /* Added breathing room for paragraphs */
+            letter-spacing: 0.015em;
+            /* Slightly tighter for paragraphs than headings */
+            margin-bottom: 1.25rem;
         }
 
         /* Glassmorphism Light */
@@ -544,7 +550,7 @@
                         <div class="md:col-span-2 glass p-10 rounded-[2.5rem] relative overflow-hidden bg-white border-slate-100 shadow-sm">
                             <div class="relative z-10">
                                 <span class="bg-[#025964] text-white text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-4 inline-block shadow-lg shadow-[#025964]/10">Portal Activo 2026</span>
-                                <h3 class="text-4xl font-black mb-3 text-slate-800">¡Hola, ${window.currentUserData?.nombre.split(' ')[0]}! ✨</h3>
+                                 <h3 class="text-4xl font-black mb-3 text-slate-800">¡Hola, ${(window.currentUserData?.nombre || 'Docente').split(' ')[0]}! ✨</h3>
                                 <p class="text-slate-500 leading-relaxed max-w-lg font-medium">Estamos aquí para apoyarte en el ciclo 2026. Tu Asesor IA y las orientaciones están listas para optimizar tu trabajo docente.</p>
                                 <div class="flex gap-4 mt-8">
                                     <button onclick="router('ia')" class="bg-[#025964] hover:bg-[#008e9b] text-white font-bold py-3 px-8 rounded-2xl transition-all shadow-xl shadow-[#025964]/10 flex items-center gap-2 hover:scale-[1.02]">
@@ -912,48 +918,194 @@
 
                 // --- VISTA: ADMIN PANEL ---
             } else if (view === 'admin') {
-                title.innerText = "Centro de Gestión";
+                title.innerText = "Centro de Gestión PNFT";
                 container.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 fade-in">
-                        <div class="glass p-10 rounded-[2.5rem] bg-white border border-slate-100 relative overflow-hidden">
-                            <div class="absolute top-0 right-0 p-10 opacity-5 text-[#025964]"><i class="ph ph-users-three text-8xl"></i></div>
-                            <div class="flex items-center gap-6 mb-10">
-                                <div class="w-16 h-16 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#025964] shadow-sm"><i class="ph-fill ph-file-xls text-3xl"></i></div>
-                                <div>
-                                    <h3 class="font-black text-2xl text-slate-800">Sincronización Masiva</h3>
-                                    <p class="text-xs text-[#025964] font-bold uppercase tracking-widest mt-1 italic">Base de Datos PNFT</p>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 fade-in">
+                        <!-- Left: Stats and Charts -->
+                        <div class="lg:col-span-1 space-y-8">
+                            <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm">
+                                <h4 class="text-[10px] font-black text-[#025964] uppercase tracking-widest mb-6 px-1">Estado del Ecosistema</h4>
+                                <canvas id="adminChart" class="w-full"></canvas>
+                                <div class="mt-8 grid grid-cols-2 gap-4">
+                                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                        <p class="text-2xl font-black text-slate-800">48</p>
+                                        <p class="text-[10px] font-black uppercase text-slate-400">Inst. Activas</p>
+                                    </div>
+                                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                        <p class="text-2xl font-black text-slate-800">124</p>
+                                        <p class="text-[10px] font-black uppercase text-slate-400">Docentes</p>
+                                    </div>
                                 </div>
                             </div>
-                            <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden" onchange="procesarExcel(this)">
-                            <button onclick="document.getElementById('excel-upload').click()" class="w-full border-4 border-dashed border-slate-50 hover:border-[#025964]/20 text-slate-300 hover:text-[#025964] rounded-3xl py-12 transition-all flex flex-col items-center gap-4 group">
-                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 border border-slate-100"><i class="ph-bold ph-upload-simple text-3xl"></i></div>
-                                <span class="text-sm font-black uppercase tracking-widest">Seleccionar Archivo Excel</span>
-                            </button>
-                            <p id="excel-status" class="mt-6 text-center text-[10px] text-slate-400 font-black uppercase tracking-widest"></p>
-                        </div>
-                        
-                        <div class="glass p-10 rounded-[2.5rem] bg-white border border-slate-100">
-                            <h3 class="font-black text-2xl text-slate-800 mb-8">Estado Global</h3>
-                            <div class="grid grid-cols-1 gap-6">
-                                <div class="bg-[#f1f8f9] p-8 rounded-3xl border border-[#025964]/5 flex items-center justify-between">
-                                    <div>
-                                        <p class="text-[#025964] text-[10px] font-black uppercase tracking-widest mb-1">Docentes Registrados</p>
-                                        <p class="text-5xl font-black text-slate-800">1,240</p>
-                                    </div>
-                                    <i class="ph-fill ph-users-four text-5xl text-[#025964]/10"></i>
+
+                            <!-- IA Alert Generator -->
+                            <div class="glass p-8 rounded-[2.5rem] bg-[#025964] text-white relative overflow-hidden shadow-xl shadow-[#025964]/10">
+                                <i class="ph-fill ph-shield-check absolute -right-10 -bottom-10 text-white/5 text-[15rem]"></i>
+                                <div class="relative z-10">
+                                    <h4 class="text-lg font-black mb-4 flex items-center gap-2 uppercase tracking-tighter"><i class="ph-bold ph-magic-wand text-teal-400"></i> Alerta PNFT Inteligente</h4>
+                                    <p class="text-[11px] text-teal-100/70 mb-6 leading-relaxed">Convierte tus apuntes de visita en un reporte técnico oficial para el sistema nacional mediante IA.</p>
+                                    <textarea id="admin-ia-input" class="w-full bg-white/10 border border-white/10 rounded-2xl p-4 text-xs text-white placeholder:text-teal-200/30 outline-none focus:bg-white/20 transition-all mb-4" rows="3" placeholder="Ej: La red falla en el laboratorio 2 de la Escuela España..."></textarea>
+                                    <button onclick="generarAlertaAdminIA()" class="w-full bg-white text-[#025964] py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg hover:scale-[1.02] transition-all">Generar Reporte IA</button>
                                 </div>
-                                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 flex items-center justify-between">
+                            </div>
+                        </div>
+
+                        <!-- Right: Institution Management -->
+                        <div class="lg:col-span-2 space-y-8">
+                            <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 relative overflow-hidden">
+                                <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
                                     <div>
-                                        <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-1">Instituciones Activas</p>
-                                        <p class="text-5xl font-black text-slate-800">48</p>
+                                        <h3 class="text-2xl font-black text-slate-800 mb-1 uppercase tracking-tighter">Gestión de Instituciones</h3>
+                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Seguimiento y Categorización 2026</p>
                                     </div>
-                                    <i class="ph-fill ph-buildings text-5xl text-slate-200"></i>
+                                    <div class="flex gap-2">
+                                        <button onclick="document.getElementById('excel-upload').click()" class="bg-slate-50 border border-slate-100 text-slate-600 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-slate-100 transition-all">
+                                            <i class="ph-bold ph-upload"></i> Importar
+                                        </button>
+                                        <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden" onchange="procesarExcel(this)">
+                                    </div>
+                                </div>
+
+                                <div class="space-y-4 max-h-[600px] overflow-y-auto pr-2 no-scrollbar">
+                                    <!-- Institution Cards -->
+                                    <div class="p-6 bg-[#f1f8f9] rounded-3xl border border-[#025964]/5 hover:border-[#025964]/20 transition-all group">
+                                        <div class="flex justify-between items-start mb-6">
+                                            <div class="flex items-center gap-4">
+                                                <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-[#025964] shadow-sm font-black text-xs border border-slate-100">0001</div>
+                                                <div>
+                                                    <h5 class="font-black text-slate-800 uppercase text-sm">Colegio Técnico Profesional de Calle Blancos</h5>
+                                                    <div class="flex gap-2 mt-1">
+                                                        <span class="text-[9px] font-black text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100 uppercase tracking-widest">Atención Urgente</span>
+                                                        <span class="text-[9px] font-black text-slate-400 bg-white px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">ID: 2103</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors shadow-sm"><i class="ph-bold ph-bell-ringing"></i></button>
+                                        </div>
+                                        
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                                            <div class="space-y-3">
+                                                <p class="text-[10px] font-black text-teal-600 uppercase tracking-widest">Docentes a cargo (4)</p>
+                                                <div class="flex -space-x-3">
+                                                    <div class="w-10 h-10 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[10px] font-black text-slate-600 shadow-sm" title="Ana García">AG</div>
+                                                    <div class="w-10 h-10 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[10px] font-black text-slate-600 shadow-sm" title="Luis Mora">LM</div>
+                                                    <div class="w-10 h-10 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[10px] font-black text-slate-600 shadow-sm" title="Carlos Pérez">CP</div>
+                                                    <div class="w-10 h-10 rounded-full bg-[#025964] border-2 border-white flex items-center justify-center text-[10px] font-black text-white shadow-sm" title="Elena Torres">ET</div>
+                                                </div>
+                                            </div>
+                                            <div class="bg-white/50 p-4 rounded-2xl border border-slate-100">
+                                                <p class="text-[10px] font-black text-slate-400 uppercase mb-1">Última Tarea Automática</p>
+                                                <p class="text-[11px] text-slate-600 font-bold flex items-center gap-2"><i class="ph-fill ph-calendar text-rose-400"></i> Visita técnica programada p. lunes</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- More Cards (Simulated) -->
+                                    <div class="p-6 bg-white rounded-3xl border border-slate-100 hover:border-[#025964]/20 transition-all group">
+                                        <div class="flex justify-between items-start">
+                                            <div class="flex items-center gap-4">
+                                                <div class="w-12 h-12 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#025964] shadow-sm font-black text-xs border border-slate-100">0432</div>
+                                                <div>
+                                                    <h5 class="font-black text-slate-800 uppercase text-sm">Escuela España</h5>
+                                                    <div class="flex gap-2 mt-1">
+                                                        <span class="text-[9px] font-black text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100 uppercase tracking-widest">Continuidad</span>
+                                                        <span class="text-[9px] font-black text-slate-400 bg-white px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">ID: 0045</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 transition-colors shadow-sm"><i class="ph-bold ph-dots-three-outline"></i></button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="p-6 bg-white rounded-3xl border border-slate-100 hover:border-[#025964]/20 transition-all group">
+                                        <div class="flex justify-between items-start">
+                                            <div class="flex items-center gap-4">
+                                                <div class="w-12 h-12 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#025964] shadow-sm font-black text-xs border border-slate-100">1289</div>
+                                                <div>
+                                                    <h5 class="font-black text-slate-800 uppercase text-sm">Liceo de Coronado</h5>
+                                                    <div class="flex gap-2 mt-1">
+                                                        <span class="text-[9px] font-black text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100 uppercase tracking-widest">Prioritario</span>
+                                                        <span class="text-[9px] font-black text-slate-400 bg-white px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">ID: 1022</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 transition-colors shadow-sm"><i class="ph-bold ph-dots-three-outline"></i></button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 `;
+                // Initialize Charts
+                setTimeout(initAdminCharts, 100);
             }
+        };
+
+        const initAdminCharts = () => {
+            const ctx = document.getElementById('adminChart')?.getContext('2d');
+            if (!ctx) return;
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Continuidad', 'Prioritario', 'Urgente'],
+                    datasets: [{
+                        data: [65, 25, 10],
+                        backgroundColor: ['#008e9b', '#f59e0b', '#ef4444'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    cutout: '80%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    family: 'Lato',
+                                    size: 10,
+                                    weight: '900'
+                                },
+                                usePointStyle: true,
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        window.generarAlertaAdminIA = async () => {
+            const input = document.getElementById('admin-ia-input');
+            const txt = input.value.trim();
+            if (!txt) return;
+
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = "Procesando Reporte...";
+            btn.disabled = true;
+
+            const prompt = `Como asistente administrativo del PNFT, toma los siguientes apuntes de visita y genera un REPORTE TÉCNICO FORMAL para el sistema oficial. 
+            Apuntes: "${txt}"
+            Formato: 1. Resumen Situación, 2. Acción Sugerida, 3. Clasificación (Urgente/Prioritario/Continuidad).`;
+
+            const respuesta = await llamarGemini(prompt, 'general');
+
+            // Format for display
+            const htmlRes = respuesta.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+            const container = input.parentElement;
+            const oldRes = document.getElementById('admin-ia-result');
+            if (oldRes) oldRes.remove();
+
+            const resDiv = document.createElement('div');
+            resDiv.id = 'admin-ia-result';
+            resDiv.className = 'mt-6 p-4 bg-white/10 rounded-2xl text-[10px] text-teal-50 border border-white/10 fade-in leading-relaxed';
+            resDiv.innerHTML = `<h5 class="font-black uppercase mb-2 border-b border-white/10 pb-2">Borrador de Reporte:</h5>${htmlRes}`;
+            container.appendChild(resDiv);
+
+            btn.innerText = originalText;
+            btn.disabled = false;
         };
 
         window.switchLevelTab = (level) => {
@@ -1195,24 +1347,102 @@
                     </div>
                 `,
                 plan: `
-                    <div class="space-y-10 fade-in">
-                        <section class="glass p-12 rounded-[2.5rem] bg-white border border-[#025964]/10 shadow-sm">
-                            <h4 class="text-3xl font-black text-slate-800 mb-8 uppercase tracking-tighter">Planeamiento Didáctico <span class="text-[#025964]">Secundaria</span></h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-                                <div class="p-8 bg-[#f1f8f9] rounded-3xl border border-[#025964]/5">
-                                    <h5 class="font-black text-slate-800 mb-4 flex items-center gap-2"><i class="ph-fill ph-circles-three text-[#025964]"></i> Macro Currículo</h5>
-                                    <p class="text-xs text-slate-500 font-medium leading-relaxed">Competencias nacionales y perfiles de salida por ciclo académico.</p>
+                    <div class="space-y-12 fade-in">
+                        <div class="glass p-10 rounded-[3rem] bg-white border border-[#025964]/10 shadow-sm">
+                            <h3 class="text-3xl font-black text-slate-800 mb-6 uppercase tracking-tighter">Lineamientos de Planeamiento Didáctico 2026: <span class="text-[#025964]">Enfoque en Secundaria</span></h3>
+                            <p class="text-slate-500 font-medium leading-loose mb-8">
+                                El planeamiento didáctico se define como el instrumento clave que permite al docente articular los saberes, la metodología y la evaluación de forma intencionada. Para el curso lectivo 2026, la plantilla y los procesos se han actualizado para alinearse con los nuevos módulos del Programa Nacional de Formación Tecnológica (PNFT).
+                            </p>
+                            <a href="https://k3sb12.github.io/Recurso-Plantilla-Planeamiento-/" target="_blank" class="inline-flex items-center gap-2 bg-[#025964] text-white px-8 py-3 rounded-2xl font-black text-xs uppercase shadow-lg shadow-[#025964]/10 hover:scale-[1.02] transition-all">
+                                <i class="ph-bold ph-link"></i> Planificación Docente en Línea
+                            </a>
+                        </div>
+
+                        <!-- 1. Disposiciones Generales -->
+                        <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100">
+                            <h4 class="text-xl font-black text-slate-800 mb-6 uppercase tracking-tighter flex items-center gap-3">
+                                <div class="w-10 h-10 bg-teal-50 rounded-xl flex items-center justify-center text-teal-600">1</div>
+                                1. Disposiciones Generales y Periodicidad
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="p-6 bg-slate-50 rounded-2xl">
+                                    <p class="text-[10px] font-black uppercase text-teal-600 mb-2">Periodicidad</p>
+                                    <p class="text-sm text-slate-600 font-bold">Bimestral (cada dos meses).</p>
                                 </div>
-                                <div class="p-8 bg-[#f1f8f9] rounded-3xl border border-[#025964]/5">
-                                    <h5 class="font-black text-slate-800 mb-4 flex items-center gap-2"><i class="ph-fill ph-squares-four text-[#025964]"></i> Micro Currículo</h5>
-                                    <p class="text-xs text-slate-500 font-medium leading-relaxed">Resultados de Aprendizaje (RdA) y criterios de desempeño específicos.</p>
+                                <div class="p-6 bg-slate-50 rounded-2xl">
+                                    <p class="text-[10px] font-black uppercase text-teal-600 mb-2">Por Nivel</p>
+                                    <p class="text-sm text-slate-600 font-bold">Plan específico por nivel (7°, 8°, 9°), no por ciclo.</p>
+                                </div>
+                                <div class="p-6 bg-slate-50 rounded-2xl">
+                                    <p class="text-[10px] font-black uppercase text-teal-600 mb-2">Base Insumo</p>
+                                    <p class="text-sm text-slate-600 font-bold">Módulo correspondiente (Saber-RdA-Indicador).</p>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-6 p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                                <i class="ph-fill ph-info text-[#025964] text-3xl"></i>
-                                <p class="text-xs text-slate-500 font-bold uppercase tracking-wider italic">Uso obligatorio de la Plantilla PIA 2026</p>
+                        </div>
+
+                        <!-- 2. La Plantilla 2026 -->
+                        <div class="glass p-10 rounded-[3rem] border border-[#025964]/10 bg-white">
+                            <h4 class="text-2xl font-black text-slate-800 mb-10 uppercase tracking-tighter">2. La Plantilla de Planeamiento 2026</h4>
+                            <div class="space-y-8">
+                                <div class="flex gap-6">
+                                    <div class="w-12 h-12 bg-teal-50 rounded-full flex items-center justify-center text-[#025964] shrink-0 font-black">B1</div>
+                                    <div>
+                                        <h5 class="font-black text-slate-800 uppercase text-sm mb-2">Bloque 1: Identificación General</h5>
+                                        <p class="text-xs text-slate-500 leading-relaxed">Datos institucionales, Ejes Transversales (Pensamiento Computacional, Ciudadanía Digital, Emprendimiento) y Selección Metodológica (Design Thinking recomendado).</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-6">
+                                    <div class="w-12 h-12 bg-[#025964] rounded-full flex items-center justify-center text-white shrink-0 font-black">B2</div>
+                                    <div>
+                                        <h5 class="font-black text-slate-800 uppercase text-sm mb-2">Bloque 2: Matriz de Mediación Pedagógica (Núcleo)</h5>
+                                        <p class="text-xs text-slate-500 leading-relaxed">Articulación de RdA, Saberes integrados, Estrategias de mediación (evitar enseñanza aislada) e Indicadores de Evaluación (basados en la Guía Docente).</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-6">
+                                    <div class="w-12 h-12 bg-teal-50 rounded-full flex items-center justify-center text-[#025964] shrink-0 font-black">B3</div>
+                                    <div>
+                                        <h5 class="font-black text-slate-800 uppercase text-sm mb-2">Bloque 3: Reflexión y Seguimiento</h5>
+                                        <p class="text-xs text-slate-500 leading-relaxed">Análisis de resultados, identificación de logros/dificultades y ajustes en la práctica futura.</p>
+                                    </div>
+                                </div>
                             </div>
-                        </section>
+                        </div>
+
+                        <!-- 3. Consideraciones Pedagógicas -->
+                        <div class="glass p-10 rounded-[3rem] bg-[#025964] text-white">
+                            <h4 class="text-2xl font-black mb-8 uppercase tracking-tighter">3. Consideraciones Pedagógicas para Secundaria</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="bg-white/10 p-6 rounded-2xl border border-white/10">
+                                    <p class="font-black text-xs uppercase mb-3 text-teal-400">Integración de Áreas</p>
+                                    <p class="text-xs text-teal-50/70 leading-relaxed">Evitar abordar saberes de forma aislada; diseñar experiencias que articulen (ej. Programación + Robótica).</p>
+                                </div>
+                                <div class="bg-white/10 p-6 rounded-2xl border border-white/10">
+                                    <p class="font-black text-xs uppercase mb-3 text-teal-400">Fases del Proyecto</p>
+                                    <p class="text-xs text-teal-50/70 leading-relaxed">Reflejar etapas de Empatizar/Definir (Inicial) e Idear/Prototipar/Testear (Desarrollo).</p>
+                                </div>
+                                <div class="bg-white/10 p-6 rounded-2xl border border-white/10">
+                                    <p class="font-black text-xs uppercase mb-3 text-teal-400">Saberes Integrales</p>
+                                    <p class="text-xs text-teal-50/70 leading-relaxed">Vincular simultáneamente lo conceptual (teoría), procedimental (hacer) y actitudinal (ser).</p>
+                                </div>
+                                <div class="bg-white/10 p-6 rounded-2xl border border-white/10">
+                                    <p class="font-black text-xs uppercase mb-3 text-teal-400">Diagnóstico Inicial</p>
+                                    <p class="text-xs text-teal-50/70 leading-relaxed">Espacio de máximo 2 lecciones al inicio de cada periodo para determinar el punto de partida.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Insumos & 5. PIA -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100">
+                                <h4 class="text-xl font-black text-slate-800 mb-4 uppercase tracking-tighter">4. Insumos Obligatorios</h4>
+                                <p class="text-xs text-slate-500 font-medium leading-relaxed mb-4">Uso de la <b>Guía Docente por ciclo</b>: Competencias, RdA, Perfiles de salida y Módulos.</p>
+                                <div class="bg-slate-50 p-4 rounded-xl text-[10px] font-bold text-slate-400 uppercase italic">El módulo es la estructura; el planeamiento es la ejecución.</div>
+                            </div>
+                            <div class="glass p-8 rounded-[2.5rem] bg-white border border-[#025964]/20">
+                                <h4 class="text-xl font-black text-[#025964] mb-4 uppercase tracking-tighter">5. Herramienta de Apoyo: PIA</h4>
+                                <p class="text-xs text-slate-500 font-medium leading-relaxed">Recurso opcional basado en <b>Inteligencia Artificial</b> para agilizar la creación de actividades manteniendo la coherencia oficial.</p>
+                            </div>
+                        </div>
                     </div>
                 `,
                 eval: `
@@ -1293,7 +1523,7 @@
             if (!txt) return;
             try {
                 await window.addDoc(window.collection(db, "foro_posts"), {
-                    autor: window.currentUserData.nombre,
+                    autor: window.currentUserData?.nombre || "Docente",
                     uid: auth.currentUser.uid,
                     mensaje: txt,
                     fecha: serverTimestamp()
