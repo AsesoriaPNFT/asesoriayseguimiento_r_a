@@ -146,6 +146,28 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #cbd5e1;
         }
+
+        /* Estilos específicos para La Experiencia */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .experience-tab-btn {
+            transition: all 0.3s ease;
+        }
+
+        .experience-tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(2, 89, 100, 0.2);
+        }
     </style>
 </head>
 
@@ -183,6 +205,27 @@
                     class="w-full bg-[#025964] hover:bg-[#008e9b] text-white font-bold py-4 rounded-2xl transition-all hover:scale-[1.01] active:scale-[0.98] mt-4 shadow-xl shadow-[#025964]/10">
                     Iniciar Sesión
                 </button>
+                <p class="text-center mt-6">
+                    <a href="#" onclick="showRecoverForm()"
+                        class="text-[10px] font-black text-[#025964] uppercase tracking-widest hover:underline decoration-2 underline-offset-4">¿Olvidaste
+                        tu correo?</a>
+                </p>
+            </div>
+
+            <div id="form-recover" class="hidden space-y-4">
+                <div class="bg-teal-50 p-4 rounded-2xl border border-teal-100 mb-4">
+                    <p class="text-[9px] font-black text-[#025964] uppercase leading-tight italic">Ingresa tus datos
+                        exactos de registro para recuperar tu dirección @mep.go.cr</p>
+                </div>
+                <input type="text" id="recover-name" class="input-field" placeholder="Nombre Completo">
+                <input type="text" id="recover-code" class="input-field" placeholder="Cód. Institucional (4 dígitos)">
+                <button onclick="recuperarEmail()"
+                    class="w-full bg-[#025964] text-white font-bold py-4 rounded-2xl transition-all shadow-lg">
+                    Buscar Correo
+                </button>
+                <button onclick="switchAuthTab('login')"
+                    class="w-full text-[10px] font-black text-slate-400 uppercase tracking-widest py-2">Volver al
+                    Login</button>
             </div>
 
             <div id="form-register" class="hidden space-y-3">
@@ -234,6 +277,9 @@
                     </div>
                     <div onclick="router('ia')" id="nav-ia" class="nav-item text-sm">
                         <i class="ph-bold ph-magic-wand text-xl"></i> <span>Asesor Virtual</span>
+                    </div>
+                    <div onclick="router('experiencia')" id="nav-experiencia" class="nav-item text-sm">
+                        <i class="ph-bold ph-sketch-logo text-xl"></i> <span>La Experiencia</span>
                     </div>
                     <div onclick="router('admin')" id="nav-admin"
                         class="nav-item hidden !text-rose-500 hover:!bg-rose-50">
@@ -319,6 +365,45 @@
             const container = document.getElementById('content-area');
             const title = document.getElementById('page-title');
             container.innerHTML = '<div class="flex flex-col items-center justify-center mt-32 space-y-4"><div class="w-16 h-16 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div><p class="text-teal-600 font-black uppercase tracking-widest text-sm animate-pulse">Sincronizando ecosistema...</p></div>';
+
+            if (view === 'experiencia') {
+                title.innerText = "La Experiencia PNFT";
+                container.innerHTML = `
+                    <div class="fade-in space-y-12 pb-20">
+                        <div class="glass p-10 rounded-[2.5rem] bg-white border border-[#025964]/10 relative overflow-hidden shadow-sm">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                                <div class="reveal active">
+                                    <span class="bg-[#f1f8f9] text-[#025964] border border-[#025964]/20 text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-6 inline-block">Filosofía de Mediación</span>
+                                    <h3 class="text-5xl font-black mb-6 leading-tight text-white-800">La Fotografía <br><span class="text-[#025964]">Previa del Aula</span></h3>
+                                    <p class="text-slate-500 font-medium leading-relaxed text-lg italic mt-2 border-l-4 border-[#025964] pl-6">
+                                        "La magia de una gran lección tecnológica comienza mucho antes del primer clic. Es la visión y la conexión lo que transforma un tema en un recuerdo eterno."
+                                    </p>
+                                </div>
+                                <div class="relative h-[300px] rounded-[2.5rem] overflow-hidden shadow-2xl reveal active">
+                                    <img src="https://images.unsplash.com/photo-1554048612-387768052bf7?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                        </div>
+
+                        <section class="space-y-10">
+                            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                                <h3 class="text-3xl font-black text-slate-800 uppercase tracking-tighter">Tu Ruta de Innovación</h3>
+                                <div class="flex gap-4 p-2 bg-slate-100 rounded-2xl">
+                                    <button onclick="switchExphase('antes')" id="exbtn-antes" class="experience-tab-btn active px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest">01. Preparación</button>
+                                    <button onclick="switchExphase('durante')" id="exbtn-durante" class="experience-tab-btn px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-slate-400">02. Ejecución</button>
+                                    <button onclick="switchExphase('despues')" id="exbtn-despues" class="experience-tab-btn px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-slate-400">03. Impacto</button>
+                                </div>
+                            </div>
+
+                            <div id="experience-phase-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <!-- Phase content will be injected here -->
+                            </div>
+                        </section>
+                    </div>
+                `;
+                setTimeout(() => window.switchExphase('antes'), 50);
+                return;
+            }
 
             // --- VISTA: DASHBOARD ---
             if (view === 'dashboard') {
@@ -1146,12 +1231,140 @@
             el.className = `mt-6 text-xs text-center font-bold min-h-[1.5em] ${type === 'err' ? 'text-red-400' : 'text-green-400'}`;
         };
 
+        window.switchExphase = (phase) => {
+            const container = document.getElementById('experience-phase-container');
+            const btns = document.querySelectorAll('.experience-tab-btn');
+            btns.forEach(b => {
+                b.classList.remove('active', 'bg-[#025964]', 'text-white');
+                b.classList.add('text-slate-400');
+            });
+            const activeBtn = document.getElementById(`exbtn-${phase}`);
+            if (activeBtn) {
+                activeBtn.classList.add('active', 'bg-[#025964]', 'text-white');
+                activeBtn.classList.remove('text-slate-400');
+            }
+
+            const phases = {
+                antes: `
+                    <div class="glass p-8 rounded-3xl bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:border-[#025964]/30 transition-all">
+                        <span class="absolute top-4 right-6 font-black text-4xl text-slate-50 group-hover:text-[#025964]/5 transition-colors">01</span>
+                        <div class="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center text-[#025964] mb-6"><i class="ph-bold ph-notebook text-2xl"></i></div>
+                        <h4 class="text-xl font-black text-slate-800 mb-2">Diagnóstico Inicial</h4>
+                        <p class="text-sm text-slate-500 font-medium leading-relaxed">Mapeo de saberes previos y condiciones tecnológicas del grupo antes de la intervención.</p>
+                    </div>
+                    <div class="glass p-8 rounded-3xl bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:border-[#025964]/30 transition-all">
+                        <span class="absolute top-4 right-6 font-black text-4xl text-slate-50 group-hover:text-[#025964]/5 transition-colors">02</span>
+                        <div class="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center text-[#025964] mb-6"><i class="ph-bold ph-strategy text-2xl"></i></div>
+                        <h4 class="text-xl font-black text-slate-800 mb-2">Diseño del Reto</h4>
+                        <p class="text-sm text-slate-500 font-medium leading-relaxed">Estructuración de la situación problema bajo el enfoque de Design Thinking.</p>
+                    </div>
+                    <div class="glass p-8 rounded-3xl bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:border-[#025964]/30 transition-all">
+                        <span class="absolute top-4 right-6 font-black text-4xl text-slate-50 group-hover:text-[#025964]/5 transition-colors">03</span>
+                        <div class="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center text-[#025964] mb-6"><i class="ph-bold ph-database text-2xl"></i></div>
+                        <h4 class="text-xl font-black text-slate-800 mb-2">Selección de Saberes</h4>
+                        <p class="text-sm text-slate-500 font-medium leading-relaxed">Identificación de los saberes digitales del nivel que se abordarán en la sesión.</p>
+                    </div>
+                    <div class="glass p-8 rounded-3xl bg-white border border-slate-200 shadow-sm relative overflow-hidden group hover:border-[#025964]/30 transition-all">
+                        <span class="absolute top-4 right-6 font-black text-4xl text-slate-50 group-hover:text-[#025964]/5 transition-colors">04</span>
+                        <div class="w-12 h-12 bg-[#025964] rounded-xl flex items-center justify-center text-white mb-6"><i class="ph-bold ph-check text-2xl"></i></div>
+                        <h4 class="text-xl font-black text-slate-800 mb-2">Lista de Cotejo</h4>
+                        <p class="text-sm text-slate-500 font-medium leading-relaxed">Preparación de los indicadores de logro y criterios de evaluación técnica.</p>
+                    </div>
+                `,
+                durante: `
+                    <div class="lg:col-span-2 glass p-10 rounded-[2.5rem] bg-[#025964] text-white relative overflow-hidden">
+                        <i class="ph-fill ph-circles-three absolute -right-10 -bottom-10 text-white/5 text-[15rem] rotate-12"></i>
+                        <h4 class="text-3xl font-black mb-4">Codocencia Activa</h4>
+                        <p class="text-teal-100 font-medium leading-relaxed mb-6">El docente y el asesor trabajan en conjunto dentro del aula para potenciar el aprendizaje técnico.</p>
+                        <ul class="space-y-4">
+                            <li class="flex items-center gap-3 text-sm font-bold"><i class="ph-bold ph-check-circle text-teal-400"></i> Modelado de procesos algorítmicos.</li>
+                            <li class="flex items-center gap-3 text-sm font-bold"><i class="ph-bold ph-check-circle text-teal-400"></i> Apoyo en la resolución de errores (debugging).</li>
+                        </ul>
+                    </div>
+                    <div class="lg:col-span-2 glass p-10 rounded-[2.5rem] bg-white border border-slate-100">
+                        <h4 class="text-2xl font-black text-slate-800 mb-4">Laboratorio de Creación</h4>
+                        <p class="text-slate-500 font-medium leading-relaxed mb-8">Uso intensivo de hardware y software bajo la metodología Design Thinking.</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-center">
+                                <p class="text-2xl font-black text-[#025964]">60%</p>
+                                <p class="text-[9px] font-black uppercase text-slate-400">Construcción</p>
+                            </div>
+                            <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-center">
+                                <p class="text-2xl font-black text-[#025964]">40%</p>
+                                <p class="text-[9px] font-black uppercase text-slate-400">Reflexión</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                despues: `
+                    <div class="lg:col-span-3 glass p-10 rounded-[2.5rem] bg-white border border-[#025964]/10">
+                        <h4 class="text-2xl font-black text-slate-800 mb-6">Bitácora de Evidencias</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="space-y-2">
+                                <div class="w-full aspect-video bg-slate-100 rounded-xl flex items-center justify-center text-slate-300"><i class="ph ph-image text-3xl"></i></div>
+                                <p class="text-[10px] font-black text-slate-400 uppercase text-center">Captura Técnica</p>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="w-full aspect-video bg-slate-100 rounded-xl flex items-center justify-center text-slate-300"><i class="ph ph-video text-3xl"></i></div>
+                                <p class="text-[10px] font-black text-slate-400 uppercase text-center">Proceso de Diseño</p>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="w-full aspect-video bg-slate-100 rounded-xl flex items-center justify-center text-slate-300"><i class="ph ph-file-pdf text-3xl"></i></div>
+                                <p class="text-[10px] font-black text-slate-400 uppercase text-center">Reporte RdA</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass p-10 rounded-[2.5rem] bg-teal-50/50 border border-teal-500/10 flex flex-col justify-center">
+                        <h5 class="text-lg font-black text-[#025964] mb-2 uppercase italic tracking-tighter">Certificación de Saberes</h5>
+                        <p class="text-xs text-slate-500 font-medium">Validación de la apropiación tecnológica en el Portal Nacional de Formación Tecnológica.</p>
+                    </div>
+                `
+            };
+            container.innerHTML = `<div class="fade-in grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">${phases[phase]}</div>`;
+        };
+
         window.switchAuthTab = (t) => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`tab-${t}`).classList.add('active');
+            if (t !== 'recover') {
+                const tab = document.getElementById(`tab-${t}`);
+                if (tab) tab.classList.add('active');
+            }
             document.getElementById('form-login').classList.toggle('hidden', t !== 'login');
             document.getElementById('form-register').classList.toggle('hidden', t !== 'register');
+            document.getElementById('form-recover').classList.toggle('hidden', t !== 'recover');
             msg("", "");
+        };
+
+        window.showRecoverForm = () => window.switchAuthTab('recover');
+
+        window.recuperarEmail = async () => {
+            const nombre = document.getElementById('recover-name').value.trim();
+            const codigo = document.getElementById('recover-code').value.trim();
+
+            if (!nombre || !codigo) return msg("⚠️ Ingresa nombre y código", "err");
+
+            msg("🔍 Buscando en el ecosistema...", "normal");
+
+            try {
+                // Importar query y where para esta búsqueda específica
+                const { query, collection, where, getDocs } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                const q = query(collection(db, "registro_usuarios"),
+                    where("nombre", "==", nombre),
+                    where("codigo", "==", codigo));
+
+                const snap = await getDocs(q);
+                if (snap.empty) {
+                    msg("❌ No se encontró ningún docente con esos datos.", "err");
+                } else {
+                    const data = snap.docs[0].data();
+                    msg(`✅ Tu correo es: ${data.email}`, "success");
+                    // Opcional: llenar el campo de login automáticamente
+                    document.getElementById('login-email').value = data.email;
+                }
+            } catch (e) {
+                console.error(e);
+                msg("⛔ Error en la búsqueda: " + e.message, "err");
+            }
         };
 
         window.registerUser = async () => {
