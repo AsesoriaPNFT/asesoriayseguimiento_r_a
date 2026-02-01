@@ -30,6 +30,13 @@
             background-color: var(--bg-main);
             color: var(--text-main);
             overflow: hidden;
+            line-height: 1.6;
+            /* Improved global leading */
+        }
+
+        p {
+            line-height: 1.75;
+            /* Added breathing room for paragraphs */
         }
 
         /* Glassmorphism Light */
@@ -997,8 +1004,8 @@
                 admin: `
                     <div class="space-y-10 fade-in">
                         <div class="glass p-10 rounded-[3rem] bg-white border border-[#025964]/10 shadow-sm mb-8">
-                             <p class="text-slate-500 font-medium leading-relaxed mb-6">
-                                A continuación, presento los detalles del contenido administrativo de las <b>"Orientaciones generales para docentes 2026"</b>, enfocados exclusivamente en el nivel de <b>Secundaria</b> (III Ciclo y Educación Diversificada/Vocacional).
+                             <p class="text-slate-500 font-medium leading-loose mb-6">
+                                A continuación, presento los detalles del contenido administrativo de las <b>"Orientaciones generales para docentes 2026"</b>, enfocados exclusivamente en el nivel de <b>Secundaria</b> (III Ciclo y Educación Diversificada/Vocacional). Se recomienda la lectura completa del documento para profundizar en los aspectos mencionados, con la finalidad de complementar la comprensión total del importante aporte pedagógico a brindar a los estudiantes en el presente curso lectivo 2026.
                              </p>
                         </div>
 
@@ -1083,50 +1090,108 @@
                     </div>
                 `,
                 peda: `
-                    <div class="space-y-10 fade-in">
-                        <section class="glass p-12 rounded-[2.5rem] bg-white border border-[#025964]/10 relative overflow-hidden">
-                            <i class="ph-fill ph-circles-three-plus absolute -right-20 -top-20 text-[#025964]/5 text-[20rem] rotate-12"></i>
-                            <div class="relative z-10">
-                                <h4 class="text-4xl font-black text-slate-800 mb-10 tracking-tighter uppercase leading-none">Pedagogía por <br><span class="text-[#025964]">Retos y Prototipado</span></h4>
-                                
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                    <div class="space-y-6">
-                                        <div class="p-8 bg-slate-50 rounded-3xl border border-slate-100 group transition-all">
-                                            <div class="flex items-center gap-4 mb-6">
-                                                <div class="w-12 h-12 bg-[#025964] text-white rounded-xl shadow-lg flex items-center justify-center font-black">DT</div>
-                                                <h5 class="text-lg font-black text-slate-800">Design Thinking</h5>
-                                            </div>
-                                            <p class="text-sm text-slate-500 font-medium leading-relaxed">Metodología core para el <b>Componente Proyecto</b>. Resolver problemas reales del contexto.</p>
-                                        </div>
-                                        <div class="p-8 bg-slate-50 rounded-3xl border border-slate-100 group transition-all">
-                                            <div class="flex items-center gap-4 mb-6">
-                                                <div class="w-12 h-12 bg-[#008e9b] text-white rounded-xl shadow-lg flex items-center justify-center"><i class="ph-bold ph-star text-2xl"></i></div>
-                                                <h5 class="text-lg font-black text-slate-800 uppercase">Enfoque Práctico</h5>
-                                            </div>
-                                            <p class="text-sm text-slate-500 font-medium leading-relaxed">Priorizamos el <b>Hacer</b>: de la teoría a la construcción de soluciones digitales tangibles.</p>
-                                        </div>
+                    <div class="space-y-12 fade-in">
+                        <div class="glass p-10 rounded-[3rem] bg-white border border-[#025964]/10 shadow-sm">
+                            <p class="text-slate-500 font-medium leading-loose">
+                                Claro, basándome en el documento <b>"Orientaciones generales para docentes 2026"</b>, he extraído los aspectos estrictamente pedagógicos para la implementación del Programa Nacional de Formación Tecnológica (PNFT) en el nivel de <b>Secundaria</b> (III Ciclo y Educación Diversificada Vocacional).
+                            </p>
+                        </div>
+
+                        <!-- 1. Enfoque Metodológico -->
+                        <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm">
+                            <h4 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-4 uppercase tracking-tighter">1. Enfoque Metodológico: Design Thinking</h4>
+                            <div class="space-y-6 text-slate-600 leading-relaxed">
+                                <p>Para secundaria, la pedagogía se centra en metodologías activas donde el estudiante es el protagonista.</p>
+                                <ul class="space-y-4">
+                                    <li class="flex gap-3"><i class="ph-bold ph-caret-right text-[#025964] mt-1"></i> <div><b>Metodología Base:</b> Se recomienda explícitamente el uso de <b>Design Thinking</b> (Pensamiento de Diseño) para el desarrollo de las clases y proyectos.</div></li>
+                                    <li class="flex gap-3"><i class="ph-bold ph-caret-right text-[#025964] mt-1"></i> <div><b>Flexibilidad Condicionada:</b> Si el docente decide utilizar otra metodología activa distinta, es obligatorio que asegure la incorporación del <b>Componente Proyecto</b> y su respectiva evaluación sumativa.</div></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 2. La Evaluación -->
+                        <div class="glass p-10 rounded-[2.5rem] bg-[#f1f8f9] border border-[#025964]/10">
+                            <h4 class="text-2xl font-black text-[#025964] mb-8 flex items-center gap-4 uppercase tracking-tighter">2. La Evaluación: El Componente Proyecto</h4>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                                <div class="space-y-6">
+                                    <p class="text-slate-700 font-bold mb-4">A diferencia de primaria (que usa pruebas de ejecución), la evaluación sumativa en secundaria gira en torno al desarrollo de un proyecto.</p>
+                                    <div class="p-6 bg-white rounded-2xl border border-teal-100 shadow-sm">
+                                        <p class="text-xs font-black text-teal-600 uppercase mb-2">Carácter del Proyecto</p>
+                                        <p class="text-sm text-slate-600">Es un proceso continuo (diagnóstico, formativo y sumativo) que debe desarrollarse estrictamente dentro de las <b>2 lecciones semanales</b> de Formación Tecnológica.</p>
                                     </div>
-                                    
-                                    <div class="bg-white p-10 rounded-[2.5rem] border border-[#025964]/10 flex flex-col justify-center">
-                                        <p class="text-[#025964] text-xs font-black uppercase tracking-widest mb-6 italic">Itinerarios y Áreas 2026</p>
-                                        <ul class="space-y-6">
-                                            <li class="flex gap-4">
-                                                <span class="w-1 h-12 bg-[#025964] rounded-full"></span>
-                                                <div><p class="font-black text-sm text-slate-800 uppercase">Programación Estructural</p></div>
-                                            </li>
-                                            <li class="flex gap-4">
-                                                <span class="w-1 h-12 bg-[#008e9b] rounded-full"></span>
-                                                <div><p class="font-black text-sm text-slate-800 uppercase">IA Aplicada</p></div>
-                                            </li>
-                                            <li class="flex gap-4">
-                                                <span class="w-1 h-12 bg-slate-200 rounded-full"></span>
-                                                <div><p class="font-black text-sm text-slate-800 uppercase">Computación Física</p></div>
-                                            </li>
-                                        </ul>
+                                    <div class="p-6 bg-white rounded-2xl border border-teal-100 shadow-sm">
+                                        <p class="text-xs font-black text-teal-600 uppercase mb-2">Calificación</p>
+                                        <p class="text-sm text-slate-600">El porcentaje del proyecto se asigna al finalizar el proceso en cada periodo lectivo.</p>
                                     </div>
                                 </div>
+                                <div class="p-8 bg-white/50 rounded-3xl border border-teal-100/30">
+                                    <h5 class="font-black text-sm uppercase text-[#025964] mb-6">Fases de Evaluación del Proyecto:</h5>
+                                    <ul class="space-y-6">
+                                        <li>
+                                            <p class="font-black text-slate-800 text-sm mb-1">1. Etapa Inicial</p>
+                                            <p class="text-xs text-slate-500">Se evalúa la comprensión del problema, la investigación y la planificación mediante indicadores específicos (describir necesidades, sintetizar hallazgos, seleccionar ideas).</p>
+                                        </li>
+                                        <li>
+                                            <p class="font-black text-slate-800 text-sm mb-1">2. Etapa de Desarrollo y Cierre</p>
+                                            <p class="text-xs text-slate-500">Se evalúa el prototipado y la solución final utilizando los indicadores de logro de los saberes conceptuales del módulo (ej. programación, robótica).</p>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
-                        </section>
+                        </div>
+
+                        <!-- 3. Planeamiento Didáctico -->
+                        <div class="glass p-10 rounded-[2.5rem] bg-white border border-slate-100">
+                            <h4 class="text-2xl font-black text-slate-800 mb-8 uppercase tracking-tighter flex items-center gap-4">3. Planeamiento Didáctico</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm text-slate-600">
+                                <ul class="space-y-4">
+                                    <li class="flex gap-3"><i class="ph-bold ph-check-circle text-[#008e9b]"></i> <div><b>Periodicidad:</b> El planeamiento se elabora de forma <b>bimestral</b> (cada dos meses).</div></li>
+                                    <li class="flex gap-3"><i class="ph-bold ph-check-circle text-[#008e9b]"></i> <div><b>Nivel vs. Ciclo:</b> Se planifica por nivel educativo (ej. un plan para 7°, otro para 8°).</div></li>
+                                    <li class="flex gap-3"><i class="ph-bold ph-check-circle text-[#008e9b]"></i> <div><b>Articulación:</b> Transformar saberes del módulo en experiencias integradas, evitando el aislamiento de áreas.</div></li>
+                                </ul>
+                                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col justify-between">
+                                    <div>
+                                        <p class="text-xs font-black text-teal-600 uppercase mb-2">Estructura de la Plantilla</p>
+                                        <p class="text-xs text-slate-500 leading-relaxed mb-4">Referencia actualizada con tres bloques: identificación, matriz de saberes/estrategias/indicadores, y reflexión.</p>
+                                    </div>
+                                    <a href="https://k3sb12.github.io/Recurso-Plantilla-Planeamiento-/" target="_blank" class="block w-full text-center bg-[#025964] text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Abrir Plantilla Digital 2026</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Estructura & 5. Vocacional -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100">
+                                <h4 class="text-xl font-black text-slate-800 mb-6 uppercase tracking-tighter">4. Estructura de los Módulos</h4>
+                                <ul class="space-y-4 text-xs text-slate-500 font-medium">
+                                    <li class="flex gap-2"><span>•</span> <span><b>Cantidad:</b> Dos módulos anuales, uno por cada periodo lectivo.</span></li>
+                                    <li class="flex gap-2"><span>•</span> <span><b>Correlación:</b> Segmentos correlacionados; se pueden retomar actividades entre periodos.</span></li>
+                                    <li class="flex gap-2"><span>•</span> <span><b>Saberes:</b> Trabajo integrado de saberes conceptuales, procedimentales y actitudinales.</span></li>
+                                </ul>
+                            </div>
+                            <div class="glass p-8 rounded-[2.5rem] bg-[#025964] text-white shadow-xl shadow-[#025964]/10">
+                                <h4 class="text-xl font-black mb-6 uppercase tracking-tighter">5. Adaptación Modalidad Vocacional</h4>
+                                <div class="space-y-4 text-xs text-teal-50">
+                                    <p><b>Diagnóstico Contextualizado:</b> Coordinación obligatoria con el docente guía para identificar necesidades específicas.</p>
+                                    <p><b>Selección de Saberes:</b> Basado en diagnóstico, se seleccionan saberes de cualquier ciclo que respondan a las necesidades, priorizando <b>herramientas de productividad.</b></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 6. Recursos -->
+                        <div class="glass p-10 rounded-[2.5rem] bg-slate-50 border border-slate-200">
+                            <h4 class="text-xl font-black text-slate-800 mb-8 uppercase tracking-tighter">6. Recursos de Apoyo Pedagógico</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                                    <h5 class="font-black text-teal-600 text-xs mb-2">Guías Docentes</h5>
+                                    <p class="text-xs text-slate-500">Documentos específicos por ciclo que organizan competencias y resultados de aprendizaje.</p>
+                                </div>
+                                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                                    <h5 class="font-black text-teal-600 text-xs mb-2">PIA (Planificación Integral y Ágil)</h5>
+                                    <p class="text-xs text-slate-500">Herramienta opcional basada en IA para apoyar la elaboración técnica del planeamiento.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 `,
                 plan: `
