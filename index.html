@@ -983,8 +983,12 @@
                 return result.data.text;
             } catch (error) {
                 console.error("Error al llamar a Gemini Function:", error);
-                if (error.code === 'unauthenticated') return "⚠️ Debes iniciar sesión para usar la IA.";
-                return `⛔ Error de conexión con el asistente: ${error.message}`;
+                // Si el error viene de Firebase Functions, mostramos código y mensaje detallado
+                const errorMsg = error.message || 'Error desconocido';
+                const errorCode = error.code || 'unknown';
+
+                if (errorCode === 'unauthenticated') return "⚠️ Debes iniciar sesión para usar la IA.";
+                return `⛔ Error (${errorCode}): ${errorMsg}`;
             }
         }
 
