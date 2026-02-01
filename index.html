@@ -14,15 +14,15 @@
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap');
 
         :root {
-            --primary: #0d9488;
-            /* Teal 600 */
-            --primary-light: #f0fdfa;
-            --accent: #f43f5e;
-            /* Rose 500 */
-            --bg-main: #f8fafc;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --glass-bg: rgba(255, 255, 255, 0.7);
+            --primary: #025964;
+            /* Sober Deep Teal */
+            --primary-light: #f1f8f9;
+            --accent: #008e9b;
+            /* Medium Teal */
+            --bg-main: #ffffff;
+            --text-main: #1a202c;
+            --text-muted: #718096;
+            --glass-bg: rgba(255, 255, 255, 0.9);
         }
 
         body {
@@ -61,7 +61,7 @@
 
         .input-field:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1);
+            box-shadow: 0 0 0 4px rgba(2, 89, 100, 0.1);
             transform: translateY(-1px);
         }
 
@@ -80,7 +80,7 @@
         .tab-btn.active {
             border-color: var(--primary);
             color: var(--primary);
-            background: rgba(13, 148, 136, 0.03);
+            background: rgba(2, 89, 100, 0.03);
         }
 
         /* Navegación Lateral */
@@ -98,7 +98,7 @@
         }
 
         .nav-item:hover {
-            background: rgba(13, 148, 136, 0.05);
+            background: rgba(2, 89, 100, 0.05);
             color: var(--primary);
             transform: translateX(4px);
         }
@@ -106,7 +106,7 @@
         .nav-item.active {
             background: var(--primary);
             color: white;
-            box-shadow: 0 8px 20px -6px rgba(13, 148, 136, 0.4);
+            box-shadow: 0 8px 20px -6px rgba(2, 89, 100, 0.1);
         }
 
         .hidden {
@@ -149,14 +149,13 @@
     </style>
 </head>
 
-<body class="bg-slate-950">
+<body>
 
-    <div id="auth-screen"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-teal-50 via-slate-50 to-rose-50/30">
-        <div class="glass p-10 rounded-[2.5rem] max-w-md w-full shadow-2xl border-t-8 border-teal-500 fade-in">
+    <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-white">
+        <div class="glass p-10 rounded-[2.5rem] max-w-md w-full shadow-2xl border-t-8 border-[#025964] fade-in">
             <div class="text-center mb-10">
                 <div
-                    class="w-20 h-20 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center text-white mx-auto mb-6 shadow-lg shadow-teal-500/30 transform -rotate-6">
+                    class="w-20 h-20 bg-[#025964] rounded-2xl flex items-center justify-center text-white mx-auto mb-6 shadow-lg shadow-[#025964]/10 transform -rotate-2">
                     <i class="ph-bold ph-cube text-4xl"></i>
                 </div>
                 <h1 class="text-3xl font-black tracking-tight text-slate-800">Portal PNFT 2026</h1>
@@ -172,16 +171,16 @@
             <div id="form-login" class="space-y-4">
                 <div class="relative group">
                     <i
-                        class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600"></i>
+                        class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#025964]"></i>
                     <input type="email" id="login-email" class="input-field !pl-12" placeholder="Correo (@mep.go.cr)">
                 </div>
                 <div class="relative group">
                     <i
-                        class="ph ph-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600"></i>
+                        class="ph ph-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#025964]"></i>
                     <input type="password" id="login-pass" class="input-field !pl-12" placeholder="Contraseña">
                 </div>
                 <button onclick="loginUser()"
-                    class="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] mt-4 shadow-xl shadow-teal-600/20">
+                    class="w-full bg-[#025964] hover:bg-[#008e9b] text-white font-bold py-4 rounded-2xl transition-all hover:scale-[1.01] active:scale-[0.98] mt-4 shadow-xl shadow-[#025964]/10">
                     Iniciar Sesión
                 </button>
             </div>
@@ -195,7 +194,7 @@
                 </div>
                 <input type="password" id="reg-pass" class="input-field" placeholder="Contraseña">
                 <button onclick="registerUser()"
-                    class="w-full bg-rose-500 hover:bg-rose-400 text-white font-bold py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] mt-4 shadow-xl shadow-rose-500/20">
+                    class="w-full bg-[#008e9b] hover:bg-[#025964] text-white font-bold py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] mt-4 shadow-xl shadow-[#008e9b]/10">
                     Crear Cuenta
                 </button>
             </div>
@@ -210,7 +209,7 @@
             <div>
                 <div class="flex items-center gap-4 px-2 mb-10">
                     <div
-                        class="w-12 h-12 bg-teal-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-teal-600/20">
+                        class="w-12 h-12 bg-[#025964] rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-[#025964]/10">
                         <i class="ph-fill ph-leaf text-2xl"></i>
                     </div>
                     <div>
@@ -326,30 +325,30 @@
                 title.innerText = "Bienvenido al Centro Core";
                 container.innerHTML = `
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 fade-in">
-                        <div class="md:col-span-2 glass p-10 rounded-[2.5rem] relative overflow-hidden bg-gradient-to-br from-white to-teal-50/30">
+                        <div class="md:col-span-2 glass p-10 rounded-[2.5rem] relative overflow-hidden bg-white border-slate-100 shadow-sm">
                             <div class="relative z-10">
-                                <span class="bg-teal-600 text-white text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-4 inline-block shadow-lg shadow-teal-500/20">Portal Activo</span>
+                                <span class="bg-[#025964] text-white text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-4 inline-block shadow-lg shadow-[#025964]/10">Portal Activo</span>
                                 <h3 class="text-4xl font-black mb-3 text-slate-800">¡Hola, ${window.currentUserData?.nombre.split(' ')[0]}! ✨</h3>
                                 <p class="text-slate-500 leading-relaxed max-w-lg font-medium">Estamos aquí para apoyarte en el ciclo 2026. Tu Asesor IA y las orientaciones están listas para optimizar tu trabajo docente.</p>
                                 <div class="flex gap-4 mt-8">
-                                    <button onclick="router('ia')" class="bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 px-8 rounded-2xl transition-all shadow-xl shadow-teal-600/20 flex items-center gap-2 hover:scale-105">
+                                    <button onclick="router('ia')" class="bg-[#025964] hover:bg-[#008e9b] text-white font-bold py-3 px-8 rounded-2xl transition-all shadow-xl shadow-[#025964]/10 flex items-center gap-2 hover:scale-[1.02]">
                                         <i class="ph-fill ph-sparkle text-xl"></i> Consultar IA
                                     </button>
-                                    <button onclick="router('orientaciones')" class="bg-white border-2 border-slate-100 hover:border-teal-100 text-slate-600 font-bold py-3 px-8 rounded-2xl transition-all flex items-center gap-2">
+                                    <button onclick="router('orientaciones')" class="bg-white border-2 border-slate-100 hover:border-[#025964]/30 text-slate-600 font-bold py-3 px-8 rounded-2xl transition-all flex items-center gap-2">
                                         Ver Documentación
                                     </button>
                                 </div>
                             </div>
-                            <i class="ph-fill ph-plant text-[15rem] absolute -right-10 -bottom-10 text-teal-600/5 rotate-12"></i>
+                            <i class="ph-fill ph-plant text-[15rem] absolute -right-10 -bottom-10 text-[#025964]/5 rotate-12"></i>
                         </div>
                         <div class="space-y-6">
                             <div class="glass p-8 rounded-[2rem] flex flex-col items-center justify-center text-center hover:scale-[1.02] transition-transform cursor-pointer group" onclick="router('orientaciones')">
-                                <div class="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 mb-6 group-hover:bg-rose-500 group-hover:text-white transition-all shadow-sm"><i class="ph-duotone ph-newspaper text-3xl"></i></div>
+                                <div class="w-16 h-16 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#025964] mb-6 group-hover:bg-[#025964] group-hover:text-white transition-all shadow-sm"><i class="ph-duotone ph-newspaper text-3xl"></i></div>
                                 <h4 class="font-black text-slate-800 text-lg">Orientaciones</h4>
                                 <p class="text-xs text-slate-400 font-bold uppercase tracking-tight mt-1">Normativa Vigente 2026</p>
                             </div>
                             <div class="glass p-8 rounded-[2rem] flex flex-col items-center justify-center text-center hover:scale-[1.02] transition-transform cursor-pointer group" onclick="router('guia')">
-                                <div class="w-16 h-16 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-500 mb-6 group-hover:bg-teal-600 group-hover:text-white transition-all shadow-sm"><i class="ph-duotone ph-book-open-text text-3xl"></i></div>
+                                <div class="w-16 h-16 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#008e9b] mb-6 group-hover:bg-[#008e9b] group-hover:text-white transition-all shadow-sm"><i class="ph-duotone ph-book-open-text text-3xl"></i></div>
                                 <h4 class="font-black text-slate-800 text-lg">Guía Docente 2026</h4>
                                 <p class="text-xs text-slate-400 font-bold uppercase tracking-tight mt-1">Pedagogía Secundaria</p>
                             </div>
@@ -359,21 +358,42 @@
 
                 // --- VISTA: ORIENTACIONES ---
             } else if (view === 'orientaciones') {
-                title.innerText = "Orientaciones Docente 2026";
+                title.innerText = "Orientaciones Didácticas 2026";
                 container.innerHTML = `
                     <div class="fade-in space-y-12 pb-20">
                         <!-- Hero & Audio -->
-                        <div class="glass p-10 rounded-[2.5rem] bg-gradient-to-br from-white to-teal-50/50 relative overflow-hidden">
+                        <div class="glass p-10 rounded-[2.5rem] bg-white border border-[#025964]/10 relative overflow-hidden shadow-sm">
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-
-                            <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden">
-                                <h4 class="text-[10px] font-black text-teal-600 uppercase tracking-widest mb-4">Mis Apuntes de Orientaciones</h4>
-                                <textarea id="orient-notes" class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-5 text-sm text-slate-600 font-medium placeholder:text-slate-300 outline-none focus:bg-white focus:border-teal-500 transition-all resize-none" rows="3" placeholder="Anota aquí tus reflexiones finales..."></textarea>
-                                <div class="flex justify-between items-center mt-4">
-                                    <p class="text-[8px] text-slate-400 font-bold uppercase italic">Persistencia Local</p>
-                                    <button onclick="window.saveOrientNotes()" class="bg-teal-600 text-white px-5 py-2 rounded-xl font-black text-[10px] uppercase shadow-lg shadow-teal-600/20 hover:scale-105 transition-all">Guardar Notas</button>
+                                <div>
+                                    <span class="bg-[#f1f8f9] text-[#025964] border border-[#025964]/20 text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-6 inline-block">Normativa e Instrucción 2026</span>
+                                    <h3 class="text-5xl font-black mb-6 leading-tight text-slate-800">Directrices para la <br><span class="text-[#025964]">Mediación Tecnológica</span></h3>
+                                    <p class="text-slate-500 font-medium leading-relaxed text-lg italic mt-2">
+                                        "Transformamos el aula en un laboratorio de creación tecnológica constante."
+                                    </p>
+                                </div>
+                                <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden">
+                                    <h4 class="text-[10px] font-black text-[#025964] uppercase tracking-widest mb-4">Mis Apuntes de Orientaciones</h4>
+                                    <textarea id="orient-notes" class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-5 text-sm text-slate-600 font-medium placeholder:text-slate-300 outline-none focus:bg-white focus:border-[#025964] transition-all resize-none" rows="3" placeholder="Anota aquí tus reflexiones finales..."></textarea>
+                                    <div class="flex justify-between items-center mt-4">
+                                        <p class="text-[8px] text-slate-400 font-bold uppercase italic">Persistencia Local</p>
+                                        <button onclick="window.saveOrientNotes()" class="bg-[#025964] text-white px-5 py-2 rounded-xl font-black text-[10px] uppercase shadow-lg shadow-[#025964]/10 hover:scale-[1.01] transition-all">Guardar Notas</button>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Navigation Tabs -->
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <div class="flex-1 glass p-2 rounded-[2.5rem] bg-[#f1f8f9] border border-slate-100 flex flex-wrap gap-2">
+                                <button onclick="switchOrientTab('admin')" id="tab-btn-admin" class="orient-tab-btn flex-1 min-w-[150px] px-8 py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all bg-[#025964] text-white shadow-lg shadow-[#025964]/10">Capa Administrativa</button>
+                                <button onclick="switchOrientTab('peda')" id="tab-btn-peda" class="orient-tab-btn flex-1 min-w-[150px] px-8 py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all text-slate-500 hover:text-[#025964]">Enfoque Pedagógico</button>
+                                <button onclick="switchOrientTab('plan')" id="tab-btn-plan" class="orient-tab-btn flex-1 min-w-[150px] px-8 py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all text-slate-500 hover:text-[#025964]">Planeamiento PIA</button>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Content Area -->
+                        <div id="orient-main-content" class="min-h-[500px]">
+                            <!-- Content injected here via switchOrientTab -->
                         </div>
                     </div>
                 `;
@@ -382,6 +402,7 @@
                 setTimeout(() => {
                     const saved = localStorage.getItem('pnft_orient_notes');
                     if (saved) document.getElementById('orient-notes').value = saved;
+                    window.switchOrientTab('admin');
                 }, 100);
 
                 // --- VISTA: GUÍA DOCENTE + IA #1 ---
@@ -390,15 +411,15 @@
                 container.innerHTML = `
                     <div class="fade-in space-y-12 pb-20">
                         <!-- Hero Section -->
-                        <div class="glass p-10 rounded-[2.5rem] bg-gradient-to-br from-indigo-900 to-slate-900 text-white relative overflow-hidden shadow-2xl">
+                        <div class="glass p-10 rounded-[2.5rem] bg-white border border-[#025964]/10 text-slate-800 relative overflow-hidden shadow-sm">
                             <div class="relative z-10 max-w-3xl">
-                                <span class="bg-indigo-500/30 border border-indigo-400/50 text-white text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-6 inline-block">Planificación Estratégica Secundaria</span>
-                                <h3 class="text-5xl font-black mb-6 leading-tight">Guía Docente de Formación Tecnológica</h3>
-                                <p class="text-indigo-100 font-medium leading-relaxed text-lg opacity-90">
-                                    Este resumen se basa estrictamente en el contenido de la Guía docente para la Formación Tecnológica Secundaria-III ciclo (2026).
+                                <span class="bg-[#f1f8f9] border border-[#008e9b]/20 text-[#025964] text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-6 inline-block">Planificación Estratégica Secundaria</span>
+                                <h3 class="text-5xl font-black mb-6 leading-tight">Guía Docente de <br><span class="text-[#025964]">Formación Tecnológica</span></h3>
+                                <p class="text-slate-500 font-medium leading-relaxed text-lg italic mt-2">
+                                    "Basada estrictamente en la Guía docente para la Formación Tecnológica Secundaria-III ciclo (2026)."
                                 </p>
                             </div>
-                            <div class="absolute top-[-10%] right-[-5%] opacity-10 rotate-12"><i class="ph-fill ph-target text-[20rem]"></i></div>
+                            <div class="absolute top-[-10%] right-[-5%] opacity-10 rotate-12 text-[#025964]"><i class="ph-fill ph-target text-[20rem]"></i></div>
                         </div>
 
                         <!-- Main Content Grid -->
@@ -408,32 +429,32 @@
                             <div class="lg:col-span-1 space-y-8">
                                 <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-xl sticky top-24">
                                     <h4 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-3">
-                                        <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600"><i class="ph-fill ph-sparkle"></i></div>
+                                        <div class="w-10 h-10 bg-[#f1f8f9] rounded-xl flex items-center justify-center text-[#025964]"><i class="ph-fill ph-sparkle"></i></div>
                                         Generador de Situaciones
                                     </h4>
                                     
                                     <div class="space-y-6">
                                         <div class="group">
-                                            <label class="block text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-3 ml-1">Contexto de la situación</label>
-                                            <textarea id="ia-tema" rows="4" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-medium outline-none focus:bg-white focus:border-indigo-500 transition-all shadow-inner" placeholder="Ej: Estudiantes de zona rural que necesitan automatizar un riego..."></textarea>
+                                            <label class="block text-[10px] font-black text-[#025964] uppercase tracking-widest mb-3 ml-1">Contexto de la situación</label>
+                                            <textarea id="ia-tema" rows="4" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-medium outline-none focus:bg-white focus:border-[#025964] transition-all shadow-inner" placeholder="Ej: Estudiantes de zona rural que necesitan automatizar un riego..."></textarea>
                                         </div>
 
                                         <div class="group">
-                                            <label class="block text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-3 ml-1">Nivel Seleccionado</label>
-                                            <select id="ia-nivel" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium outline-none focus:bg-white focus:border-indigo-500 transition-all appearance-none cursor-pointer">
+                                            <label class="block text-[10px] font-black text-[#025964] uppercase tracking-widest mb-3 ml-1">Nivel Seleccionado</label>
+                                            <select id="ia-nivel" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium outline-none focus:bg-white focus:border-[#025964] transition-all appearance-none cursor-pointer">
                                                 <option value="Sétimo Año">Sétimo Año</option>
                                                 <option value="Octavo Año">Octavo Año</option>
                                                 <option value="Noveno Año">Noveno Año</option>
                                             </select>
                                         </div>
 
-                                        <button onclick="window.generarSituacion()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-3xl py-5 font-black text-xs transition-all shadow-xl shadow-indigo-600/30 flex items-center justify-center gap-3 group uppercase tracking-widest">
-                                            Generar 4 Situaciones Reto <i class="ph-bold ph-magic-wand text-lg transition-transform group-hover:scale-110"></i>
+                                        <button onclick="window.generarSituacion()" class="w-full bg-[#025964] hover:bg-[#008e9b] text-white rounded-3xl py-5 font-black text-xs transition-all shadow-lg shadow-[#025964]/10 flex items-center justify-center gap-3 group uppercase tracking-widest">
+                                            Generar 4 Situaciones Reto <i class="ph-bold ph-magic-wand text-lg transition-transform group-hover:scale-105"></i>
                                         </button>
                                     </div>
 
                                     <div id="ia-result-container" class="mt-8 hidden">
-                                        <div id="ia-result" class="bg-indigo-50/50 p-6 rounded-3xl border border-indigo-100 text-sm text-slate-700 leading-relaxed max-h-[400px] overflow-y-auto">
+                                        <div id="ia-result" class="bg-[#f1f8f9] p-6 rounded-3xl border border-[#025964]/10 text-sm text-slate-700 leading-relaxed max-h-[400px] overflow-y-auto">
                                             <!-- Result here -->
                                         </div>
                                     </div>
@@ -477,43 +498,43 @@
 
                                 <!-- Levels Tabs -->
                                 <div class="space-y-6">
-                                    <div class="flex gap-4 p-2 bg-slate-100 rounded-[2rem] overflow-x-auto no-scrollbar">
-                                        <button onclick="switchLevelTab('sétimo')" id="level-btn-sétimo" class="level-tab-btn flex-1 min-w-[120px] px-6 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-widest transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/20">7mo Año</button>
-                                        <button onclick="switchLevelTab('octavo')" id="level-btn-octavo" class="level-tab-btn flex-1 min-w-[120px] px-6 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600">8vo Año</button>
-                                        <button onclick="switchLevelTab('noveno')" id="level-btn-noveno" class="level-tab-btn flex-1 min-w-[120px] px-6 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600">9no Año</button>
+                                    <div class="flex gap-4 p-2 bg-[#f1f8f9] rounded-[2rem] overflow-x-auto no-scrollbar border border-[#025964]/5">
+                                        <button onclick="switchLevelTab('sétimo')" id="level-btn-sétimo" class="level-tab-btn flex-1 min-w-[120px] px-6 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-widest transition-all bg-[#025964] text-white shadow-lg shadow-[#025964]/10">7mo Año</button>
+                                        <button onclick="switchLevelTab('octavo')" id="level-btn-octavo" class="level-tab-btn flex-1 min-w-[120px] px-6 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-widest transition-all text-slate-400 hover:text-[#025964]">8vo Año</button>
+                                        <button onclick="switchLevelTab('noveno')" id="level-btn-noveno" class="level-tab-btn flex-1 min-w-[120px] px-6 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-widest transition-all text-slate-400 hover:text-[#025964]">9no Año</button>
                                     </div>
 
-                                    <div id="level-content-area" class="glass p-10 rounded-[2.5rem] bg-indigo-50 border border-indigo-100">
+                                    <div id="level-content-area" class="glass p-10 rounded-[2.5rem] bg-white border border-[#025964]/10">
                                         <!-- Level content injected via switchLevelTab('sétimo') -->
                                     </div>
                                 </div>
 
                                 <!-- Evaluation & Planning Details -->
                                 <div class="space-y-8">
-                                    <div class="glass p-10 rounded-[2.5rem] bg-white border border-slate-100">
-                                        <h5 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-3"><i class="ph-fill ph-scales text-rose-500"></i> Lineamientos de Evaluación</h5>
+                                    <div class="glass p-10 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm">
+                                        <h5 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-3"><i class="ph-fill ph-scales text-[#025964]"></i> Lineamientos de Evaluación</h5>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm text-slate-600 leading-relaxed">
                                             <ul class="space-y-4">
-                                                <li class="flex gap-3"><i class="ph-bold ph-caret-right text-rose-500 mt-1"></i> <div><b>Marco Normativo:</b> Se rige estrictamente por el Reglamento de Evaluación de los Aprendizajes vigente.</div></li>
-                                                <li class="flex gap-3"><i class="ph-bold ph-caret-right text-rose-500 mt-1"></i> <div><b>Responsabilidad:</b> El docente diseña estrategias contextualizadas e integradoras.</div></li>
+                                                <li class="flex gap-3"><i class="ph-bold ph-caret-right text-[#025964] mt-1"></i> <div><b>Marco Normativo:</b> Se rige estrictamente por el Reglamento de Evaluación de los Aprendizajes vigente.</div></li>
+                                                <li class="flex gap-3"><i class="ph-bold ph-caret-right text-[#025964] mt-1"></i> <div><b>Responsabilidad:</b> El docente diseña estrategias contextualizadas e integradoras.</div></li>
                                             </ul>
                                             <ul class="space-y-4">
-                                                <li class="flex gap-3"><i class="ph-bold ph-caret-right text-rose-500 mt-1"></i> <div><b>Gestión del Tiempo:</b> Se debe valorar el tiempo efectivo por periodo para la medición justa.</div></li>
-                                                <li class="flex gap-3"><i class="ph-bold ph-caret-right text-rose-500 mt-1"></i> <div><b>Reflexión Ética:</b> Integrar espacios sobre el sentido ético y responsable de la IA y tecnología.</div></li>
+                                                <li class="flex gap-3"><i class="ph-bold ph-caret-right text-[#025964] mt-1"></i> <div><b>Gestión del Tiempo:</b> Se debe valorar el tiempo efectivo por periodo para la medición justa.</div></li>
+                                                <li class="flex gap-3"><i class="ph-bold ph-caret-right text-[#025964] mt-1"></i> <div><b>Reflexión Ética:</b> Integrar espacios sobre el sentido ético y responsable de la IA y tecnología.</div></li>
                                             </ul>
                                         </div>
                                     </div>
 
-                                    <div class="glass p-10 rounded-[2.5rem] bg-slate-900 text-indigo-100 border-none shadow-xl">
-                                        <h5 class="text-xl font-black text-white mb-6 flex items-center gap-3"><i class="ph-fill ph-notepad text-indigo-400"></i> Directrices de Planeamiento</h5>
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm opacity-90 leading-relaxed">
+                                    <div class="glass p-10 rounded-[2.5rem] bg-white border border-[#025964]/10 shadow-sm relative overflow-hidden">
+                                        <h5 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-3"><i class="ph-fill ph-notepad text-[#025964]"></i> Directrices de Planeamiento</h5>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm text-slate-600 leading-relaxed">
                                             <ul class="space-y-4">
-                                                <li class="flex gap-3"><i class="ph-bold ph-check-square text-indigo-400 mt-1"></i> <div><b>Base Curricular:</b> Referencia obligatoria al macro y micro currículo del PNFT.</div></li>
-                                                <li class="flex gap-3"><i class="ph-bold ph-check-square text-indigo-400 mt-1"></i> <div><b>Contextualización:</b> Adaptación a necesidades y entorno de los estudiantes.</div></li>
+                                                <li class="flex gap-3"><i class="ph-bold ph-check-square text-[#025964] mt-1"></i> <div><b>Base Curricular:</b> Referencia obligatoria al macro y micro currículo del PNFT.</div></li>
+                                                <li class="flex gap-3"><i class="ph-bold ph-check-square text-[#025964] mt-1"></i> <div><b>Contextualización:</b> Adaptación a necesidades y entorno de los estudiantes.</div></li>
                                             </ul>
                                             <ul class="space-y-4">
-                                                <li class="flex gap-3"><i class="ph-bold ph-check-square text-indigo-400 mt-1"></i> <div><b>Ejes Transversales:</b> Pensamiento Computacional, Ciudadanía Digital y Emprendimiento.</div></li>
-                                                <li class="flex gap-3"><i class="ph-bold ph-check-square text-indigo-400 mt-1"></i> <div><b>Libertad y Autonomía:</b> El docente lidera el diseño de su mediación pedagógica.</div></li>
+                                                <li class="flex gap-3"><i class="ph-bold ph-check-square text-[#025964] mt-1"></i> <div><b>Ejes Transversales:</b> Pensamiento Computacional, Ciudadanía Digital y Emprendimiento.</div></li>
+                                                <li class="flex gap-3"><i class="ph-bold ph-check-square text-[#025964] mt-1"></i> <div><b>Libertad y Autonomía:</b> El docente lidera el diseño de su mediación pedagógica.</div></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -537,10 +558,10 @@
                         const p = doc.data();
                         const date = p.fecha?.toDate().toLocaleDateString() || 'Hoy';
                         postsHtml += `
-                            <div class="glass p-8 rounded-3xl mb-6 bg-white border-l-8 border-teal-500 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="glass p-8 rounded-3xl mb-6 bg-white border-l-8 border-[#025964] shadow-sm hover:shadow-md transition-shadow">
                                 <div class="flex justify-between items-center mb-4">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 bg-teal-50 rounded-full flex items-center justify-center text-teal-600 font-black">${p.autor.charAt(0)}</div>
+                                        <div class="w-10 h-10 bg-[#f1f8f9] rounded-full flex items-center justify-center text-[#025964] font-black">${p.autor.charAt(0)}</div>
                                         <span class="font-black text-slate-800 text-sm">${p.autor}</span>
                                     </div>
                                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-full">${date}</span>
@@ -552,12 +573,12 @@
 
                 container.innerHTML = `
                     <div class="fade-in max-w-4xl mx-auto">
-                        <div class="glass p-8 rounded-[2.5rem] mb-12 bg-white relative shadow-xl overflow-hidden">
-                            <div class="absolute top-0 right-0 p-8 opacity-5"><i class="ph ph-chat-circle-dots text-8xl"></i></div>
-                            <textarea id="foro-msg" class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-6 text-slate-800 text-lg focus:border-teal-500 focus:bg-white outline-none resize-none transition-all placeholder:text-slate-300 font-medium" rows="3" placeholder="¿Qué éxito has tenido hoy en clase? Comparte..."></textarea>
+                        <div class="glass p-8 rounded-[2.5rem] mb-12 bg-white relative shadow-xl border border-slate-100 overflow-hidden">
+                            <div class="absolute top-0 right-0 p-8 opacity-5 text-[#025964]"><i class="ph ph-chat-circle-dots text-8xl"></i></div>
+                            <textarea id="foro-msg" class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-6 text-slate-800 text-lg focus:border-[#025964] focus:bg-white outline-none resize-none transition-all placeholder:text-slate-300 font-medium" rows="3" placeholder="¿Qué éxito has tenido hoy en clase? Comparte..."></textarea>
                             <div class="flex justify-between items-center mt-6">
-                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest pl-2">Se compartirá con la Red Nacional Docente</p>
-                                <button onclick="publicarForo()" class="bg-teal-600 hover:bg-teal-500 text-white px-10 py-3 rounded-2xl font-black text-sm transition-all shadow-lg shadow-teal-600/20 flex items-center gap-3">
+                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest pl-2 italic">Red Nacional de Formación Tecnológica</p>
+                                <button onclick="publicarForo()" class="bg-[#025964] hover:bg-[#008e9b] text-white px-10 py-3 rounded-2xl font-black text-sm transition-all shadow-lg shadow-[#025964]/10 flex items-center gap-3">
                                     Publicar Experiencia <i class="ph ph-paper-plane-tilt"></i>
                                 </button>
                             </div>
@@ -572,13 +593,15 @@
                 container.innerHTML = `
                     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 h-[calc(100vh-220px)] fade-in">
                         <div class="lg:col-span-3 glass rounded-[2.5rem] flex flex-col overflow-hidden bg-white">
-                            <header class="px-8 py-5 border-b border-slate-100 flex items-center gap-4 bg-teal-50/30">
-                                <div class="w-10 h-10 bg-teal-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-teal-600/10">
+                            <header class="px-8 py-5 border-b border-slate-100 flex items-center gap-4 bg-[#f1f8f9]">
+                                <div class="w-10 h-10 bg-[#025964] rounded-xl flex items-center justify-center text-white shadow-lg shadow-[#025964]/10">
                                     <i class="ph-fill ph-robot text-xl"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-black text-slate-800 text-sm">IA PNFT 2.5</h4>
-                                    <p class="text-[9px] text-teal-600 font-black uppercase tracking-widest">En línea y listo para apoyarte</p>
+                                    <h4 class="text-lg font-black text-slate-800 leading-none">Asesoría de Informática Digital</h4>
+                                    <p class="text-[10px] text-[#025964] font-black uppercase tracking-widest mt-1.5 flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#008e9b] animate-pulse"></span> Sistema Activo
+                                    </p>
                                 </div>
                             </header>
                             <div id="chat-history" class="flex-1 p-8 overflow-y-auto space-y-6">
@@ -589,10 +612,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="p-6 bg-slate-50/50 border-t border-slate-100">
-                                <div class="flex gap-4 bg-white p-2 rounded-[2rem] shadow-lg border border-slate-100">
+                            <div class="p-6 bg-white border-t border-slate-100">
+                                <div class="flex gap-4 bg-slate-50 p-2 rounded-[2rem] shadow-inner border border-slate-100 focus-within:bg-white focus-within:border-[#025964] transition-all">
                                     <input type="text" id="chat-input" class="flex-1 bg-transparent px-6 py-4 text-sm font-medium outline-none text-slate-800" placeholder="Escribe tu consulta pedagógica aquí...">
-                                    <button onclick="enviarChatIA()" class="w-14 h-14 bg-teal-600 hover:bg-teal-500 rounded-3xl flex items-center justify-center text-white shadow-xl shadow-teal-600/20 transition-all active:scale-90 flex-shrink-0">
+                                    <button onclick="enviarChatIA()" class="w-14 h-14 bg-[#025964] hover:bg-[#008e9b] rounded-3xl flex items-center justify-center text-white shadow-xl shadow-[#025964]/10 transition-all active:scale-90 flex-shrink-0">
                                         <i class="ph-bold ph-paper-plane-right text-2xl"></i>
                                     </button>
                                 </div>
@@ -623,39 +646,39 @@
                 title.innerText = "Centro de Gestión";
                 container.innerHTML = `
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-10 fade-in">
-                        <div class="glass p-10 rounded-[2.5rem] bg-white relative overflow-hidden">
-                            <div class="absolute top-0 right-0 p-10 opacity-5"><i class="ph ph-users-three text-8xl"></i></div>
+                        <div class="glass p-10 rounded-[2.5rem] bg-white border border-slate-100 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 p-10 opacity-5 text-[#025964]"><i class="ph ph-users-three text-8xl"></i></div>
                             <div class="flex items-center gap-6 mb-10">
-                                <div class="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 shadow-sm"><i class="ph-fill ph-file-xls text-3xl"></i></div>
+                                <div class="w-16 h-16 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#025964] shadow-sm"><i class="ph-fill ph-file-xls text-3xl"></i></div>
                                 <div>
                                     <h3 class="font-black text-2xl text-slate-800">Sincronización Masiva</h3>
-                                    <p class="text-xs text-rose-500 font-bold uppercase tracking-widest mt-1">Base de Datos PNFT</p>
+                                    <p class="text-xs text-[#025964] font-bold uppercase tracking-widest mt-1 italic">Base de Datos PNFT</p>
                                 </div>
                             </div>
                             <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden" onchange="procesarExcel(this)">
-                            <button onclick="document.getElementById('excel-upload').click()" class="w-full border-4 border-dashed border-rose-100 hover:border-rose-400 text-rose-300 hover:text-rose-500 rounded-3xl py-12 transition-all flex flex-col items-center gap-4 group">
-                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg transition-transform group-hover:scale-110"><i class="ph-bold ph-upload-simple text-3xl"></i></div>
+                            <button onclick="document.getElementById('excel-upload').click()" class="w-full border-4 border-dashed border-slate-50 hover:border-[#025964]/20 text-slate-300 hover:text-[#025964] rounded-3xl py-12 transition-all flex flex-col items-center gap-4 group">
+                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 border border-slate-100"><i class="ph-bold ph-upload-simple text-3xl"></i></div>
                                 <span class="text-sm font-black uppercase tracking-widest">Seleccionar Archivo Excel</span>
                             </button>
                             <p id="excel-status" class="mt-6 text-center text-[10px] text-slate-400 font-black uppercase tracking-widest"></p>
                         </div>
                         
-                        <div class="glass p-10 rounded-[2.5rem] bg-white">
+                        <div class="glass p-10 rounded-[2.5rem] bg-white border border-slate-100">
                             <h3 class="font-black text-2xl text-slate-800 mb-8">Estado Global</h3>
                             <div class="grid grid-cols-1 gap-6">
-                                <div class="bg-teal-50/50 p-8 rounded-3xl border border-teal-100/50 flex items-center justify-between">
+                                <div class="bg-[#f1f8f9] p-8 rounded-3xl border border-[#025964]/5 flex items-center justify-between">
                                     <div>
-                                        <p class="text-teal-600 text-[10px] font-black uppercase tracking-widest mb-1">Docentes Registrados</p>
+                                        <p class="text-[#025964] text-[10px] font-black uppercase tracking-widest mb-1">Docentes Registrados</p>
                                         <p class="text-5xl font-black text-slate-800">1,240</p>
                                     </div>
-                                    <i class="ph-fill ph-users-four text-5xl text-teal-100"></i>
+                                    <i class="ph-fill ph-users-four text-5xl text-[#025964]/10"></i>
                                 </div>
-                                <div class="bg-rose-50/50 p-8 rounded-3xl border border-rose-100/50 flex items-center justify-between">
+                                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 flex items-center justify-between">
                                     <div>
-                                        <p class="text-rose-500 text-[10px] font-black uppercase tracking-widest mb-1">Instituciones Activas</p>
+                                        <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-1">Instituciones Activas</p>
                                         <p class="text-5xl font-black text-slate-800">48</p>
                                     </div>
-                                    <i class="ph-fill ph-buildings text-5xl text-rose-100"></i>
+                                    <i class="ph-fill ph-buildings text-5xl text-slate-200"></i>
                                 </div>
                             </div>
                         </div>
@@ -667,11 +690,11 @@
         window.switchLevelTab = (level) => {
             const area = document.getElementById('level-content-area');
             const btns = document.querySelectorAll('.level-tab-btn');
-            btns.forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg', 'shadow-indigo-600/20'));
+            btns.forEach(b => b.classList.remove('bg-[#025964]', 'text-white', 'shadow-lg', 'shadow-[#025964]/10'));
             btns.forEach(b => b.classList.add('text-slate-400'));
             const activeBtn = document.getElementById(`level-btn-${level}`);
             if (activeBtn) {
-                activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-lg', 'shadow-indigo-600/20');
+                activeBtn.classList.add('bg-[#025964]', 'text-white', 'shadow-lg', 'shadow-[#025964]/10');
                 activeBtn.classList.remove('text-slate-400');
             }
             const data = {
@@ -704,11 +727,11 @@
             };
             const info = data[level];
             area.innerHTML = `
-                <h4 class="text-xl font-black text-indigo-900 mb-6 flex items-center gap-3">${info.title}</h4>
+                <h4 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-3">${info.title}</h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${info.cards.length > 3 ? '2' : '3'} gap-6">
                     ${info.cards.map(c => `
-                        <div class="bg-white p-6 rounded-3xl shadow-sm border border-indigo-100 flex flex-col h-full hover:shadow-md transition-shadow">
-                            <h6 class="text-[10px] font-black text-indigo-600 uppercase mb-3 tracking-widest">${c.t}</h6>
+                        <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#025964]/10 flex flex-col h-full hover:shadow-md transition-shadow">
+                            <h6 class="text-[10px] font-black text-[#025964] uppercase mb-3 tracking-widest">${c.t}</h6>
                             <p class="text-[11px] text-slate-500 font-medium leading-relaxed">${c.c}</p>
                         </div>
                     `).join('')}
@@ -719,51 +742,50 @@
         window.switchOrientTab = (tab) => {
             const content = document.getElementById('orient-main-content');
             const btns = document.querySelectorAll('.orient-tab-btn');
-            btns.forEach(b => b.classList.remove('active', 'bg-indigo-600', 'text-white'));
+            btns.forEach(b => b.classList.remove('active', 'bg-[#025964]', 'text-white', 'shadow-lg', 'shadow-[#025964]/10'));
             const activeBtn = document.getElementById(`tab-btn-${tab}`);
-            if (activeBtn) activeBtn.classList.add('active', 'bg-indigo-600', 'text-white');
+            if (activeBtn) activeBtn.classList.add('active', 'bg-[#025964]', 'text-white', 'shadow-lg', 'shadow-[#025964]/10');
 
             const templates = {
                 admin: `
                     <div class="space-y-10 fade-in">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="glass p-10 rounded-[3rem] bg-white border border-slate-100 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all flex flex-col justify-between group">
+                            <div class="glass p-10 rounded-[2.5rem] bg-white border border-slate-100 hover:shadow-xl hover:shadow-[#025964]/5 transition-all flex flex-col justify-between group h-full">
                                 <div>
-                                    <div class="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 mb-8 group-hover:scale-110 transition-transform"><i class="ph-bold ph-clock-user text-3xl"></i></div>
+                                    <div class="w-16 h-16 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#025964] mb-8 group-hover:scale-110 transition-transform"><i class="ph-bold ph-clock-user text-3xl"></i></div>
                                     <h4 class="text-2xl font-black text-slate-800 mb-4 tracking-tighter uppercase">Carga Horaria Secundaria</h4>
-                                    <p class="text-slate-500 font-medium leading-relaxed mb-6">La asignación se realiza según la matrícula institucional, garantizando la cobertura en III Ciclo y Educación Diversificada.</p>
+                                    <p class="text-slate-500 font-medium leading-relaxed mb-6">Asignación según matrícula institucional, priorizando III Ciclo y Educación Diversificada.</p>
                                 </div>
-                                <div class="bg-indigo-600 p-6 rounded-2xl text-white font-black text-xs uppercase tracking-widest text-center shadow-lg shadow-indigo-600/20 italic">Prioridad Absuoluta en Horario</div>
+                                <div class="bg-[#f1f8f9] border border-[#025964]/10 p-5 rounded-2xl text-[#025964] font-black text-xs uppercase tracking-widest text-center italic">Prioridad Técnica en Horario</div>
                             </div>
                             
-                            <div class="glass p-10 rounded-[3rem] bg-slate-900 border-none shadow-2xl relative overflow-hidden group">
-                                <i class="ph-bold ph-notebook absolute -right-8 -bottom-8 text-white/5 text-[12rem] rotate-12 group-hover:rotate-0 transition-all duration-700"></i>
+                            <div class="glass p-10 rounded-[2.5rem] bg-white border border-[#025964]/10 shadow-sm relative overflow-hidden group h-full">
                                 <div class="relative z-10">
-                                    <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-teal-400 mb-8"><i class="ph-bold ph-check-square-offset text-3xl"></i></div>
-                                    <h4 class="text-2xl font-black text-white mb-4 tracking-tighter uppercase">Bitácora Digital Obligatoria</h4>
-                                    <p class="text-slate-400 font-medium leading-relaxed mb-8 text-sm">Registro estricto de evidencias técnicas y uso de recursos. Documento legal para procesos de auditoría.</p>
-                                    <div class="flex items-center gap-4 py-4 px-6 bg-white/5 rounded-2xl border border-white/10">
-                                        <div class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></div>
-                                        <span class="text-[10px] font-black uppercase text-teal-400 tracking-widest">Reporte Mensual</span>
+                                    <div class="w-16 h-16 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#025964] mb-8"><i class="ph-bold ph-check-square-offset text-3xl"></i></div>
+                                    <h4 class="text-2xl font-black text-slate-800 mb-4 tracking-tighter uppercase">Bitácora Digital</h4>
+                                    <p class="text-slate-500 font-medium leading-relaxed mb-8 text-sm">Registro de evidencias técnicas y uso de recursos. Documento legal para procesos de auditoría.</p>
+                                    <div class="flex items-center gap-4 py-4 px-6 bg-[#f1f8f9] border border-[#025964]/5 rounded-2xl">
+                                        <div class="w-2 h-2 rounded-full bg-[#008e9b] animate-pulse"></div>
+                                        <span class="text-[10px] font-black uppercase text-[#025964] tracking-widest">Control Mensual SEA</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="glass p-10 rounded-[3rem] bg-indigo-50 border border-indigo-100">
-                             <h4 class="text-xl font-black text-indigo-900 mb-8 flex items-center gap-3"><i class="ph-bold ph-list-numbers"></i> Responsabilidades del Docente</h4>
+                        <div class="glass p-10 rounded-[2.5rem] bg-white border border-[#025964]/10">
+                             <h4 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3"><i class="ph-bold ph-list-numbers text-[#025964]"></i> Responsabilidades Docentes</h4>
                              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div class="p-6 bg-white/80 rounded-2xl">
-                                    <p class="text-[10px] font-black text-indigo-500 uppercase mb-2">Administrar</p>
-                                    <p class="text-xs text-slate-700 font-bold">Custodia y control de activos tecnológicos (TecnoPresta).</p>
+                                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <p class="text-[10px] font-black text-[#025964] uppercase mb-2">Administrar</p>
+                                    <p class="text-xs text-slate-600 font-bold">Custodia de activos (TecnoPresta).</p>
                                 </div>
-                                <div class="p-6 bg-white/80 rounded-2xl">
-                                    <p class="text-[10px] font-black text-indigo-500 uppercase mb-2">Planificar</p>
-                                    <p class="text-xs text-slate-700 font-bold">Diseño bimonthly según niveles de alcance por ciclo.</p>
+                                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <p class="text-[10px] font-black text-[#025964] uppercase mb-2">Planificar</p>
+                                    <p class="text-xs text-slate-600 font-bold">Diseño PIA 2026 bimonthly.</p>
                                 </div>
-                                <div class="p-6 bg-white/80 rounded-2xl">
-                                    <p class="text-[10px] font-black text-indigo-500 uppercase mb-2">Certificar</p>
-                                    <p class="text-xs text-slate-700 font-bold">Asegurar la calidad del proceso en el sistema SEA.</p>
+                                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <p class="text-[10px] font-black text-[#025964] uppercase mb-2">Certificar</p>
+                                    <p class="text-xs text-slate-600 font-bold">Asegurar calidad del proceso.</p>
                                 </div>
                              </div>
                         </div>
@@ -771,52 +793,43 @@
                 `,
                 peda: `
                     <div class="space-y-10 fade-in">
-                        <section class="glass p-12 rounded-[3.5rem] bg-gradient-to-br from-emerald-50 to-white border border-emerald-100 relative overflow-hidden">
-                            <i class="ph-fill ph-circles-three-plus absolute -right-20 -top-20 text-emerald-100 text-[20rem] opacity-50"></i>
+                        <section class="glass p-12 rounded-[2.5rem] bg-white border border-[#025964]/10 relative overflow-hidden">
+                            <i class="ph-fill ph-circles-three-plus absolute -right-20 -top-20 text-[#025964]/5 text-[20rem] rotate-12"></i>
                             <div class="relative z-10">
-                                <h4 class="text-4xl font-black text-slate-900 mb-10 tracking-tighter uppercase leading-none">Pedagogía por <br><span class="text-emerald-600">Retos y Diseño</span></h4>
+                                <h4 class="text-4xl font-black text-slate-800 mb-10 tracking-tighter uppercase leading-none">Pedagogía por <br><span class="text-[#025964]">Retos y Prototipado</span></h4>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                                     <div class="space-y-6">
-                                        <div class="p-8 bg-white rounded-3xl shadow-xl shadow-emerald-900/5 border border-emerald-50 group hover:-translate-y-2 transition-all">
+                                        <div class="p-8 bg-slate-50 rounded-3xl border border-slate-100 group transition-all">
                                             <div class="flex items-center gap-4 mb-6">
-                                                <div class="w-12 h-12 bg-emerald-600 text-white rounded-xl shadow-lg flex items-center justify-center font-black">DT</div>
+                                                <div class="w-12 h-12 bg-[#025964] text-white rounded-xl shadow-lg flex items-center justify-center font-black">DT</div>
                                                 <h5 class="text-lg font-black text-slate-800">Design Thinking</h5>
                                             </div>
-                                            <p class="text-sm text-slate-500 font-medium leading-relaxed">Metodología core para el <b>Componente Proyecto</b>. Enfoque en resolver problemas reales del contexto estudiantil.</p>
+                                            <p class="text-sm text-slate-500 font-medium leading-relaxed">Metodología core para el <b>Componente Proyecto</b>. Resolver problemas reales del contexto.</p>
                                         </div>
-                                        <div class="p-8 bg-white rounded-3xl shadow-xl shadow-emerald-900/5 border border-emerald-50 group hover:-translate-y-2 transition-all">
+                                        <div class="p-8 bg-slate-50 rounded-3xl border border-slate-100 group transition-all">
                                             <div class="flex items-center gap-4 mb-6">
-                                                <div class="w-12 h-12 bg-amber-500 text-white rounded-xl shadow-lg flex items-center justify-center"><i class="ph-bold ph-game-controller text-2xl"></i></div>
+                                                <div class="w-12 h-12 bg-[#008e9b] text-white rounded-xl shadow-lg flex items-center justify-center"><i class="ph-bold ph-game-controller text-2xl"></i></div>
                                                 <h5 class="text-lg font-black text-slate-800">ABJ y ABR</h5>
                                             </div>
-                                            <p class="text-sm text-slate-500 font-medium leading-relaxed">Aprendizaje basado en Juegos y Retos como estrategias complementarias para el desarrollo de saberes técnicos.</p>
+                                            <p class="text-sm text-slate-500 font-medium leading-relaxed">Juegos y Retos como estrategias complementarias para saberes técnicos iniciales.</p>
                                         </div>
                                     </div>
                                     
-                                    <div class="bg-slate-900 p-10 rounded-[2.5rem] text-white flex flex-col justify-center">
-                                        <p class="text-emerald-400 text-[10px] font-black uppercase tracking-[0.3em] mb-6">Saberes Clave 2026</p>
+                                    <div class="bg-white p-10 rounded-[2.5rem] border border-[#025964]/10 flex flex-col justify-center">
+                                        <p class="text-[#025964] text-[10px] font-black uppercase tracking-widest mb-6">Itinerarios 2026</p>
                                         <ul class="space-y-6">
                                             <li class="flex gap-4">
-                                                <span class="w-1 h-12 bg-emerald-500 rounded-full"></span>
-                                                <div>
-                                                    <p class="font-black text-sm uppercase">Programación y Algoritmia</p>
-                                                    <p class="text-[11px] text-slate-400">Lógica, Python, C++, Estructuras de datos.</p>
-                                                </div>
+                                                <span class="w-1 h-12 bg-[#025964] rounded-full"></span>
+                                                <div><p class="font-black text-sm text-slate-800 uppercase">Programación Estructural</p></div>
                                             </li>
                                             <li class="flex gap-4">
-                                                <span class="w-1 h-12 bg-blue-500 rounded-full"></span>
-                                                <div>
-                                                    <p class="font-black text-sm uppercase">IA y Ciencia de Datos</p>
-                                                    <p class="text-[11px] text-slate-400">Prompt engineering, analítica, modelos éticos.</p>
-                                                </div>
+                                                <span class="w-1 h-12 bg-[#008e9b] rounded-full"></span>
+                                                <div><p class="font-black text-sm text-slate-800 uppercase">IA Aplicada</p></div>
                                             </li>
                                             <li class="flex gap-4">
-                                                <span class="w-1 h-12 bg-rose-500 rounded-full"></span>
-                                                <div>
-                                                    <p class="font-black text-sm uppercase">Robótica y Computación Física</p>
-                                                    <p class="text-[11px] text-slate-400">Arduino, Sensores, Automatización real.</p>
-                                                </div>
+                                                <span class="w-1 h-12 bg-slate-200 rounded-full"></span>
+                                                <div><p class="font-black text-sm text-slate-800 uppercase">Computación Física</p></div>
                                             </li>
                                         </ul>
                                     </div>
@@ -827,79 +840,61 @@
                 `,
                 plan: `
                     <div class="space-y-10 fade-in">
-                        <section class="glass p-12 rounded-[3.5rem] bg-white border border-slate-100">
-                            <div class="flex flex-col md:flex-row gap-12 items-center mb-12">
-                                <div class="flex-1">
-                                    <span class="text-amber-500 text-xs font-black uppercase tracking-widest mb-4 inline-block italic">Macro a Micro Currículo</span>
-                                    <h4 class="text-4xl font-black text-slate-900 mb-6 tracking-tighter uppercase leading-none">Estructura del <br><span class="text-amber-500">Planeamiento</span></h4>
-                                    <p class="text-slate-500 font-medium leading-relaxed mb-8">El diseño bimonthly en secundaria se centra en la progresión de competencias mediante resultados de aprendizaje (RdA) por nivel.</p>
+                        <section class="glass p-12 rounded-[2.5rem] bg-white border border-[#025964]/10 shadow-sm">
+                            <h4 class="text-3xl font-black text-slate-800 mb-8 uppercase tracking-tighter">Planeamiento Didáctico <span class="text-[#025964]">Secundaria</span></h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                                <div class="p-8 bg-[#f1f8f9] rounded-3xl border border-[#025964]/5">
+                                    <h5 class="font-black text-slate-800 mb-4 flex items-center gap-2"><i class="ph-fill ph-circles-three text-[#025964]"></i> Macro Currículo</h5>
+                                    <p class="text-xs text-slate-500 font-medium leading-relaxed">Competencias nacionales y perfiles de salida por ciclo académico.</p>
                                 </div>
-                                <div class="w-full md:w-80 bg-slate-50 p-8 rounded-[2rem] border border-slate-100">
-                                    <div class="space-y-4">
-                                        <div class="flex items-center gap-3 p-4 bg-white rounded-2xl border border-slate-200"><i class="ph-bold ph-calendar text-amber-500"></i> <span class="text-xs font-black text-slate-700 uppercase">Ciclo Bimestral</span></div>
-                                        <div class="flex items-center gap-3 p-4 bg-white rounded-2xl border border-slate-200"><i class="ph-bold ph-layout text-amber-500"></i> <span class="text-xs font-black text-slate-700 uppercase">Plantilla PIA Única</span></div>
-                                        <div class="flex items-center gap-3 p-4 bg-white rounded-2xl border border-slate-200"><i class="ph-bold ph-users-three text-amber-500"></i> <span class="text-xs font-black text-slate-700 uppercase">Por Nivel (7, 8, 9...)</span></div>
-                                    </div>
+                                <div class="p-8 bg-[#f1f8f9] rounded-3xl border border-[#025964]/5">
+                                    <h5 class="font-black text-slate-800 mb-4 flex items-center gap-2"><i class="ph-fill ph-squares-four text-[#025964]"></i> Micro Currículo</h5>
+                                    <p class="text-xs text-slate-500 font-medium leading-relaxed">Resultados de Aprendizaje (RdA) y criterios de desempeño específicos.</p>
                                 </div>
                             </div>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div class="p-8 rounded-3xl bg-amber-50 border border-amber-100 flex flex-col items-center text-center">
-                                    <div class="w-12 h-12 bg-amber-500 text-white rounded-2xl flex items-center justify-center font-black mb-6 shadow-lg shadow-amber-500/20">01</div>
-                                    <h5 class="text-sm font-black text-slate-800 uppercase mb-4">Competencias</h5>
-                                    <p class="text-[11px] text-slate-500 font-medium">Marco global del Programa Nacional.</p>
-                                </div>
-                                <div class="p-8 rounded-3xl bg-amber-50 border border-amber-100 flex flex-col items-center text-center">
-                                    <div class="w-12 h-12 bg-amber-500 text-white rounded-2xl flex items-center justify-center font-black mb-6 shadow-lg shadow-amber-500/20">02</div>
-                                    <h5 class="text-sm font-black text-slate-800 uppercase mb-4">RdA</h5>
-                                    <p class="text-[11px] text-slate-500 font-medium">Resultados de Aprendizaje por ciclo institucional.</p>
-                                </div>
-                                <div class="p-8 rounded-3xl bg-amber-50 border border-amber-100 flex flex-col items-center text-center">
-                                    <div class="w-12 h-12 bg-amber-500 text-white rounded-2xl flex items-center justify-center font-black mb-6 shadow-lg shadow-amber-500/20">03</div>
-                                    <h5 class="text-sm font-black text-slate-800 uppercase mb-4">Indicadores</h5>
-                                    <p class="text-[11px] text-slate-500 font-medium">Evidencias observables por período evaluativo.</p>
-                                </div>
+                            <div class="flex items-center gap-6 p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                                <i class="ph-fill ph-info text-[#025964] text-3xl"></i>
+                                <p class="text-xs text-slate-500 font-bold uppercase tracking-wider italic">Uso obligatorio de la Plantilla PIA 2026</p>
                             </div>
                         </section>
                     </div>
                 `,
                 eval: `
                     <div class="space-y-10 fade-in">
-                        <section class="glass p-12 rounded-[3.5rem] bg-slate-900 border-none relative overflow-hidden">
-                             <div class="absolute -right-20 -bottom-20 w-[40rem] h-[40rem] bg-rose-600/10 blur-[120px] rounded-full"></div>
+                        <section class="glass p-12 rounded-[2.5rem] bg-white border border-[#025964]/10 relative overflow-hidden">
                              <div class="relative z-10">
-                                <span class="bg-rose-500 text-white text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-widest mb-8 inline-block">Métrica 2026: Secundaria</span>
-                                <h4 class="text-5xl font-black text-white mb-12 tracking-tighter uppercase leading-none">Componente <br><span class="text-rose-500 italic">Proyecto</span></h4>
+                                <span class="bg-[#025964] text-white text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-widest mb-8 inline-block shadow-lg shadow-[#025964]/10">Métrica 2026: Secundaria</span>
+                                <h4 class="text-5xl font-black text-slate-800 mb-12 tracking-tighter uppercase leading-none">Componente <br><span class="text-[#025964]">Proyecto</span></h4>
                                 
                                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                                    <div class="p-8 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-md">
+                                    <div class="p-8 bg-[#f1f8f9] border border-[#025964]/5 rounded-3xl">
                                         <div class="flex items-center gap-4 mb-6">
-                                            <div class="w-10 h-10 bg-rose-500 rounded-xl flex items-center justify-center text-white"><i class="ph-bold ph-pencil-line"></i></div>
-                                            <h5 class="text-lg font-black text-white uppercase tracking-tighter">Etapa Inicial (Proceso)</h5>
+                                            <div class="w-10 h-10 bg-[#025964] rounded-xl flex items-center justify-center text-white"><i class="ph-bold ph-pencil-line"></i></div>
+                                            <h5 class="text-lg font-black text-slate-800 uppercase tracking-tighter">Etapa Inicial</h5>
                                         </div>
-                                        <p class="text-slate-400 text-sm leading-relaxed mb-6">No se evalúa el código ni el robot. Se evalúa la capacidad de:</p>
+                                        <p class="text-slate-500 text-sm leading-relaxed mb-6">Foco en el proceso cognitivo y de diseño:</p>
                                         <div class="space-y-3">
-                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-300"><i class="ph-bold ph-check text-rose-500"></i> Describir necesidades con empatía.</div>
-                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-300"><i class="ph-bold ph-check text-rose-500"></i> Sintetizar hallazgos clave.</div>
-                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-300"><i class="ph-bold ph-check text-rose-500"></i> Seleccionar ideas eficientes.</div>
+                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-600"><i class="ph-bold ph-check text-[#008e9b]"></i> Empatía y definición del reto.</div>
+                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-600"><i class="ph-bold ph-check text-[#008e9b]"></i> Síntesis de hallazgos clave.</div>
+                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-600"><i class="ph-bold ph-check text-[#008e9b]"></i> Ideación de soluciones eficientes.</div>
                                         </div>
                                     </div>
-                                    <div class="p-8 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-md">
+                                    <div class="p-8 bg-[#f1f8f9] border border-[#025964]/5 rounded-3xl">
                                         <div class="flex items-center gap-4 mb-6">
-                                            <div class="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center text-white"><i class="ph-bold ph-gear-six"></i></div>
-                                            <h5 class="text-lg font-black text-white uppercase tracking-tighter">Etapas Posteriores (Hacer)</h5>
+                                            <div class="w-10 h-10 bg-[#008e9b] rounded-xl flex items-center justify-center text-white"><i class="ph-bold ph-gear-six"></i></div>
+                                            <h5 class="text-lg font-black text-slate-800 uppercase tracking-tighter">Etapas Técnicas</h5>
                                         </div>
-                                        <p class="text-slate-400 text-sm leading-relaxed mb-6">Foco en la ejecución técnica y validación del producto final:</p>
+                                        <p class="text-slate-500 text-sm leading-relaxed mb-6">Foco en la ejecución y saberes digitales:</p>
                                         <div class="space-y-3">
-                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-300"><i class="ph-bold ph-check text-teal-500"></i> Logro de saberes técnicos (Python/Robótica).</div>
-                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-300"><i class="ph-bold ph-check text-teal-500"></i> Calidad del prototipo funcional.</div>
-                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-300"><i class="ph-bold ph-check text-teal-500"></i> Presentación y validación externa.</div>
+                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-600"><i class="ph-bold ph-check text-[#025964]"></i> Implementación de algoritmos/código.</div>
+                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-600"><i class="ph-bold ph-check text-[#025964]"></i> Funcionalidad del prototipo digital.</div>
+                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-600"><i class="ph-bold ph-check text-[#025964]"></i> Validación y comunicación de resultados.</div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="mt-12 flex items-center gap-6 p-6 bg-white/5 rounded-2xl border border-white/10">
-                                    <i class="ph-fill ph-warning-diamond text-rose-500 text-3xl"></i>
-                                    <p class="text-xs text-slate-400 font-medium">Recordatorio: La acreditación técnica del estudiante depende de la coherencia entre el proyecto y los saberes digitales del nivel.</p>
+                                <div class="mt-12 flex items-center gap-6 p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <i class="ph-fill ph-warning-diamond text-[#025964] text-3xl"></i>
+                                    <p class="text-xs text-slate-500 font-medium italic">La acreditación técnica depende de la coherencia entre el proyecto y los saberes digitales del nivel.</p>
                                 </div>
                              </div>
                         </section>
@@ -908,25 +903,25 @@
                 pob: `
                     <div class="space-y-10 fade-in">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                             <div class="glass p-10 rounded-[3rem] bg-indigo-600 text-white relative overflow-hidden group">
-                                <i class="ph-bold ph-briefcase absolute -left-10 -bottom-10 text-white/5 text-[15rem] rotate-12 transition-all"></i>
+                             <div class="glass p-10 rounded-[2.5rem] bg-[#025964] text-white relative overflow-hidden group">
+                                <i class="ph-bold ph-briefcase absolute -left-10 -bottom-10 text-white/5 text-[15rem] rotate-12"></i>
                                 <div class="relative z-10">
-                                    <h4 class="text-3xl font-black mb-4 tracking-tighter uppercase leading-none">Secundaria <span class="bg-white/20 px-4 py-1 rounded-xl text-lg">Vocacional</span></h4>
-                                    <p class="text-indigo-100 font-medium text-sm leading-relaxed mb-8">Población prioritaria. Enfoque en diagnóstico funcional y selección de módulos compensatorios.</p>
-                                    <div class="bg-white text-indigo-900 font-black text-[10px] uppercase py-3 px-6 rounded-xl inline-block shadow-xl">Atención Prioritaria en Horario</div>
+                                    <h4 class="text-3xl font-black mb-4 tracking-tighter uppercase leading-none">Secundaria <span class="bg-white/20 px-4 py-1 rounded-xl text-lg uppercase">Vocacional</span></h4>
+                                    <p class="text-slate-200 font-medium text-sm leading-relaxed mb-8">Población prioritaria. Enfoque en diagnóstico funcional y módulos compensatorios.</p>
+                                    <div class="bg-white text-[#025964] font-black text-[10px] uppercase py-3 px-6 rounded-xl inline-block shadow-xl">Atención Prioritaria en Horario</div>
                                 </div>
                              </div>
-                             <div class="glass p-10 rounded-[3rem] bg-white border border-slate-100 group">
-                                <div class="w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center mb-8"><i class="ph-bold ph-user-circle-plus text-3xl"></i></div>
-                                <h4 class="text-2xl font-black text-slate-800 mb-4 tracking-tighter uppercase">EPJA (Nox/Diu)</h4>
-                                <p class="text-slate-500 text-sm font-medium leading-relaxed">Directrices específicas para CAN, IPEC y CINDEA. Ajuste de tiempos y micro-planeamiento por competencia laboral.</p>
+                             <div class="glass p-10 rounded-[2.5rem] bg-white border border-slate-100 group h-full flex flex-col justify-center">
+                                <div class="w-16 h-16 bg-[#f1f8f9] text-[#025964] rounded-2xl flex items-center justify-center mb-8"><i class="ph-bold ph-user-circle-plus text-3xl"></i></div>
+                                <h4 class="text-2xl font-black text-slate-800 mb-4 tracking-tighter uppercase">EPJA (CAN / IPEC)</h4>
+                                <p class="text-slate-500 text-sm font-medium leading-relaxed">Directrices específicas para educación de adultos. Ajuste de tiempos y micro-planeamiento por competencia laboral.</p>
                              </div>
                         </div>
-                        <div class="glass p-10 rounded-[3rem] bg-teal-50 border border-teal-100 flex items-center gap-8">
-                            <div class="w-20 h-20 bg-teal-600 text-white rounded-full flex items-center justify-center shrink-0 shadow-lg shadow-teal-600/20"><i class="ph-bold ph-hands-clapping text-4xl"></i></div>
+                        <div class="glass p-10 rounded-[2.5rem] bg-[#f1f8f9] border border-[#025964]/10 flex items-center gap-8">
+                            <div class="w-16 h-16 bg-white border border-[#025964]/10 text-[#025964] rounded-full flex items-center justify-center shrink-0 shadow-sm"><i class="ph-bold ph-hands-clapping text-3xl"></i></div>
                             <div>
-                                <h5 class="text-xl font-black text-teal-900 mb-2 uppercase tracking-tighter italic">Inclusión Total</h5>
-                                <p class="text-sm text-teal-700 font-medium leading-relaxed">Las Aulas Integradas de secundaria deben priorizar la productividad y autonomía digital del estudiante mediante diagnósticos personalizados.</p>
+                                <h5 class="text-xl font-black text-slate-800 mb-2 uppercase tracking-tighter">Inclusión Total</h5>
+                                <p class="text-sm text-slate-500 font-medium leading-relaxed">Las Aulas Integradas deben priorizar la productividad digital mediante diagnósticos personalizados.</p>
                             </div>
                         </div>
                     </div>
@@ -1072,7 +1067,7 @@ Responde siempre basado en estos lineamientos. Si algo no está aquí, indica qu
                     <div class="text-slate-600 font-medium leading-relaxed">${htmlRes}</div>
                     <div class="mt-8 flex justify-between gap-4 border-t border-slate-100 pt-6">
                         <p class="text-[9px] text-slate-400 font-black uppercase">Nivel: ${nivel} | Tono: ${vibe}</p>
-                        <button onclick="window.print()" class="text-[10px] font-black text-teal-600 uppercase border border-teal-100 px-6 py-2 rounded-xl hover:bg-teal-50 transition-all">Imprimir Material</button>
+                        <button onclick="window.print()" class="text-[10px] font-black text-[#025964] uppercase border border-[#025964]/20 px-6 py-2 rounded-xl hover:bg-[#f1f8f9] transition-all">Imprimir Material</button>
                     </div>
                 </div>`;
         };
@@ -1083,14 +1078,14 @@ Responde siempre basado en estos lineamientos. Si algo no está aquí, indica qu
             const txt = input.value.trim();
             if (!txt) return alert("Describe el objetivo de tu lección.");
 
-            resDiv.innerHTML = '<div class="flex flex-col items-center w-full"><div class="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-3"></div><p class="text-indigo-600 font-black text-[9px] uppercase tracking-widest">Calculando tiempos y fases...</p></div>';
+            resDiv.innerHTML = '<div class="flex flex-col items-center w-full"><div class="w-10 h-10 border-4 border-[#025964] border-t-transparent rounded-full animate-spin mb-3"></div><p class="text-[#025964] font-black text-[9px] uppercase tracking-widest">Calculando tiempos y fases...</p></div>';
 
             const prompt = `${window.CONTEXTO_OFICIAL_2026}\n\nActúa como asesor pedagógico. Crea un plan de lección detallado de 40 minutos para el objetivo: "${txt}". Estructura el plan basándote en las fases de Design Thinking que apliquen. Incluye sugerencia de mediación técnica.`;
 
             const respuesta = await llamarGemini(prompt);
             const htmlRes = respuesta.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
             resDiv.innerHTML = `<div class="text-left fade-in font-medium text-slate-600 leading-relaxed max-h-[300px] overflow-y-auto p-2">${htmlRes}</div>`;
-            resDiv.className = "bg-white border border-indigo-100 rounded-3xl p-8 min-h-[160px] text-sm flex flex-col items-start shadow-sm shadow-indigo-500/5";
+            resDiv.className = "bg-white border border-[#025964]/10 rounded-3xl p-8 min-h-[160px] text-sm flex flex-col items-start shadow-sm shadow-[#025964]/5";
         };
 
         window.enviarChatIA = async () => {
