@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recurso de Apoyo Asesoría y Seguimiento 2026</title>
+    <title>Recurso de Asesoría y Seguimiento 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
 
         :root {
             --primary: #025964;
@@ -26,7 +26,7 @@
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Lato', sans-serif;
             background-color: var(--bg-main);
             color: var(--text-main);
             overflow: hidden;
@@ -163,10 +163,13 @@
                 left: -100%;
                 top: 0;
                 height: 100vh;
-                width: 280px;
+                width: 290px;
                 z-index: 100;
                 transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 box-shadow: 20px 0 50px rgba(0, 0, 0, 0.1);
+                background: white !important;
+                /* Solid background for mobile to avoid blur issues */
+                backdrop-filter: none !important;
             }
 
             aside.open {
@@ -245,9 +248,9 @@
                     class="w-20 h-20 bg-[#025964] rounded-2xl flex items-center justify-center text-white mx-auto mb-6 shadow-lg shadow-[#025964]/10 transform -rotate-2">
                     <i class="ph-bold ph-cube text-4xl"></i>
                 </div>
-                <h1 class="text-3xl font-black tracking-tight text-slate-800">Recurso de A y S Dimensión 1 PNFT</h1>
-                <p class="text-slate-500 text-[10px] uppercase tracking-widest font-black mt-1">Asesores PNFT Rodolfo
-                    Juárez - Alberto Bustos</p>
+                <h1 class="text-3xl font-black tracking-tight text-slate-800">Recurso A y S</h1>
+                <p class="text-slate-500 text-[10px] uppercase tracking-widest font-black mt-1">Dimensión 1 | PNFT</p>
+                <p class="text-[9px] text-slate-400 font-bold uppercase mt-2">Rodolfo Juarez | Alberto Bustos</p>
             </div>
 
             <div class="flex mb-8 bg-slate-100/50 p-1.5 rounded-2xl">
@@ -317,16 +320,24 @@
 
         <aside id="main-sidebar" class="w-72 bg-white border-r border-slate-200 flex flex-col justify-between p-6 z-40">
             <div>
-                <div class="flex items-center gap-4 px-2 mb-10">
-                    <div
-                        class="w-12 h-12 bg-[#025964] rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-[#025964]/10">
-                        <i class="ph-fill ph-leaf text-2xl"></i>
+                <div class="flex items-center justify-between mb-10 px-2 lg:px-0">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 bg-[#025964] rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-[#025964]/10">
+                            <i class="ph-fill ph-leaf text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-black text-slate-800 text-lg leading-tight">Recurso A y S</h2>
+                            <p
+                                class="text-[9px] font-black text-slate-400 uppercase tracking-tighter leading-none mb-2">
+                                Dimensión 1 | PNFT</p>
+                        </div>
                     </div>
-                    <div>
-                        <h2 class="font-black text-slate-800 text-xl leading-none">PNFT Core</h2>
-                        <span id="user-role-badge"
-                            class="text-sm font-black text-teal-600 uppercase tracking-widest bg-teal-50 px-3 py-1 rounded-full mt-1 inline-block">DOCENTE</span>
-                    </div>
+                    <!-- Close Button Mobile -->
+                    <button onclick="toggleSidebar()"
+                        class="lg:hidden w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 rounded-xl">
+                        <i class="ph-bold ph-x text-xl"></i>
+                    </button>
                 </div>
 
                 <nav class="space-y-1">
@@ -340,10 +351,10 @@
                         <i class="ph-bold ph-sparkle text-xl"></i> <span>Guía Docente 2026</span>
                     </div>
                     <div onclick="router('foro')" id="nav-foro" class="nav-item text-sm">
-                        <i class="ph-bold ph-globe-hemisphere-west text-xl"></i> <span>Foro para Docentes</span>
+                        <i class="ph-bold ph-globe-hemisphere-west text-xl"></i> <span>Foro Nacional</span>
                     </div>
                     <div onclick="router('ia')" id="nav-ia" class="nav-item text-sm">
-                        <i class="ph-bold ph-magic-wand text-xl"></i> <span>Asesor IA</span>
+                        <i class="ph-bold ph-magic-wand text-xl"></i> <span>Asesor Virtual</span>
                     </div>
                     <div onclick="router('experiencia')" id="nav-experiencia" class="nav-item text-sm">
                         <i class="ph-bold ph-sketch-logo text-xl"></i> <span>La Experiencia</span>
@@ -520,7 +531,7 @@
 
             // --- VISTA: DASHBOARD ---
             if (view === 'dashboard') {
-                title.innerText = "Panel Central";
+                title.innerText = "Panel Central del Ecosistema";
                 container.innerHTML = `
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 fade-in">
                         <div class="md:col-span-2 glass p-10 rounded-[2.5rem] relative overflow-hidden bg-white border-slate-100 shadow-sm">
@@ -542,7 +553,7 @@
                         <div class="space-y-6">
                             <div class="glass p-8 rounded-[2rem] flex flex-col items-center justify-center text-center hover:scale-[1.02] transition-transform cursor-pointer group" onclick="router('orientaciones')">
                                 <div class="w-20 h-20 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#025964] mb-6 group-hover:bg-[#025964] group-hover:text-white transition-all shadow-sm"><i class="ph-duotone ph-newspaper text-4xl"></i></div>
-                                <h4 class="font-black text-slate-800 text-xl">Orientaciones Didácticas 2026</h4>
+                                <h4 class="font-black text-slate-800 text-xl">Orientaciones Didácticas</h4>
                                 <p class="text-sm text-slate-400 font-bold uppercase tracking-tight mt-1">Normativa Vigente 2026</p>
                             </div>
                             <div class="glass p-8 rounded-[2rem] flex flex-col items-center justify-center text-center hover:scale-[1.02] transition-transform cursor-pointer group" onclick="router('guia')">
@@ -675,11 +686,11 @@
                             <!-- Right: Guide Content -->
                             <div class="lg:col-span-2 space-y-12">
                                 
-                                <!-- Áreas de Conocimiento PNFT - Dimensión 1 -->
+                                <!-- Ejes del Ecosistema -->
                                 <div class="glass p-10 rounded-[2.5rem] bg-white border border-[#025964]/10 shadow-sm">
                                     <div class="flex items-center gap-4 mb-8">
                                         <div class="w-12 h-12 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-600"><i class="ph-fill ph-circles-four"></i></div>
-                                        <h4 class="text-2xl font-black text-slate-800">Áreas de Conocimiento Dimensión 1 - PNFT</h4>
+                                        <h4 class="text-2xl font-black text-slate-800">Ejes del Ecosistema PNFT</h4>
                                     </div>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div class="p-8 bg-[#f1f8f9] rounded-3xl border border-[#025964]/5 hover:border-[#025964]/20 transition-all">
@@ -834,7 +845,7 @@
                                     <i class="ph-fill ph-robot text-xl"></i>
                                 </div>
                                 <div>
-                                    <h4 class="text-lg font-black text-slate-800 leading-none">Asesoría PNFT</h4>
+                                    <h4 class="text-lg font-black text-slate-800 leading-none">Asesoría de Informática Digital</h4>
                                     <p class="text-[10px] text-[#025964] font-black uppercase tracking-widest mt-1.5 flex items-center gap-2">
                                         <span class="w-1.5 h-1.5 rounded-full bg-[#008e9b] animate-pulse"></span> Sistema Activo
                                     </p>
@@ -1444,11 +1455,11 @@
                 durante: `
                     <div class="lg:col-span-2 glass p-10 rounded-[2.5rem] bg-[#025964] text-white relative overflow-hidden">
                         <i class="ph-fill ph-circles-three absolute -right-10 -bottom-10 text-white/5 text-[15rem] rotate-12"></i>
-                        <h4 class="text-3xl font-black mb-4">Codocencia Activa</h4>
-                        <p class="text-teal-100 font-medium leading-relaxed mb-6">El docente y el asesor trabajan en conjunto dentro del aula para potenciar el aprendizaje técnico.</p>
+                        <h4 class="text-3xl font-black mb-4">Liderazgo Pedagógico</h4>
+                        <p class="text-teal-100 font-medium leading-relaxed mb-6">El docente de secundaria lidera la mediación técnica dentro del aula para potenciar el aprendizaje autónomo.</p>
                         <ul class="space-y-4">
                             <li class="flex items-center gap-3 text-sm font-bold"><i class="ph-bold ph-check-circle text-teal-400"></i> Modelado de procesos algorítmicos.</li>
-                            <li class="flex items-center gap-3 text-sm font-bold"><i class="ph-bold ph-check-circle text-teal-400"></i> Apoyo en la resolución de errores (debugging).</li>
+                            <li class="flex items-center gap-3 text-sm font-bold"><i class="ph-bold ph-check-circle text-teal-400"></i> Apoyo en la resolución de problemas (debugging).</li>
                         </ul>
                     </div>
                     <div class="lg:col-span-2 glass p-10 rounded-[2.5rem] bg-white border border-slate-100">
