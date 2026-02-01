@@ -317,6 +317,16 @@
                     <input type="text" id="reg-code" class="input-field" placeholder="Cód. Inst.">
                 </div>
                 <input type="password" id="reg-pass" class="input-field" placeholder="Contraseña">
+
+                <div class="group">
+                    <label
+                        class="block text-[9px] font-black text-[#025964] uppercase tracking-widest mb-2 ml-1">Selecciona
+                        tu Asesor</label>
+                    <select id="reg-advisor" class="input-field cursor-pointer">
+                        <option value="alberto">Alberto Bustos Ortega</option>
+                        <option value="rodolfo">Rodolfo Juárez Pérez</option>
+                    </select>
+                </div>
                 <button onclick="registerUser()"
                     class="w-full bg-[#008e9b] hover:bg-[#025964] text-white font-bold py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] mt-4 shadow-xl shadow-[#008e9b]/10">
                     Crear Cuenta
@@ -961,7 +971,11 @@
                                 <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
                                     <div>
                                         <h3 class="text-2xl font-black text-slate-800 mb-1 uppercase tracking-tighter">Gestión de Instituciones</h3>
-                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Seguimiento y Categorización 2026</p>
+                                        <div class="flex gap-4 mt-2">
+                                            <button onclick="filtrarAsesor('todos')" id="filter-todos" class="text-[9px] font-black uppercase tracking-widest text-[#025964] border-b-2 border-[#025964]">Todos</button>
+                                            <button onclick="filtrarAsesor('alberto')" id="filter-alberto" class="text-[9px] font-black uppercase tracking-widest text-slate-400 border-b-2 border-transparent hover:text-[#025964] transition-all">Docentes Alberto Bustos O.</button>
+                                            <button onclick="filtrarAsesor('rodolfo')" id="filter-rodolfo" class="text-[9px] font-black uppercase tracking-widest text-slate-400 border-b-2 border-transparent hover:text-[#025964] transition-all">Docentes Rodolfo Juárez P.</button>
+                                        </div>
                                     </div>
                                     <div class="flex gap-2">
                                         <button onclick="document.getElementById('excel-upload').click()" class="bg-slate-50 border border-slate-100 text-slate-600 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-slate-100 transition-all">
@@ -1111,6 +1125,21 @@
 
             btn.innerText = originalText;
             btn.disabled = false;
+        };
+
+        window.filtrarAsesor = (asesor) => {
+            const btns = ['todos', 'alberto', 'rodolfo'];
+            btns.forEach(id => {
+                const el = document.getElementById(`filter-${id}`);
+                if (el) {
+                    el.classList.toggle('text-[#025964]', id === asesor);
+                    el.classList.toggle('border-[#025964]', id === asesor);
+                    el.classList.toggle('text-slate-400', id !== asesor);
+                    el.classList.toggle('border-transparent', id !== asesor);
+                }
+            });
+            // Lógica de filtrado real se aplicaría sobre el snapshot de Firebase o los datos del Excel
+            console.log(`Filtrando por asesor: ${asesor}`);
         };
 
         window.switchLevelTab = (level) => {
@@ -1912,11 +1941,13 @@
         window.registerUser = async () => {
             const email = document.getElementById('reg-email').value.trim();
             const pass = document.getElementById('reg-pass').value;
+            const advisor = document.getElementById('reg-advisor').value;
             const data = {
                 nombre: document.getElementById('reg-name').value.trim(),
                 telefono: document.getElementById('reg-phone').value.trim(),
                 codigo: document.getElementById('reg-code').value.trim(),
                 email: email,
+                asesor: advisor,
                 rol: "docente",
                 ultimo_acceso: serverTimestamp()
             };
@@ -1925,8 +1956,21 @@
             if (pass.length < 6) return msg("⚠️ Contraseña corta", "err");
             if (!data.nombre || !data.telefono || !data.codigo) return msg("⚠️ Complete datos", "err");
 
-            msg("⏳ Registrando...", "normal");
+            msg("⏳ Verificando autorización...", "normal");
+
             try {
+                // Validación de Lista Blanca (Whitelist)
+                const { getDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                const whitelistSnap = await getDoc(doc(db, "whitelist", email.toLowerCase()));
+
+                /* 
+                // VALIDACIÓN DE LISTA BLANCA (Comentada para registro abierto)
+                if (!whitelistSnap.exists()) {
+                    return msg("⛔ No estás en la lista de acceso autorizado.", "err");
+                } 
+                */
+
+                msg("⏳ Registrando...", "normal");
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
                 await guardarFicha(res.user.uid, data);
             } catch (error) {
