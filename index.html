@@ -369,8 +369,8 @@
                     <div onclick="router('ia')" id="nav-ia" class="nav-item text-sm">
                         <i class="ph-bold ph-magic-wand text-xl"></i> <span>Asesor Virtual</span>
                     </div>
-                    <div onclick="router('experiencia')" id="nav-experiencia" class="nav-item text-sm">
-                        <i class="ph-bold ph-sketch-logo text-xl"></i> <span>La Experiencia</span>
+                    <div onclick="router('compartiendo')" id="nav-compartiendo" class="nav-item text-sm">
+                        <i class="ph-bold ph-cloud-arrow-up text-xl"></i> <span>Compartiendo Resultados</span>
                     </div>
                     <div onclick="router('admin')" id="nav-admin"
                         class="nav-item hidden !text-rose-500 hover:!bg-rose-50">
@@ -503,21 +503,26 @@
             const title = document.getElementById('page-title');
             container.innerHTML = '<div class="flex flex-col items-center justify-center mt-32 space-y-4"><div class="w-16 h-16 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div><p class="text-teal-600 font-black uppercase tracking-widest text-sm animate-pulse">Sincronizando ecosistema...</p></div>';
 
-            if (view === 'experiencia') {
-                title.innerText = "La Experiencia PNFT";
+            if (view === 'compartiendo') {
+                title.innerText = "Compartiendo Resultados";
                 container.innerHTML = `
                     <div class="fade-in space-y-12 pb-20">
                         <div class="glass p-10 rounded-[2.5rem] bg-white border border-[#025964]/10 relative overflow-hidden shadow-sm">
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
                                 <div class="reveal active">
-                                    <span class="bg-[#f1f8f9] text-[#025964] border border-[#025964]/20 text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-6 inline-block">Filosofía de Mediación</span>
-                                    <h3 class="text-5xl font-black mb-6 leading-tight text-white-800">La Fotografía <br><span class="text-[#025964]">Previa del Aula</span></h3>
+                                    <span class="bg-[#f1f8f9] text-[#025964] border border-[#025964]/20 text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-6 inline-block">Ecosistema de Colaboración</span>
+                                    <h3 class="text-5xl font-black mb-6 leading-tight text-white-800">Nuestras <br><span class="text-[#025964]">Producciones Digitales</span></h3>
                                     <p class="text-slate-500 font-medium leading-relaxed text-lg italic mt-2 border-l-4 border-[#025964] pl-6">
-                                        "La magia de una gran lección tecnológica comienza mucho antes del primer clic. Es la visión y la conexión lo que transforma un tema en un recuerdo eterno."
+                                        "El poder del docente y el estudiante se manifiesta en lo que crean. Este es el espacio para compartir retos, apps, recursos y éxitos pedagógicos."
                                     </p>
+                                    <div class="mt-8">
+                                        <a href="https://adminmepcr-my.sharepoint.com/:f:/g/personal/alberto_bustos_ortega_mep_go_cr/IgDapm3yAwYNSpv-eKTJND8FASqX99UebZBoTjwXfyg0Po4?e=MQdZTP" target="_blank" class="inline-flex items-center gap-3 bg-[#025964] text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-[#025964]/10 hover:scale-[1.02] transition-all">
+                                            <i class="ph-bold ph-cloud-arrow-up text-xl"></i> Acceder a Carpeta en la Nube
+                                        </a>
+                                    </div>
                                 </div>
                                 <div class="relative h-[300px] rounded-[2.5rem] overflow-hidden shadow-2xl reveal active">
-                                    <img src="https://images.unsplash.com/photo-1554048612-387768052bf7?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover">
+                                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover">
                                 </div>
                             </div>
                         </div>
@@ -569,10 +574,10 @@
                                 <h4 class="font-black text-slate-800 text-xl">Orientaciones Didácticas</h4>
                                 <p class="text-sm text-slate-400 font-bold uppercase tracking-tight mt-1">Normativa Vigente 2026</p>
                             </div>
-                            <div class="glass p-8 rounded-[2rem] flex flex-col items-center justify-center text-center hover:scale-[1.02] transition-transform cursor-pointer group" onclick="router('guia')">
-                                <div class="w-20 h-20 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#008e9b] mb-6 group-hover:bg-[#008e9b] group-hover:text-white transition-all shadow-sm"><i class="ph-duotone ph-book-open-text text-4xl"></i></div>
-                                <h4 class="font-black text-slate-800 text-xl">Guía Docente 2026</h4>
-                                <p class="text-sm text-slate-400 font-bold uppercase tracking-tight mt-1">Saberes y Mediación</p>
+                            <div class="glass p-8 rounded-[2rem] flex flex-col items-center justify-center text-center hover:scale-[1.02] transition-transform cursor-pointer group" onclick="router('compartiendo')">
+                                <div class="w-20 h-20 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#025964] mb-6 group-hover:bg-[#025964] group-hover:text-white transition-all shadow-sm"><i class="ph-duotone ph-cloud-arrow-up text-4xl"></i></div>
+                                <h4 class="font-black text-slate-800 text-xl">Compartiendo Resultados</h4>
+                                <p class="text-sm text-slate-400 font-bold uppercase tracking-tight mt-1">Nube de Producciones</p>
                             </div>
                         </div>
                     </div>
