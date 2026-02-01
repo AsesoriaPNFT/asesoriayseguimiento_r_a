@@ -975,85 +975,22 @@
             } catch (e) { alert("Error: " + e.message); }
         };
 
-        // --- LÓGICA IA (GEMINI) ---
-        window.CONTEXTO_OFICIAL_2026 = `
-Eres un Asistente Experto del "Recurso de Asesoría y Seguimiento 2026" para el PNFT (Programa Nacional de Formación Tecnológica) del MEP Costa Rica.
-DIDI-DRTE es la dirección técnica. El portal incluye las "Orientaciones Didácticas 2026" y la "Guía Docente 2026".
-Asesores clave: Rodolfo Juárez Pérez y Alberto Bustos Ortega.
-
-CONOCIMIENTO TÉCNICO COMPLETO (Normativa 2026):
-
-1. CONCEPTOS BASE:
-- Dimensiones: 1 (Aprender de tecnología - docentes IE) y 2 (Aprender con tecnología - transversal).
-- Áreas de Conocimiento: Apropiación Tecnológica y Digital, Programación y Algoritmos, Ciencia de Datos e IA, Computación Física y Robótica.
-
-2. ASPECTOS ADMINISTRATIVOS:
-- Carga Horaria Primaria: Materno/Transición (80 min), I/II Ciclo (30 lecciones: 28 atención + 2 GTP).
-- GTP (Gestión Técnico-Pedagógica): Planear, coordinar codocencia, registrar en SEA, revisar procesos.
-- Codocencia: Obligatoria en Primaria. El docente de grado debe permanecer en la lección.
-- Secundaria: Carga según matrícula. III Ciclo Académico (7°, 8°, 9°) y Vocacional tienen prioridad.
-- Carpeta Institucional: Debe contener circulares, planeamientos, inventarios TecnoPresta y bitácoras de control (obligatorias).
-
-3. ASPECTOS PEDAGÓGICOS:
-- Saberes: Conceptuales (conocer), Procedimentales (hacer) y Actitudinales (ser). Se trabajan integrados.
-- Metodologías: ABJ (Juego), ABR (Retos) y Design Thinking. Docente elige según contexto, pero en Secundaria se recomienda Design Thinking para el Proyecto.
-- Niveles de Alcance: Largo plazo (Competencias), Mediano (Resultados de Aprendizaje RdA por ciclo) y Corto (Indicadores de logro por nivel).
-- Planeamiento: Bimestral, por nivel (no por ciclo). Plantilla PIA 2026 es el estándar.
-
-4. EVALUACIÓN DE LOS APRENDIZAJES (REA):
-- Primaria: Escala sumativa con Prueba de Ejecución en cada periodo.
-- Secundaria: Componente Proyecto es vital.
-  - Etapa Inicial: Se evalúa proceso (describir necesidades, sintetizar, seleccionar ideas).
-  - Etapas Posteriores: Se evalúa ejecución técnica (saberes de programación/robótica).
-- Poblaciones: Vocacional (prioridad), EPJA (CAN, IPEC, CINDEA, CONED), Aulas Integradas (Diagnóstico y priorización de productividad).
-
-Responde siempre basado en estos lineamientos. Si algo no está aquí, indica que se debe consultar al asesor regional o al repositorio oficial (pnft.mep.go.cr).
-`;
-
-        window.geminiKey = (localStorage.getItem('pnft_gemini_key') || "").trim();
-
-        window.configurarAPI = () => {
-            const currentKey = localStorage.getItem('pnft_gemini_key') || "";
-            const key = prompt("Ingrese su Clave de API de Gemini (AIza...):", currentKey);
-            if (key !== null) {
-                const cleanKey = key.trim();
-                localStorage.setItem('pnft_gemini_key', cleanKey);
-                window.geminiKey = cleanKey;
-                alert("✅ Clave configurada y optimizada.");
-            }
-        };
-
-        async function llamarGemini(promptTxt) {
-            if (!window.geminiKey) {
-                return `⚠️ Error: Falta API Key.<br><button onclick="configurarAPI()" class="mt-4 bg-teal-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase">Configurar Clave Ahora</button>`;
-            }
-
-            // Usamos Gemini 2.0 Flash para máximo rendimiento
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${window.geminiKey}`;
+        // --- LÓGICA IA (GEMINI vía SERVER) ---
+        async function llamarGemini(promptTxt, type = 'general') {
             try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: promptTxt }] }] })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    console.error("Error Gemini:", data);
-                    // Si el error es por clave inválida, ofrecemos re-configurar
-                    if (response.status === 400 && data.error?.message?.includes('API key')) {
-                        return `⚠️ Error: Clave API inválida.<br><button onclick="configurarAPI()" class="mt-4 bg-teal-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase">Configurar Clave Ahora</button>`;
-                    }
-                    return `⚠️ Error API (${response.status}): ${data.error?.message || response.statusText}`;
-                }
-
-                return data.candidates[0].content.parts[0].text;
+                const callGemini = window.httpsCallable(window.functions, 'callGemini');
+                const result = await callGemini({ prompt: promptTxt, type: type });
+                return result.data.text;
             } catch (error) {
-                console.error(error);
-                return `⛔ Error de conexión: ${error.message}`;
+                console.error("Error al llamar a Gemini Function:", error);
+                if (error.code === 'unauthenticated') return "⚠️ Debes iniciar sesión para usar la IA.";
+                return `⛔ Error de conexión con el asistente: ${error.message}`;
             }
         }
+
+        window.configurarAPI = () => {
+            alert("✅ El sistema ahora utiliza una conexión de servidor segura. No se requieren claves locales.");
+        };
 
         window.askOrientIA = async (preSet) => {
             const input = document.getElementById('orient-ia-input');
@@ -1064,7 +1001,7 @@ Responde siempre basado en estos lineamientos. Si algo no está aquí, indica qu
             resDiv.innerHTML = '<div class="flex items-center gap-3 text-teal-500 font-black uppercase tracking-widest text-[10px] animate-pulse"><i class="ph ph-cpu"></i> Escaneando Normativa 2026...</div>';
             if (!preSet) input.value = "";
 
-            const respuesta = await llamarGemini(`${window.CONTEXTO_OFICIAL_2026}\n\nConsulta específica sobre NORMATIVA Y ORIENTACIONES: ${txt}`);
+            const respuesta = await llamarGemini(txt, 'orient');
 
             const htmlRes = respuesta.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
             resDiv.innerHTML = `<div class="fade-in bg-teal-50/10 border border-teal-500/20 p-5 rounded-2xl text-slate-300 shadow-sm">${htmlRes}</div>`;
@@ -1088,9 +1025,7 @@ Responde siempre basado en estos lineamientos. Si algo no está aquí, indica qu
                     <p class="text-teal-600 font-black uppercase tracking-widest text-[10px] animate-pulse">La IA está diseñando tu reto ${vibe}...</p>
                 </div>`;
 
-            const prompt = `${window.CONTEXTO_OFICIAL_2026}\n\nActúa como especialista curricular. Crea una "Situación Problema" detallada para el tema: "${tema}" dirigida a estudiantes de ${nivel}. El tono debe ser ${vibe}. Estructura la propuesta siguiendo las fases de Design Thinking y aplica los criterios de evaluación de la etapa inicial si corresponde. Incluye: Título, Reto y Actividades por fase.`;
-
-            const respuesta = await llamarGemini(prompt);
+            const respuesta = await llamarGemini(tema, 'situacion');
             const htmlRes = respuesta.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
             resDiv.innerHTML = `
                 <div class="prose prose-slate max-w-none text-left h-[500px] overflow-y-auto p-8 bg-white rounded-[2rem] shadow-inner custom-scrollbar">
@@ -1110,9 +1045,7 @@ Responde siempre basado en estos lineamientos. Si algo no está aquí, indica qu
 
             resDiv.innerHTML = '<div class="flex flex-col items-center w-full"><div class="w-10 h-10 border-4 border-[#025964] border-t-transparent rounded-full animate-spin mb-3"></div><p class="text-[#025964] font-black text-xs uppercase tracking-widest">Calculando tiempos y fases...</p></div>';
 
-            const prompt = `${window.CONTEXTO_OFICIAL_2026}\n\nActúa como asesor pedagógico. Crea un plan de lección detallado de 40 minutos para el objetivo: "${txt}". Estructura el plan basándote en las fases de Design Thinking que apliquen. Incluye sugerencia de mediación técnica.`;
-
-            const respuesta = await llamarGemini(prompt);
+            const respuesta = await llamarGemini(txt, 'general');
             const htmlRes = respuesta.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
             resDiv.innerHTML = `<div class="text-left fade-in font-medium text-slate-600 leading-relaxed max-h-[300px] overflow-y-auto p-2">${htmlRes}</div>`;
             resDiv.className = "bg-white border border-[#025964]/10 rounded-3xl p-8 min-h-[160px] text-sm flex flex-col items-start shadow-sm shadow-[#025964]/5";
@@ -1143,7 +1076,7 @@ Responde siempre basado en estos lineamientos. Si algo no está aquí, indica qu
                 </div>`;
             hist.scrollTop = hist.scrollHeight;
 
-            const respuesta = await llamarGemini(`${window.CONTEXTO_OFICIAL_2026}\n\nConsulta general del docente: ${txt}`);
+            const respuesta = await llamarGemini(txt, 'general');
 
             document.getElementById(loadingId).remove();
             const htmlRes = respuesta.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
@@ -1187,8 +1120,8 @@ Responde siempre basado en estos lineamientos. Si algo no está aquí, indica qu
             reader.readAsArrayBuffer(file);
         };
 
-        // --- EXPORT PARA QUE FUNCIONE EN MODULE ---
         // Necesitamos exponer funciones de firebase a window para usarlas dentro de router() que es global
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
         import { collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         window.collection = collection;
         window.addDoc = addDoc;
@@ -1196,6 +1129,11 @@ Responde siempre basado en estos lineamientos. Si algo no está aquí, indica qu
         window.query = query;
         window.orderBy = orderBy;
         window.limit = limit;
+        window.getFunctions = getFunctions;
+        window.httpsCallable = httpsCallable;
+
+        // Inicializar Functions
+        window.functions = getFunctions(window.app);
 
         // --- AUTH LOGIC (Ya probada y funcional) ---
         const msg = (txt, type) => {
