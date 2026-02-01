@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recurso de Apoyo | Asesoría y Seguimiento 2026</title>
+    <title>Recurso de Apoyo Asesoría y Seguimiento 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -147,6 +147,71 @@
             background: #cbd5e1;
         }
 
+        /* --- RESPONSIVE ADJUSTMENTS --- */
+        @media (max-width: 1024px) {
+            body {
+                overflow: auto;
+                /* Allow body scroll on mobile if needed */
+            }
+
+            #app-layout {
+                flex-direction: column;
+            }
+
+            aside {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                height: 100vh;
+                width: 280px;
+                z-index: 100;
+                transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 20px 0 50px rgba(0, 0, 0, 0.1);
+            }
+
+            aside.open {
+                left: 0;
+            }
+
+            main {
+                width: 100%;
+            }
+
+            header {
+                padding: 0 1.5rem;
+                height: 80px;
+            }
+
+            #content-area {
+                padding: 1.5rem;
+            }
+
+            /* Responsive Grid Helpers */
+            .grid-cols-2,
+            .grid-cols-3,
+            .grid-cols-4 {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Exceptions for very small grids like levels */
+            .no-stack-mobile {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)) !important;
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(2, 89, 100, 0.2);
+                backdrop-filter: blur(4px);
+                z-index: 90;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+        }
+
         /* Estilos específicos para La Experiencia */
         .reveal {
             opacity: 0;
@@ -180,9 +245,9 @@
                     class="w-20 h-20 bg-[#025964] rounded-2xl flex items-center justify-center text-white mx-auto mb-6 shadow-lg shadow-[#025964]/10 transform -rotate-2">
                     <i class="ph-bold ph-cube text-4xl"></i>
                 </div>
-                <h1 class="text-3xl font-black tracking-tight text-slate-800">Recurso de Apoyo | A y S Dimensión 1 | PNFT</h1>
-                <p class="text-slate-500 text-[10px] uppercase tracking-widest font-black mt-1">Asesores Nacionales PNFT Rodolfo
-                    Juárez Pérez - Alberto Bustos Ortega</p>
+                <h1 class="text-3xl font-black tracking-tight text-slate-800">Recurso de A y S Dimensión 1 PNFT</h1>
+                <p class="text-slate-500 text-[10px] uppercase tracking-widest font-black mt-1">Asesores PNFT Rodolfo
+                    Juárez - Alberto Bustos</p>
             </div>
 
             <div class="flex mb-8 bg-slate-100/50 p-1.5 rounded-2xl">
@@ -247,8 +312,10 @@
     </div>
 
     <div id="app-layout" class="hidden flex h-screen w-full bg-slate-50">
+        <!-- Overlay for mobile sidebar -->
+        <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-        <aside class="w-72 bg-white border-r border-slate-200 flex flex-col justify-between p-6 z-40">
+        <aside id="main-sidebar" class="w-72 bg-white border-r border-slate-200 flex flex-col justify-between p-6 z-40">
             <div>
                 <div class="flex items-center gap-4 px-2 mb-10">
                     <div
@@ -273,10 +340,10 @@
                         <i class="ph-bold ph-sparkle text-xl"></i> <span>Guía Docente 2026</span>
                     </div>
                     <div onclick="router('foro')" id="nav-foro" class="nav-item text-sm">
-                        <i class="ph-bold ph-globe-hemisphere-west text-xl"></i> <span>Foro Nacional</span>
+                        <i class="ph-bold ph-globe-hemisphere-west text-xl"></i> <span>Foro para Docentes</span>
                     </div>
                     <div onclick="router('ia')" id="nav-ia" class="nav-item text-sm">
-                        <i class="ph-bold ph-magic-wand text-xl"></i> <span>Asesor Virtual</span>
+                        <i class="ph-bold ph-magic-wand text-xl"></i> <span>Asesor IA</span>
                     </div>
                     <div onclick="router('experiencia')" id="nav-experiencia" class="nav-item text-sm">
                         <i class="ph-bold ph-sketch-logo text-xl"></i> <span>La Experiencia</span>
@@ -309,16 +376,25 @@
         <main class="flex-1 relative bg-slate-50 overflow-y-auto">
             <header
                 class="h-24 flex items-center justify-between px-10 border-b border-slate-200 bg-white/70 backdrop-blur-xl sticky top-0 z-30">
-                <div>
-                    <h2 id="page-title" class="text-2xl font-black tracking-tight text-slate-800">Recurso de Asesoría
-                        2026</h2>
-                    <p class="text-xs text-teal-600 font-black uppercase tracking-widest mt-1.5">Rodolfo Juárez
-                        Pérez - Alberto Bustos Ortega</p>
+                <div class="flex items-center gap-4">
+                    <!-- Hamburger Menu Button -->
+                    <button onclick="toggleSidebar()"
+                        class="lg:hidden w-10 h-10 flex items-center justify-center bg-slate-100 rounded-xl text-slate-600">
+                        <i class="ph-bold ph-list text-xl"></i>
+                    </button>
+                    <div>
+                        <h2 id="page-title"
+                            class="text-xl lg:text-2xl font-black tracking-tight text-slate-800 truncate max-w-[200px] lg:max-w-none">
+                            Recurso de A y S</h2>
+                        <p class="text-[9px] text-teal-600 font-black uppercase tracking-widest mt-1 hidden lg:block">
+                            Asesoría PNFT 2026</p>
+                    </div>
                 </div>
                 <div class="flex gap-4">
                     <span
-                        class="text-xs font-black uppercase tracking-widest text-teal-600 bg-teal-50 px-4 py-2 rounded-2xl flex items-center gap-3 border border-teal-100/50">
-                        <span class="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></span> Sistema Activo
+                        class="text-[9px] font-black uppercase tracking-widest text-teal-600 bg-teal-50 px-3 py-2 rounded-xl flex items-center gap-2 border border-teal-100/50">
+                        <span class="w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse"></span> <span
+                            class="hidden sm:inline">Sistema Activo</span>
                     </span>
                 </div>
             </header>
@@ -334,22 +410,22 @@
             'sétimo': {
                 title: 'Sétimo Año: Fundamentos y Apropiación',
                 modulos: [
-                    { n: 'Módulo 1', s: ['Computadora', 'Gestión de archivos', 'Estructuras condicionales', 'Estructuras repetitivas', 'Operadores aritméticos', 'Operadores relacionales', 'Operadores lógicos', 'Evento', 'Hardware', 'Software', 'Redes de comunicación', 'Sistema operativo', 'Lógica de programación', 'Dato', 'Variable', 'Algoritmo', 'Crea Contenido', 'Entorno de Programación'] },
-                    { n: 'Módulo 2', s: ['Productividad', 'Referencias bibliográficas', 'Operadores lógicos', 'Funciones', 'Riesgos en línea', 'Asistentes virtuales', 'Internet', 'Criptomonedas', 'Malware', 'Fundamentos IA', 'Navegador', 'Netiqueta', 'Nube', 'Seguridad', 'Buscador', 'Colaboración'] }
+                    { n: 'Módulo 1', s: ['Computadora', 'Gestión de archivos', 'Estructuras condicionales', 'Estructuras repetitivas', 'Operadores aritméticos', 'Operadores relacionales', 'Operadores lógicos', 'Evento', 'Hardware', 'Software', 'Redes de comunicación', 'Sistema operativo', 'Lógica de programación', 'Dato', 'Variable', 'Algoritmo', 'Herramientas de creación de contenido', 'Entorno de programación'] },
+                    { n: 'Módulo 2', s: ['Herramienta de productividad', 'Referencias bibliográficas', 'Operadores lógicos', 'Procedimientos y/o funciones', 'Riesgos en línea', 'Dato', 'Asistentes virtuales', 'Internet', 'Criptomonedas', 'Software malicioso', 'Fundamentos de la IA', 'Navegador', 'Netiqueta', 'Almacenamiento en la nube', 'Contraseñas seguras', 'Buscador', 'Comunicación y colaboración'] }
                 ]
             },
             'octavo': {
                 title: 'Octavo Año: Comunicación e Interconexión',
                 modulos: [
-                    { n: 'Módulo 1', s: ['Gestión archivos', 'Programación Textual', 'Conexión dispositivos', 'Circuito eléctrico', 'Electrónica', 'Robot', 'Mecanismos', 'Crea Contenido', 'Buscador', 'Hardware/Software', 'Mecánica Robótica', 'Microcontrolador', 'S.O.'] },
-                    { n: 'Módulo 2', s: ['Malware', 'Colección de datos', 'Redes', 'Licencias', 'Hackeo Ético', 'Fundamentos de IA', 'Plataformas Contenido', 'Sensor', 'Actuador', 'Herramientas Generativas', 'Internet de las cosas', 'Productividad'] }
+                    { n: 'Módulo 1', s: ['Gestión de archivos', 'Entorno de programación textual', 'Conexión entre dispositivos', 'Circuito eléctrico', 'Fundamentos de electrónica', 'Robot', 'Mecanismos', 'Herramientas de creación de contenido', 'Buscador', 'Hardware', 'Software', 'Mecánica aplicada a la robótica', 'Microcontrolador', 'Robótica', 'Entorno de programación', 'Sistema Operativo'] },
+                    { n: 'Módulo 2', s: ['Software malicioso', 'Colección de datos', 'Redes de comunicación', 'Licencia', 'Hackeo', 'Fundamentos de la IA', 'Plataformas de creación de contenido', 'Sensor', 'Actuador', 'Herramientas generativas', 'Recolección de datos', 'Internet de las cosas', 'Herramienta de productividad'] }
                 ]
             },
             'noveno': {
                 title: 'Noveno Año: Automatización y Prototipado',
                 modulos: [
-                    { n: 'Módulo 1', s: ['Microcontrolador', 'Mecanismos', 'Dato', 'Almacenamiento', 'Prog. Textual', 'Algoritmo', 'Domótica', 'Prototipos', 'Sensor', 'Actuador'] },
-                    { n: 'Módulo 2', s: ['Sistema Operativo', 'IA Generativa', 'Redes', 'Derechos Autor', 'Desafíos IA', 'Productividad', 'Crea Contenido', 'Huella Digital', 'Riesgos en línea', 'Plataformas'] }
+                    { n: 'Módulo 1', s: ['Microcontrolador', 'Movimiento en mecanismos', 'Dato', 'Almacenamiento de datos', 'Entorno de programación textual', 'Algoritmo', 'Domótica', 'Prototipos', 'Sensor', 'Actuador'] },
+                    { n: 'Módulo 2', s: ['Sistema Operativo', 'Herramientas generativas', 'Redes de comunicación', 'Derechos de autor y licenciamiento', 'Desafíos de la IA', 'Herramienta de productividad', 'Herramientas de creación de contenido', 'Huella digital', 'Riesgos en línea', 'Plataformas de creación de contenido'] }
                 ]
             }
         };
@@ -383,7 +459,18 @@
         const _k = "QUl6YVN5QWNUNDhvNGJlSlF5ZDN4VmFpOGYwd1FUQ3FEd3NUYjJj"; // Reemplaza esto con tu nueva clave en Base64
         window.geminiKey = atob(_k);
 
+        window.toggleSidebar = () => {
+            const sidebar = document.getElementById('main-sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        };
+
         window.router = async (view) => {
+            // Close sidebar on navigation (mobile)
+            document.getElementById('main-sidebar').classList.remove('open');
+            document.getElementById('sidebar-overlay').classList.remove('active');
+
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             const activeBtn = document.getElementById('nav-' + view);
             if (activeBtn) activeBtn.classList.add('active');
@@ -433,7 +520,7 @@
 
             // --- VISTA: DASHBOARD ---
             if (view === 'dashboard') {
-                title.innerText = "Panel Central del Ecosistema";
+                title.innerText = "Panel Central";
                 container.innerHTML = `
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 fade-in">
                         <div class="md:col-span-2 glass p-10 rounded-[2.5rem] relative overflow-hidden bg-white border-slate-100 shadow-sm">
@@ -455,7 +542,7 @@
                         <div class="space-y-6">
                             <div class="glass p-8 rounded-[2rem] flex flex-col items-center justify-center text-center hover:scale-[1.02] transition-transform cursor-pointer group" onclick="router('orientaciones')">
                                 <div class="w-20 h-20 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#025964] mb-6 group-hover:bg-[#025964] group-hover:text-white transition-all shadow-sm"><i class="ph-duotone ph-newspaper text-4xl"></i></div>
-                                <h4 class="font-black text-slate-800 text-xl">Orientaciones Didácticas</h4>
+                                <h4 class="font-black text-slate-800 text-xl">Orientaciones Didácticas 2026</h4>
                                 <p class="text-sm text-slate-400 font-bold uppercase tracking-tight mt-1">Normativa Vigente 2026</p>
                             </div>
                             <div class="glass p-8 rounded-[2rem] flex flex-col items-center justify-center text-center hover:scale-[1.02] transition-transform cursor-pointer group" onclick="router('guia')">
@@ -539,11 +626,20 @@
                             <!-- Left: IA Generator Sidebar -->
                             <div class="lg:col-span-1 space-y-8">
                                 <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-xl sticky top-24">
-                                    <h4 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-3">
+                                    <h4 class="text-xl font-black text-slate-800 mb-2 flex items-center gap-3">
                                         <div class="w-10 h-10 bg-[#f1f8f9] rounded-xl flex items-center justify-center text-[#025964]"><i class="ph-fill ph-sparkle"></i></div>
                                         Creador de Situaciones Problema
                                     </h4>
                                     
+                                    <div class="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6 rounded-r-2xl">
+                                        <div class="flex gap-3">
+                                            <i class="ph-fill ph-info text-amber-600 text-lg"></i>
+                                            <p class="text-[10px] text-amber-800 font-bold leading-relaxed">
+                                                <b>NOTA PEDAGÓGICA:</b> Este recurso genera <u>ejemplos orientadores</u>. El proceso de <b>Design Thinking</b> debe ser vivido por el estudiante; use estos puntos como guía para su mediación, no como material final de entrega.
+                                            </p>
+                                        </div>
+                                    </div>
+
                                     <div class="space-y-6">
                                         <div class="group">
                                             <label class="block text-xs font-black text-[#025964] uppercase tracking-widest mb-3 ml-1">Contexto de la situación</label>
@@ -579,11 +675,11 @@
                             <!-- Right: Guide Content -->
                             <div class="lg:col-span-2 space-y-12">
                                 
-                                <!-- Ejes del Ecosistema -->
+                                <!-- Áreas de Conocimiento PNFT - Dimensión 1 -->
                                 <div class="glass p-10 rounded-[2.5rem] bg-white border border-[#025964]/10 shadow-sm">
                                     <div class="flex items-center gap-4 mb-8">
                                         <div class="w-12 h-12 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-600"><i class="ph-fill ph-circles-four"></i></div>
-                                        <h4 class="text-2xl font-black text-slate-800">Ejes del Ecosistema PNFT</h4>
+                                        <h4 class="text-2xl font-black text-slate-800">Áreas de Conocimiento Dimensión 1 - PNFT</h4>
                                     </div>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div class="p-8 bg-[#f1f8f9] rounded-3xl border border-[#025964]/5 hover:border-[#025964]/20 transition-all">
@@ -738,7 +834,7 @@
                                     <i class="ph-fill ph-robot text-xl"></i>
                                 </div>
                                 <div>
-                                    <h4 class="text-lg font-black text-slate-800 leading-none">Asesoría de Informática Digital</h4>
+                                    <h4 class="text-lg font-black text-slate-800 leading-none">Asesoría PNFT</h4>
                                     <p class="text-[10px] text-[#025964] font-black uppercase tracking-widest mt-1.5 flex items-center gap-2">
                                         <span class="w-1.5 h-1.5 rounded-full bg-[#008e9b] animate-pulse"></span> Sistema Activo
                                     </p>
@@ -1173,6 +1269,7 @@
             NIVEL: ${nivel}
             MODULO: ${moduloName}
             SABERES A INTEGRAR: ${selectedSaberes.join(', ') || 'Relacionados al módulo'}
+            IMPORTANTE: Recuerda que estas situaciones son GUÍAS para el docente. El estudiante es quien debe vivir el proceso de Design Thinking. 
             FORMATO: Usa párrafos numerados, lenguaje profesional y enfoque en Design Thinking.`;
 
             const respuesta = await llamarGemini(promptFinal, 'situacion');
@@ -1187,10 +1284,15 @@
             resDiv.innerHTML = `
                 <div class="fade-in space-y-6">
                     <div class="flex items-center justify-between mb-6">
-                        <span class="text-[10px] font-black text-[#025964] uppercase tracking-widest bg-[#f1f8f9] px-4 py-2 rounded-full border border-[#025964]/10">Resultados para ${nivel}</span>
+                        <span class="text-[10px] font-black text-[#025964] uppercase tracking-widest bg-[#f1f8f9] px-4 py-2 rounded-full border border-[#025964]/10">Guía Orientadora para ${nivel}</span>
                         <button onclick="window.print()" class="text-[10px] font-black text-slate-400 hover:text-[#025964] uppercase flex items-center gap-2"><i class="ph ph-printer"></i> Imprimir</button>
                     </div>
                     ${formattedHtml}
+                    <div class="mt-8 p-6 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                        <p class="text-[11px] text-slate-500 font-medium italic text-center">
+                            "Recordatorio: Esta información es un insumo técnico para el diseño de su mediación pedagógica. Asegúrese de que sus estudiantes sean los protagonistas activos del proceso de resolución."
+                        </p>
+                    </div>
                 </div>`;
         };
 
@@ -1523,4 +1625,3 @@
 </body>
 
 </html>
-
