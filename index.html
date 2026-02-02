@@ -9,6 +9,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -455,9 +456,9 @@
         };
         window.SABERES_DATA = SABERES_DATA;
 
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, serverTimestamp, collection, addDoc, getDocs, query, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, serverTimestamp, collection, addDoc, getDocs, query, orderBy, limit, where, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A",
@@ -471,6 +472,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
         // --- SISTEMA DE NAVEGACIÓN Y VISTAS ---
         window.currentUserData = null;
@@ -480,8 +482,11 @@
          * Codificamos la clave en Base64 para evitar que los bots de Google la detecten como filtrada.
          * Para máxima seguridad: RESTRINGE ESTA CLAVE POR DOMINIO (HTTP Referrer) en Google AI Studio.
          */
-        const _k = "QUl6YVN5QWNUNDhvNGJlSlF5ZDN4VmFpOGYwd1FUQ3FEd3NUYjJj"; // Reemplaza esto con tu nueva clave en Base64
+        const _k = "QUl6YVN5QWNUNDhvNGJlSlF5ZDN4VmFpOGYwd1FUQ3FEd3NUYjJj";
         window.geminiKey = atob(_k);
+
+        // Configuración de PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
         window.toggleSidebar = () => {
             const sidebar = document.getElementById('main-sidebar');
@@ -504,46 +509,131 @@
             container.innerHTML = '<div class="flex flex-col items-center justify-center mt-32 space-y-4"><div class="w-16 h-16 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div><p class="text-teal-600 font-black uppercase tracking-widest text-sm animate-pulse">Sincronizando ecosistema...</p></div>';
 
             if (view === 'compartiendo') {
-                title.innerText = "Compartiendo Resultados";
+                title.innerText = "Galería de Producciones Digitales";
                 container.innerHTML = `
-                    <div class="fade-in space-y-12 pb-20">
-                        <div class="glass p-10 rounded-[2.5rem] bg-white border border-[#025964]/10 relative overflow-hidden shadow-sm">
-                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-                                <div class="reveal active">
-                                    <span class="bg-[#f1f8f9] text-[#025964] border border-[#025964]/20 text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-6 inline-block">Ecosistema de Colaboración</span>
-                                    <h3 class="text-5xl font-black mb-6 leading-tight text-white-800">Nuestras <br><span class="text-[#025964]">Producciones Digitales</span></h3>
-                                    <p class="text-slate-500 font-medium leading-relaxed text-lg italic mt-2 border-l-4 border-[#025964] pl-6">
-                                        "El poder del docente y el estudiante se manifiesta en lo que crean. Este es el espacio para compartir soluciones a problemas, apps, recursos y éxitos pedagógicos."
+                    <div class="fade-in space-y-10 pb-20">
+                        <!-- Hero de Galería -->
+                        <div class="glass p-10 rounded-[2.5rem] bg-[#025964] text-white relative overflow-hidden shadow-xl border-none">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center relative z-10">
+                                <div>
+                                    <span class="bg-white/10 text-teal-300 border border-white/10 text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-6 inline-block">Repositorio Nacional PNFT</span>
+                                    <h3 class="text-5xl font-black mb-6 leading-tight uppercase tracking-tighter">Nuestras <br>Producciones</h3>
+                                    <p class="text-teal-100 font-medium leading-relaxed text-lg italic border-l-4 border-teal-500 pl-6">
+                                        Explora y comparte recursos diseñados por docentes para la resolución de problemas y el fortalecimiento de saberes digitales.
                                     </p>
-                                    <div class="mt-8">
-                                        <a href="https://adminmepcr-my.sharepoint.com/:f:/g/personal/alberto_bustos_ortega_mep_go_cr/IgDapm3yAwYNSpv-eKTJND8FASqX99UebZBoTjwXfyg0Po4?e=MQdZTP" target="_blank" class="inline-flex items-center gap-3 bg-[#025964] text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-[#025964]/10 hover:scale-[1.02] transition-all">
-                                            <i class="ph-bold ph-cloud-arrow-up text-xl"></i> Acceder a Carpeta en la Nube
+                                    <div class="mt-8 flex gap-4">
+                                        <button onclick="window.abrirModalSubir()" class="bg-teal-500 hover:bg-teal-400 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl transition-all flex items-center gap-3">
+                                            <i class="ph-bold ph-plus-circle text-xl"></i> Compartir Recurso
+                                        </button>
+                                        <a href="https://adminmepcr-my.sharepoint.com/:f:/g/personal/alberto_bustos_ortega_mep_go_cr/IgDapm3yAwYNSpv-eKTJND8FASqX99UebZBoTjwXfyg0Po4?e=MQdZTP" target="_blank" class="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-white/10 transition-all flex items-center gap-3">
+                                            <i class="ph-bold ph-microsoft-excel text-xl"></i> Carpeta OneDrive
                                         </a>
                                     </div>
                                 </div>
-                                <div class="relative h-[300px] rounded-[2.5rem] overflow-hidden shadow-2xl reveal active">
-                                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover">
+                                <div class="hidden lg:block relative h-[350px] rounded-[2rem] overflow-hidden">
+                                     <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover grayscale opacity-50">
+                                     <div class="absolute inset-0 bg-gradient-to-tr from-[#025964] via-transparent to-transparent"></div>
+                                </div>
+                            </div>
+                            <i class="ph-fill ph-circles-three text-[20rem] absolute -right-20 -bottom-20 text-white/5 rotate-12"></i>
+                        </div>
+
+                        <!-- Grid de Recursos -->
+                        <div class="space-y-6">
+                            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                                <h4 class="text-xl font-black text-slate-800 uppercase tracking-tighter flex items-center gap-3">
+                                    <i class="ph-bold ph-layout text-teal-600"></i> Recursos de la Comunidad
+                                </h4>
+                                <div class="flex gap-2">
+                                    <select onchange="window.filtrarRecursos(this.value)" class="bg-slate-100 border-none rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 outline-none">
+                                        <option value="todos">Todos los niveles</option>
+                                        <option value="sétimo">Sétimo Año</option>
+                                        <option value="octavo">Octavo Año</option>
+                                        <option value="noveno">Noveno Año</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div id="galeria-recursos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <!-- Cargando state -->
+                                <div class="col-span-full py-20 flex flex-col items-center gap-4">
+                                    <div class="w-10 h-10 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Consultando repositorio...</p>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <section class="space-y-10">
-                            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-                                <h3 class="text-3xl font-black text-slate-800 uppercase tracking-tighter">Tu Ruta de Innovación</h3>
-                                <div class="flex gap-4 p-2 bg-slate-100 rounded-2xl">
-                                    <button onclick="switchExphase('antes')" id="exbtn-antes" class="experience-tab-btn active px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest">01. Preparación</button>
-                                    <button onclick="switchExphase('durante')" id="exbtn-durante" class="experience-tab-btn px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-slate-400">02. Ejecución</button>
-                                    <button onclick="switchExphase('despues')" id="exbtn-despues" class="experience-tab-btn px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-slate-400">03. Impacto</button>
+                    <!-- Modal de Carga -->
+                    <div id="modal-subir" class="fixed inset-0 z-[2000] hidden flex items-center justify-center p-6">
+                        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="window.cerrarModalSubir()"></div>
+                        <div class="glass w-full max-w-xl bg-white rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
+                            <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-[#025964] text-white">
+                                <div>
+                                    <h3 class="text-xl font-black uppercase tracking-tighter leading-none">Compartir Recurso Digital</h3>
+                                    <p class="text-[10px] text-teal-200 uppercase tracking-widest mt-2 font-bold">Ciclo Lectivo 2026</p>
+                                </div>
+                                <button onclick="window.cerrarModalSubir()" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all"><i class="ph-bold ph-x"></i></button>
+                            </div>
+                            
+                            <div class="p-8 overflow-y-auto no-scrollbar space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Nombre del Recurso</label>
+                                        <input type="text" id="up-nombre" class="input-field text-xs mb-0" placeholder="Ej: App de Lógica Condicional">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Nivel Educativo</label>
+                                        <select id="up-nivel" onchange="window.updateUploadSelectors()" class="input-field text-xs mb-0">
+                                            <option value="">Seleccione Nivel</option>
+                                            <option value="sétimo">Sétimo Año</option>
+                                            <option value="octavo">Octavo Año</option>
+                                            <option value="noveno">Noveno Año</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Módulo</label>
+                                        <select id="up-modulo" onchange="window.updateUploadSaberes()" class="input-field text-xs mb-0">
+                                            <option value="">Primero elija nivel</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Saber Asociado</label>
+                                        <select id="up-saber" class="input-field text-xs mb-0">
+                                            <option value="">Primero elija módulo</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-1">
+                                    <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Descripción del Recurso</label>
+                                    <textarea id="up-desc" class="input-field text-xs mb-0 min-h-[80px]" placeholder="¿De qué trata este recurso y cómo ayuda en la resolución de problemas?"></textarea>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1 block">Archivo del Recurso (PDF, ZIP, DOCX)</label>
+                                    <div class="border-2 border-dashed border-slate-100 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 bg-slate-50 group hover:border-teal-500/30 transition-all cursor-pointer relative" onclick="document.getElementById('file-upload').click()">
+                                        <input type="file" id="file-upload" class="hidden" onchange="window.handleFileSelect(this)">
+                                        <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-slate-300 shadow-sm group-hover:text-teal-500 transition-all">
+                                            <i class="ph-bold ph-cloud-arrow-up text-3xl"></i>
+                                        </div>
+                                        <p id="file-name" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Haga clic o arrastre el archivo aquí</p>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div id="experience-phase-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                <!-- Phase content will be injected here -->
+                            <div class="p-8 border-t border-slate-100 bg-slate-50">
+                                <button onclick="window.subirRecursoDigital()" id="btn-subir" class="w-full bg-[#025964] hover:bg-teal-600 text-white py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl transition-all disabled:bg-slate-300 flex items-center justify-center gap-2">
+                                    <i class="ph ph-upload-simple"></i> Publicar en el Ecosistema
+                                </button>
                             </div>
-                        </section>
+                        </div>
                     </div>
                 `;
-                setTimeout(() => window.switchExphase('antes'), 50);
+                window.cargarGaleriaRecursos();
                 return;
             }
 
@@ -953,13 +1043,20 @@
                                     
                                     <div class="mb-4">
                                         <label class="text-[9px] font-black uppercase tracking-widest text-teal-200/50 mb-2 block">Seleccione herramienta:</label>
-                                        <select id="admin-ia-type" class="w-full bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-[10px] font-bold text-white outline-none focus:bg-white/20 transition-all cursor-pointer appearance-none">
+                                        <select id="admin-ia-type" onchange="window.toggleAdminPDFButton()" class="w-full bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-[10px] font-bold text-white outline-none focus:bg-white/20 transition-all cursor-pointer appearance-none">
                                             <option value="reporte" class="bg-[#025964]">Reporte Técnico de Visita</option>
                                             <option value="circular" class="bg-[#025964]">Redactar Circular/Oficio</option>
-                                            <option value="pia" class="bg-[#025964]">Revisión Pedagógica (PIA)</option>
+                                            <option value="pia" class="bg-[#025964]">Audit Pedagógica (Subir PDF)</option>
                                             <option value="agenda" class="bg-[#025964]">Preparador de Agenda Visita</option>
                                             <option value="analisis" class="bg-[#025964]">Análisis de Tendencias</option>
                                         </select>
+                                    </div>
+
+                                    <div id="admin-pdf-container" class="hidden mb-4">
+                                        <input type="file" id="admin-ia-pdf" class="hidden" accept=".pdf" onchange="window.procesarPDFAdmin()">
+                                        <button onclick="document.getElementById('admin-ia-pdf').click()" class="w-full bg-teal-500/20 border border-teal-500/30 text-teal-300 py-3 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-teal-500/30 transition-all flex items-center justify-center gap-2">
+                                            <i class="ph-bold ph-file-pdf text-lg"></i> <span id="admin-pdf-status">Cargar Planeamiento PDF</span>
+                                        </button>
                                     </div>
 
                                     <textarea id="admin-ia-input" class="w-full bg-white/10 border border-white/10 rounded-2xl p-4 text-xs text-white placeholder:text-teal-200/30 outline-none focus:bg-white/20 transition-all mb-4" rows="4" placeholder="Ej: El docente tiene dudas con Design Thinking..."></textarea>
@@ -1088,6 +1185,7 @@
                 setTimeout(() => {
                     initAdminCharts();
                     window.updateAdminChart();
+                    window.toggleAdminPDFButton();
                 }, 100);
             }
         };
@@ -1126,11 +1224,49 @@
             });
         };
 
+        window.toggleAdminPDFButton = () => {
+            const type = document.getElementById('admin-ia-type').value;
+            const container = document.getElementById('admin-pdf-container');
+            if (type === 'pia') container.classList.remove('hidden');
+            else container.classList.add('hidden');
+        };
+
+        window.procesarPDFAdmin = async () => {
+            const file = document.getElementById('admin-ia-pdf').files[0];
+            if (!file) return;
+
+            const status = document.getElementById('admin-pdf-status');
+            status.innerText = "Leyendo documento...";
+
+            try {
+                const reader = new FileReader();
+                reader.onload = async function () {
+                    const typedarray = new Uint8Array(this.result);
+                    const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                    let fullText = "";
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const content = await page.getTextContent();
+                        const strings = content.items.map(item => item.str);
+                        fullText += strings.join(" ") + "\n";
+                    }
+                    document.getElementById('admin-ia-input').value = fullText;
+                    status.innerText = "📄 PDF Cargado con éxito";
+                    msg("✅ Texto extraído del PDF", "success");
+                };
+                reader.readAsArrayBuffer(file);
+            } catch (e) {
+                console.error(e);
+                status.innerText = "Error al leer PDF";
+                msg("⛔ Error al procesar el PDF", "err");
+            }
+        };
+
         window.ejecutarHerramientaIA = async () => {
             const input = document.getElementById('admin-ia-input');
             const type = document.getElementById('admin-ia-type').value;
             const txt = input.value.trim();
-            if (!txt) return msg("⚠️ Por favor ingrese información", "normal");
+            if (!txt) return msg("⚠️ Por favor ingrese información o suba un planeamiento", "normal");
 
             const btn = document.getElementById('btn-ia-admin');
             const originalHTML = btn.innerHTML;
@@ -1140,7 +1276,21 @@
             const prompts = {
                 reporte: `Genera un REPORTE TÉCNICO FORMAL de visita para el PNFT. Detalles: "${txt}". Formato: 1. Resumen, 2. Acción Sugerida, 3. Clasificación.`,
                 circular: `Redacta un OFICIO/CIRCULAR oficial del PNFT dirigido a docentes/directores. Contexto: "${txt}". Tono formal, empoderador y técnico.`,
-                pia: `Actúa como especialista pedagógico del PNFT. Evalúa este contenido de Planeamiento (PIA): "${txt}". Revisa si cumple con Design Thinking, saberes digitales y mediación proactiva. Da sugerencias de mejora.`,
+                pia: `ACTÚA COMO AUDITOR PEDAGÓGICO DE ALTO NIVEL DEL PNFT 2026. 
+                Analiza el siguiente PLANEAMIENTO (PIA) y verifica el cumplimiento de:
+                
+                1. CONGRUENCIA 2026: ¿Se alinea con las Orientaciones Didácticas y la Guía 2026?
+                2. MÓDULOS Y SABERES: ¿Corresponden los saberes a los niveles de Sétimo, Octavo o Noveno según la Guía? (Verifica contra: Computación Física, IA, Programación, Apropiación).
+                3. COMPONENTE PROYECTO: ¿El planeamiento desarrolla la Resolución de Problemas bajo las 5 fases de Design Thinking (Empatizar, Definir, Idear, Prototipar, Probar y Evaluar)?
+                4. EVALUACIÓN: ¿Se incluyen indicadores de logro técnicos y actitudinales claros?
+                
+                CONTENIDO DEL PLANEAMIENTO:
+                "${txt}"
+                
+                DA UN DICTAMEN TÉCNICO: 
+                - Puntos Fuertes.
+                - Omisiones Críticas.
+                - Recomendación de Mejora Directa.`,
                 agenda: `Crea una AGENDA DE VISITA técnica para una institución. Contexto: "${txt}". Incluye tiempos, objetivos técnicos y pedagógicos.`,
                 analisis: `Analiza la siguiente tendencia/situación observada en el campo: "${txt}". Indica posibles riesgos, oportunidades de capacitación y impacto en el programa.`
             };
@@ -1697,6 +1847,167 @@
                 </label>
             `).join('');
         };
+
+
+        // --- LÓGICA DE PRODUCCIONES DIGITALES ---
+        window.abrirModalSubir = () => document.getElementById('modal-subir').classList.remove('hidden');
+        window.cerrarModalSubir = () => {
+            document.getElementById('modal-subir').classList.add('hidden');
+            document.getElementById('file-upload').value = "";
+            document.getElementById('file-name').innerText = "Haga clic o arrastre el archivo aquí";
+        };
+
+        window.updateUploadSelectors = () => {
+            const nivel = document.getElementById('up-nivel').value;
+            const moduloSel = document.getElementById('up-modulo');
+            moduloSel.innerHTML = '<option value="">Seleccione Módulo</option>';
+            if (!nivel || !window.SABERES_DATA[nivel]) return;
+
+            window.SABERES_DATA[nivel].modulos.forEach((m, idx) => {
+                moduloSel.innerHTML += `<option value="${idx}">${m.n}</option>`;
+            });
+            window.updateUploadSaberes();
+        };
+
+        window.updateUploadSaberes = () => {
+            const nivel = document.getElementById('up-nivel').value;
+            const moduloIdx = document.getElementById('up-modulo').value;
+            const saberSel = document.getElementById('up-saber');
+            saberSel.innerHTML = '<option value="">Seleccione Saber</option>';
+
+            if (!nivel || moduloIdx === "" || !window.SABERES_DATA[nivel].modulos[moduloIdx]) return;
+
+            window.SABERES_DATA[nivel].modulos[moduloIdx].s.forEach(s => {
+                saberSel.innerHTML += `<option value="${s}">${s}</option>`;
+            });
+        };
+
+        window.handleFileSelect = (input) => {
+            const file = input.files[0];
+            if (file) {
+                document.getElementById('file-name').innerText = `📄 ${file.name}`;
+            }
+        };
+
+        window.subirRecursoDigital = async () => {
+            const nombre = document.getElementById('up-nombre').value.trim();
+            const desc = document.getElementById('up-desc').value.trim();
+            const nivel = document.getElementById('up-nivel').value;
+            const moduloIdx = document.getElementById('up-modulo').value;
+            const saber = document.getElementById('up-saber').value;
+            const file = document.getElementById('file-upload').files[0];
+
+            if (!nombre || !nivel || !moduloIdx || !saber || !file) {
+                return msg("⚠️ Complete todos los campos y suba un archivo", "err");
+            }
+
+            const btn = document.getElementById('btn-subir');
+            btn.disabled = true;
+            btn.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Publicando...`;
+
+            try {
+                const asesorNombre = (window.currentUserData?.asesor === 'alberto')
+                    ? 'Alberto Bustos Ortega'
+                    : (window.currentUserData?.asesor === 'rodolfo')
+                        ? 'Rodolfo Juárez Pérez'
+                        : 'Producciones Generales';
+
+                const safeName = file.name.replace(/[^a-z0-9.]/gi, '_').toLowerCase();
+                const storagePath = `producciones/${asesorNombre}/${Date.now()}_${safeName}`;
+                const fileRef = ref(storage, storagePath);
+
+                msg("⏳ Subiendo archivo a la nube...", "normal");
+                const uploadRes = await uploadBytes(fileRef, file);
+                const downloadURL = await getDownloadURL(uploadRes.ref);
+
+                msg("⏳ Registrando en repositorio...", "normal");
+                await addDoc(collection(db, "producciones_digitales"), {
+                    nombre,
+                    descripcion: desc,
+                    nivel,
+                    modulo: window.SABERES_DATA[nivel].modulos[moduloIdx].n,
+                    saber,
+                    fileURL: downloadURL,
+                    fileName: file.name,
+                    autor: window.currentUserData.nombre,
+                    asesor: asesorNombre,
+                    creadoEn: serverTimestamp(),
+                    email: window.currentUserData.email
+                });
+
+                msg("✅ Recurso compartido con éxito", "success");
+                window.cerrarModalSubir();
+                window.cargarGaleriaRecursos();
+            } catch (e) {
+                console.error(e);
+                msg("⛔ Error al subir el recurso", "err");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="ph ph-upload-simple"></i> Publicar en el Ecosistema`;
+            }
+        };
+
+        window.cargarGaleriaRecursos = async (filtroNivel = 'todos') => {
+            const galeria = document.getElementById('galeria-recursos');
+            if (!galeria) return;
+
+            try {
+                let q = query(collection(db, "producciones_digitales"), orderBy("creadoEn", "desc"), limit(20));
+                if (filtroNivel !== 'todos') {
+                    q = query(collection(db, "producciones_digitales"), where("nivel", "==", filtroNivel), orderBy("creadoEn", "desc"));
+                }
+
+                const snap = await getDocs(q);
+                if (snap.empty) {
+                    galeria.innerHTML = `
+                        <div class="col-span-full py-20 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200 flex flex-col items-center">
+                            <i class="ph ph-folder-open text-5xl text-slate-300 mb-4"></i>
+                            <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Aún no hay recursos compartidos en este nivel</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = "";
+                snap.forEach(doc => {
+                    const r = doc.data();
+                    const initials = r.autor.split(' ').map(n => n[0]).join('').substring(0, 2);
+                    html += `
+                        <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 hover:border-teal-500/30 transition-all group flex flex-col h-full shadow-sm hover:shadow-xl">
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="text-[9px] font-black bg-teal-50 text-teal-600 px-3 py-1 rounded-full uppercase tracking-widest border border-teal-100">${r.nivel}</span>
+                                <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-teal-600 transition-colors">
+                                    <i class="ph ph-file-pdf text-xl"></i>
+                                </div>
+                            </div>
+                            
+                            <h5 class="text-lg font-black text-slate-800 leading-tight mb-2 group-hover:text-[#025964] transition-colors">${r.nombre}</h5>
+                            <p class="text-[11px] text-slate-500 font-medium line-clamp-3 mb-6 flex-grow italic">"${r.descripcion || 'Sin descripción disponible.'}"</p>
+                            
+                            <div class="space-y-4 pt-6 border-t border-slate-50">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-[#025964] flex items-center justify-center text-[10px] font-black text-white shadow-sm">${initials}</div>
+                                    <div>
+                                        <p class="text-[10px] font-black text-slate-800 uppercase leading-none">${r.autor}</p>
+                                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-tight mt-1">${r.asesor}</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <a href="${r.fileURL}" target="_blank" class="flex-grow bg-[#025964] hover:bg-teal-600 text-white text-center py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-teal-900/10">Descargar Recurso</a>
+                                    <button onclick="msg('Recurso: ${r.modulo} / ${r.saber}', 'info')" class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 hover:bg-teal-50 hover:text-teal-600 transition-all"><i class="ph ph-info"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                galeria.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+                galeria.innerHTML = `<p class="col-span-full text-center text-rose-500 font-bold py-10">Error al cargar recursos: ${e.message}</p>`;
+            }
+        };
+
+        window.filtrarRecursos = (nivel) => window.cargarGaleriaRecursos(nivel);
 
         window.generarSituacion = async () => {
             const tema = document.getElementById('ia-tema').value;
