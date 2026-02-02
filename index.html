@@ -2038,14 +2038,22 @@
                 if (!userSnap.exists()) return;
                 const u = userSnap.data();
 
-                const nNombre = prompt("Nombre completo:", u.nombre);
+                const nNombre = prompt("Nombre completo del docente:", u.nombre);
                 if (nNombre === null) return;
-                const nCodigo = prompt("Código Institucional:", u.codigo);
+
+                const nCodigo = prompt("Código Institucional (4 dígitos):", u.codigo);
                 if (nCodigo === null) return;
-                const nRol = prompt("Rol (docente/admin):", u.rol || "docente");
+
+                let nRol = prompt("Rol del usuario - Escriba 'admin' para darle permisos totales o 'docente' para nivel normal:", u.rol || "docente");
                 if (nRol === null) return;
 
-                msg("⏳ Actualizando...", "normal");
+                nRol = nRol.toLowerCase().trim();
+                if (nRol !== 'admin' && nRol !== 'docente') {
+                    alert("⚠️ Rol no válido. Por favor use 'admin' o 'docente'.");
+                    return;
+                }
+
+                msg("⏳ Actualizando perfil...", "normal");
                 await setDoc(doc(db, "registro_usuarios", uid), {
                     nombre: nNombre,
                     codigo: nCodigo,
