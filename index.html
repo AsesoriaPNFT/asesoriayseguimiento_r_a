@@ -467,7 +467,7 @@
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, serverTimestamp, collection, addDoc, getDocs, query, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBABrNvQH1Zu-peF3Rn1uCe-Yfb2LBGC9A",
@@ -1782,7 +1782,6 @@
 
         // Necesitamos exponer funciones de firebase a window para usarlas dentro de router() que es global
         import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
-        import { collection, addDoc, getDocs, query, orderBy, limit, getDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         window.collection = collection;
         window.addDoc = addDoc;
         window.getDocs = getDocs;
@@ -1982,7 +1981,6 @@
 
             try {
                 // Validación de Lista Blanca (Whitelist)
-                const { getDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
                 const whitelistSnap = await getDoc(doc(db, "whitelist", email.toLowerCase()));
 
                 // VALIDACIÓN DE LISTA BLANCA (Habilitada por solicitud del usuario)
@@ -2017,7 +2015,6 @@
             msg("Verificando credenciales...", "normal");
 
             try {
-                const { getDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
                 const whitelistSnap = await getDoc(doc(db, "whitelist", email));
 
                 if (!whitelistSnap.exists()) {
