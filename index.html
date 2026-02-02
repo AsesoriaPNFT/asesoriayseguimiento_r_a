@@ -290,27 +290,12 @@
                     Iniciar Sesión
                 </button>
                 <p class="text-center mt-6">
-                    <a href="#" onclick="showRecoverForm()"
+                    <a href="#" onclick="enviarResetPass()"
                         class="text-[10px] font-black text-[#025964] uppercase tracking-widest hover:underline decoration-2 underline-offset-4">¿Olvidaste
-                        tu correo?</a>
+                        tu contraseña?</a>
                 </p>
             </div>
 
-            <div id="form-recover" class="hidden space-y-4">
-                <div class="bg-teal-50 p-4 rounded-2xl border border-teal-100 mb-4">
-                    <p class="text-[9px] font-black text-[#025964] uppercase leading-tight italic">Ingresa tus datos
-                        exactos de registro para recuperar tu dirección @mep.go.cr</p>
-                </div>
-                <input type="text" id="recover-name" class="input-field" placeholder="Nombre Completo">
-                <input type="text" id="recover-code" class="input-field" placeholder="Cód. Institucional (4 dígitos)">
-                <button onclick="recuperarEmail()"
-                    class="w-full bg-[#025964] text-white font-bold py-4 rounded-2xl transition-all shadow-lg">
-                    Buscar Correo
-                </button>
-                <button onclick="switchAuthTab('login')"
-                    class="w-full text-[10px] font-black text-slate-400 uppercase tracking-widest py-2">Volver al
-                    Login</button>
-            </div>
 
             <div id="form-register" class="hidden space-y-3">
                 <input type="text" id="reg-name" class="input-field" placeholder="Nombre Completo">
@@ -326,8 +311,10 @@
                         class="block text-[9px] font-black text-[#025964] uppercase tracking-widest mb-2 ml-1">Selecciona
                         tu Asesor</label>
                     <select id="reg-advisor" class="input-field cursor-pointer">
+                        <option value="none">-- Selecciona tu Asesor --</option>
                         <option value="alberto">Alberto Bustos Ortega</option>
                         <option value="rodolfo">Rodolfo Juárez Pérez</option>
+                        <option value="admin">Personal Administrativo / Nacional</option>
                     </select>
                 </div>
                 <button onclick="registerUser()"
@@ -469,7 +456,7 @@
         window.SABERES_DATA = SABERES_DATA;
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, serverTimestamp, collection, addDoc, getDocs, query, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -1774,6 +1761,8 @@
         window.doc = doc;
         window.getFunctions = getFunctions;
         window.httpsCallable = httpsCallable;
+        window.sendPasswordResetEmail = sendPasswordResetEmail;
+        window.serverTimestamp = serverTimestamp;
 
         // Inicializar Functions
         window.functions = getFunctions(window.app);
@@ -1909,35 +1898,17 @@
             msg("", "");
         };
 
-        window.showRecoverForm = () => window.switchAuthTab('recover');
+        window.enviarResetPass = async (targetEmail = null) => {
+            const email = targetEmail || document.getElementById('login-email').value.trim() || prompt("Ingresa tu correo @mep.go.cr:");
+            if (!email || !email.includes('@mep.go.cr')) return msg("⚠️ Ingresa un correo institucional válido", "err");
 
-        window.recuperarEmail = async () => {
-            const nombre = document.getElementById('recover-name').value.trim();
-            const codigo = document.getElementById('recover-code').value.trim();
-
-            if (!nombre || !codigo) return msg("⚠️ Ingresa nombre y código", "err");
-
-            msg("🔍 Buscando en el ecosistema...", "normal");
-
+            msg("⏳ Enviando enlace de recuperación...", "normal");
             try {
-                // Importar query y where para esta búsqueda específica
-                const { query, collection, where, getDocs } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-                const q = query(collection(db, "registro_usuarios"),
-                    where("nombre", "==", nombre),
-                    where("codigo", "==", codigo));
-
-                const snap = await getDocs(q);
-                if (snap.empty) {
-                    msg("❌ No se encontró ningún docente con esos datos.", "err");
-                } else {
-                    const data = snap.docs[0].data();
-                    msg(`✅ Tu correo es: ${data.email}`, "success");
-                    // Opcional: llenar el campo de login automáticamente
-                    document.getElementById('login-email').value = data.email;
-                }
+                await sendPasswordResetEmail(auth, email);
+                msg("✅ Enlace enviado.", "success");
             } catch (e) {
                 console.error(e);
-                msg("⛔ Error en la búsqueda: " + e.message, "err");
+                msg("⛔ Error: " + e.message, "err");
             }
         };
 
@@ -2029,9 +2000,10 @@
                                     <p class="text-[9px] text-[#025964] font-black uppercase mt-1">Clave: <span class="bg-slate-100 px-2 py-0.5 rounded tracking-widest">${u.password || 'Sin dato'}</span></p>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-3">
                                 <span class="text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-transparent ${rolColor}">${u.rol || 'docente'}</span>
-                                <button onclick="alert('Función de edición en desarrollo')" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-[#025964] transition-colors"><i class="ph ph-note-pencil"></i></button>
+                                <button onclick="window.enviarResetPass('${u.email}')" title="Enviar Enlace de Reseteo" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors"><i class="ph ph-paper-plane-tilt"></i></button>
+                                <button onclick="window.copiarDatosUsuario('${btoa(JSON.stringify(u))}')" title="Copiar Datos" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-teal-600 transition-colors"><i class="ph ph-copy"></i></button>
+                                <button onclick="window.editarUsuario('${doc.id}')" title="Editar" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-[#025964] transition-colors"><i class="ph ph-note-pencil"></i></button>
                             </div>
                         </div>
                     `;
@@ -2040,6 +2012,51 @@
             } catch (e) {
                 console.error("Error al listar usuarios:", e);
                 listUsuarios.innerHTML = `<p class="text-center text-rose-500 font-bold p-10">Error: ${e.message}</p>`;
+            }
+        };
+
+        window.copiarDatosUsuario = (base64Data) => {
+            try {
+                const u = JSON.parse(atob(base64Data));
+                const text = `*Recurso de Asesoría y Seguimiento 2026*\n\nHola ${u.nombre}, aquí están tus credenciales para el portal:\n\n📧 *Correo:* ${u.email}\n🔑 *Clave:* ${u.password || 'Sin dato'}\n🏢 *Código:* ${u.codigo}\n👨‍🏫 *Asesor:* ${u.asesor === 'alberto' ? 'Alberto Bustos Ortega' : u.asesor === 'rodolfo' ? 'Rodolfo Juárez Pérez' : 'Personal Administrativo'}\n\nLink: https://asesoriapnft.github.io/`;
+
+                navigator.clipboard.writeText(text).then(() => {
+                    msg("✅ Datos copiados al portapapeles", "success");
+                }).catch(err => {
+                    console.error('Error al copiar:', err);
+                    alert("Error al copiar: " + text); // Fallback si falla navigator.clipboard
+                });
+            } catch (e) {
+                console.error(e);
+                msg("⛔ Error al copiar datos", "err");
+            }
+        };
+
+        window.editarUsuario = async (uid) => {
+            try {
+                const userSnap = await getDoc(doc(db, "registro_usuarios", uid));
+                if (!userSnap.exists()) return;
+                const u = userSnap.data();
+
+                const nNombre = prompt("Nombre completo:", u.nombre);
+                if (nNombre === null) return;
+                const nCodigo = prompt("Código Institucional:", u.codigo);
+                if (nCodigo === null) return;
+                const nRol = prompt("Rol (docente/admin):", u.rol || "docente");
+                if (nRol === null) return;
+
+                msg("⏳ Actualizando...", "normal");
+                await setDoc(doc(db, "registro_usuarios", uid), {
+                    nombre: nNombre,
+                    codigo: nCodigo,
+                    rol: nRol
+                }, { merge: true });
+
+                msg("✅ Usuario actualizado", "success");
+                window.listarUsuarios();
+            } catch (e) {
+                console.error(e);
+                msg("⛔ Error al editar", "err");
             }
         };
 
@@ -2055,7 +2072,14 @@
             msg("Verificando credenciales...", "normal");
 
             try {
-                await signInWithEmailAndPassword(auth, email, pass);
+                const res = await signInWithEmailAndPassword(auth, email, pass);
+
+                // BACKFILL: Guardar contraseña si no existe en Firestore
+                const userDoc = await getDoc(doc(db, "registro_usuarios", res.user.uid));
+                if (userDoc.exists() && !userDoc.data().password) {
+                    console.log("Actualizando contraseña faltante en perfil...");
+                    await setDoc(doc(db, "registro_usuarios", res.user.uid), { password: pass }, { merge: true });
+                }
             }
             catch (e) {
                 console.error("Login Error:", e);
