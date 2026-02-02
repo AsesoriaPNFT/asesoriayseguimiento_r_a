@@ -177,12 +177,13 @@
                 top: 0;
                 height: 100vh;
                 width: 290px;
-                z-index: 100;
+                z-index: 200;
+                /* Increased to stay above EVERYTHING */
                 transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 20px 0 50px rgba(0, 0, 0, 0.1);
+                box-shadow: 20px 0 50px rgba(0, 0, 0, 0.2);
                 background: white !important;
-                /* Solid background for mobile to avoid blur issues */
                 backdrop-filter: none !important;
+                border-right: 1px solid rgba(0, 0, 0, 0.05);
             }
 
             aside.open {
@@ -218,9 +219,11 @@
                 display: none;
                 position: fixed;
                 inset: 0;
-                background: rgba(2, 89, 100, 0.2);
+                background: rgba(2, 50, 60, 0.4);
+                /* Slightly darker for better contrast */
                 backdrop-filter: blur(4px);
-                z-index: 90;
+                z-index: 150;
+                /* Lower than aside (200) but higher than main content */
             }
 
             .sidebar-overlay.active {
@@ -341,7 +344,7 @@
         <!-- Overlay for mobile sidebar -->
         <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-        <aside id="main-sidebar" class="w-72 bg-white border-r border-slate-200 flex flex-col justify-between p-6 z-40">
+        <aside id="main-sidebar" class="w-72 bg-white border-r border-slate-200 flex flex-col justify-between p-6">
             <div>
                 <div class="flex items-center justify-between mb-10 px-2 lg:px-0">
                     <div class="flex items-center gap-4">
@@ -979,7 +982,10 @@
                                     </div>
                                     <div class="flex gap-2">
                                         <button onclick="document.getElementById('excel-upload').click()" class="bg-slate-50 border border-slate-100 text-slate-600 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-slate-100 transition-all">
-                                            <i class="ph-bold ph-upload"></i> Importar
+                                            <i class="ph-bold ph-upload"></i> Importar Excel
+                                        </button>
+                                        <button onclick="window.listarUsuarios()" class="bg-[#025964] text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-[#008e9b] transition-all">
+                                            <i class="ph-bold ph-users-four"></i> Ver Usuarios
                                         </button>
                                         <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden" onchange="procesarExcel(this)">
                                     </div>
@@ -987,68 +993,44 @@
 
                                 <div class="space-y-4 max-h-[600px] overflow-y-auto pr-2 no-scrollbar">
                                     <!-- Institution Cards -->
-                                    <div class="p-6 bg-[#f1f8f9] rounded-3xl border border-[#025964]/5 hover:border-[#025964]/20 transition-all group">
-                                        <div class="flex justify-between items-start mb-6">
-                                            <div class="flex items-center gap-4">
-                                                <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-[#025964] shadow-sm font-black text-xs border border-slate-100">0001</div>
-                                                <div>
-                                                    <h5 class="font-black text-slate-800 uppercase text-sm">Colegio Técnico Profesional de Calle Blancos</h5>
-                                                    <div class="flex gap-2 mt-1">
-                                                        <span class="text-[9px] font-black text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100 uppercase tracking-widest">Atención Urgente</span>
-                                                        <span class="text-[9px] font-black text-slate-400 bg-white px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">ID: 2103</span>
+                                    <div id="admin-instituciones-list" class="space-y-4">
+                                        <div class="p-6 bg-[#f1f8f9] rounded-3xl border border-[#025964]/5 hover:border-[#025964]/20 transition-all group">
+                                            <div class="flex justify-between items-start mb-6">
+                                                <div class="flex items-center gap-4">
+                                                    <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-[#025964] shadow-sm font-black text-xs border border-slate-100">0001</div>
+                                                    <div>
+                                                        <h5 class="font-black text-slate-800 uppercase text-sm">Colegio Técnico Profesional de Calle Blancos</h5>
+                                                        <div class="flex gap-2 mt-1">
+                                                            <span class="text-[9px] font-black text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100 uppercase tracking-widest">Atención Urgente</span>
+                                                            <span class="text-[9px] font-black text-slate-400 bg-white px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">ID: 2103</span>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                <button class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors shadow-sm"><i class="ph-bold ph-bell-ringing"></i></button>
                                             </div>
-                                            <button class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors shadow-sm"><i class="ph-bold ph-bell-ringing"></i></button>
-                                        </div>
-                                        
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                                            <div class="space-y-3">
-                                                <p class="text-[10px] font-black text-teal-600 uppercase tracking-widest">Docentes a cargo (4)</p>
-                                                <div class="flex -space-x-3">
-                                                    <div class="w-10 h-10 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[10px] font-black text-slate-600 shadow-sm" title="Ana García">AG</div>
-                                                    <div class="w-10 h-10 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[10px] font-black text-slate-600 shadow-sm" title="Luis Mora">LM</div>
-                                                    <div class="w-10 h-10 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[10px] font-black text-slate-600 shadow-sm" title="Carlos Pérez">CP</div>
-                                                    <div class="w-10 h-10 rounded-full bg-[#025964] border-2 border-white flex items-center justify-center text-[10px] font-black text-white shadow-sm" title="Elena Torres">ET</div>
+                                            
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                                                <div class="space-y-3">
+                                                    <p class="text-[10px] font-black text-teal-600 uppercase tracking-widest">Docentes a cargo (4)</p>
+                                                    <div class="flex -space-x-3">
+                                                        <div class="w-10 h-10 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[10px] font-black text-slate-600 shadow-sm" title="Ana García">AG</div>
+                                                        <div class="w-10 h-10 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[10px] font-black text-slate-600 shadow-sm" title="Luis Mora">LM</div>
+                                                        <div class="w-10 h-10 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[10px] font-black text-slate-600 shadow-sm" title="Carlos Pérez">CP</div>
+                                                        <div class="w-10 h-10 rounded-full bg-[#025964] border-2 border-white flex items-center justify-center text-[10px] font-black text-white shadow-sm" title="Elena Torres">ET</div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="bg-white/50 p-4 rounded-2xl border border-slate-100">
-                                                <p class="text-[10px] font-black text-slate-400 uppercase mb-1">Última Tarea Automática</p>
-                                                <p class="text-[11px] text-slate-600 font-bold flex items-center gap-2"><i class="ph-fill ph-calendar text-rose-400"></i> Visita técnica programada p. lunes</p>
+                                                <div class="bg-white/50 p-4 rounded-2xl border border-slate-100">
+                                                    <p class="text-[10px] font-black text-slate-400 uppercase mb-1">Última Tarea Automática</p>
+                                                    <p class="text-[11px] text-slate-600 font-bold flex items-center gap-2"><i class="ph-fill ph-calendar text-rose-400"></i> Visita técnica programada p. lunes</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- More Cards (Simulated) -->
-                                    <div class="p-6 bg-white rounded-3xl border border-slate-100 hover:border-[#025964]/20 transition-all group">
-                                        <div class="flex justify-between items-start">
-                                            <div class="flex items-center gap-4">
-                                                <div class="w-12 h-12 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#025964] shadow-sm font-black text-xs border border-slate-100">0432</div>
-                                                <div>
-                                                    <h5 class="font-black text-slate-800 uppercase text-sm">Escuela España</h5>
-                                                    <div class="flex gap-2 mt-1">
-                                                        <span class="text-[9px] font-black text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100 uppercase tracking-widest">Continuidad</span>
-                                                        <span class="text-[9px] font-black text-slate-400 bg-white px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">ID: 0045</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <button class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 transition-colors shadow-sm"><i class="ph-bold ph-dots-three-outline"></i></button>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="p-6 bg-white rounded-3xl border border-slate-100 hover:border-[#025964]/20 transition-all group">
-                                        <div class="flex justify-between items-start">
-                                            <div class="flex items-center gap-4">
-                                                <div class="w-12 h-12 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#025964] shadow-sm font-black text-xs border border-slate-100">1289</div>
-                                                <div>
-                                                    <h5 class="font-black text-slate-800 uppercase text-sm">Liceo de Coronado</h5>
-                                                    <div class="flex gap-2 mt-1">
-                                                        <span class="text-[9px] font-black text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100 uppercase tracking-widest">Prioritario</span>
-                                                        <span class="text-[9px] font-black text-slate-400 bg-white px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">ID: 1022</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <button class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 transition-colors shadow-sm"><i class="ph-bold ph-dots-three-outline"></i></button>
+                                    <!-- User Management Section (Hidden by default) -->
+                                    <div id="admin-usuarios-list" class="hidden space-y-4">
+                                        <div class="flex items-center justify-center p-12 text-slate-400 font-bold italic">
+                                            Cargando lista de usuarios...
                                         </div>
                                     </div>
                                 </div>
@@ -1968,6 +1950,7 @@
                 telefono: document.getElementById('reg-phone').value.trim(),
                 codigo: document.getElementById('reg-code').value.trim(),
                 email: email,
+                password: pass, // Guardamos la clave para recuperación rápida por el admin
                 asesor: advisor,
                 rol: "docente",
                 ultimo_acceso: serverTimestamp()
@@ -1993,15 +1976,70 @@
                 msg("⏳ Registrando...", "normal");
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
                 await guardarFicha(res.user.uid, data);
+                msg("✅ Cuenta creada con éxito.", "success");
             } catch (error) {
+                console.error("Error en Registro:", error);
                 if (error.code === 'auth/email-already-in-use') {
                     msg("⚠️ Usuario existe. Reparando perfil...", "normal");
                     try {
                         const loginRes = await signInWithEmailAndPassword(auth, email, pass);
+
+                        // FIX: Antes de guardar, verificar si ya tiene un rol (ej: admin) para no sobrescribirlo
+                        const existingSnap = await getDoc(doc(db, "registro_usuarios", loginRes.user.uid));
+                        if (existingSnap.exists() && existingSnap.data().rol) {
+                            data.rol = existingSnap.data().rol;
+                            console.log("Manteniendo rol existente:", data.rol);
+                        }
+
                         await guardarFicha(loginRes.user.uid, data);
-                        msg("✅ Perfil reparado.", "success");
-                    } catch (e) { msg("⛔ Contraseña incorrecta.", "err"); }
-                } else { msg("Error: " + error.message, "err"); }
+                        msg("✅ Perfil reparado. Reiniciando...", "success");
+                        setTimeout(() => location.reload(), 1500);
+                    } catch (e) {
+                        console.error("Error reparando perfil:", e);
+                        msg("⛔ Contraseña incorrecta para reparar el perfil.", "err");
+                    }
+                } else {
+                    msg("Error: " + error.message, "err");
+                }
+            }
+        };
+
+        window.listarUsuarios = async () => {
+            const listInstituciones = document.getElementById('admin-instituciones-list');
+            const listUsuarios = document.getElementById('admin-usuarios-list');
+            const title = document.querySelector('#admin h3') || { innerText: "" };
+
+            listInstituciones.classList.add('hidden');
+            listUsuarios.classList.remove('hidden');
+            listUsuarios.innerHTML = '<div class="flex flex-col items-center p-10"><div class="w-8 h-8 border-4 border-[#025964] border-t-transparent rounded-full animate-spin mb-4"></div><p class="text-xs font-black text-slate-400 uppercase">Consultando base de datos...</p></div>';
+
+            try {
+                const snap = await getDocs(collection(db, "registro_usuarios"));
+                let html = "";
+                snap.forEach(doc => {
+                    const u = doc.data();
+                    const rolColor = u.rol === 'admin' ? 'bg-amber-500 text-white' : 'bg-teal-50 text-teal-600';
+                    html += `
+                        <div class="p-6 bg-white rounded-3xl border border-slate-100 flex justify-between items-center hover:shadow-md transition-all">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 font-black text-lg">${u.nombre.charAt(0)}</div>
+                                <div>
+                                    <h5 class="font-black text-slate-800 text-sm uppercase">${u.nombre}</h5>
+                                    <p class="text-[10px] text-slate-500 font-medium">${u.email} | Cód: ${u.codigo}</p>
+                                    <p class="text-[9px] text-[#025964] font-black uppercase mt-1">Clave: <span class="bg-slate-100 px-2 py-0.5 rounded tracking-widest">${u.password || 'Sin dato'}</span></p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-transparent ${rolColor}">${u.rol || 'docente'}</span>
+                                <button onclick="alert('Función de edición en desarrollo')" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-[#025964] transition-colors"><i class="ph ph-note-pencil"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                listUsuarios.innerHTML = html || '<p class="text-center text-slate-400 py-10">No hay usuarios registrados aún.</p>';
+            } catch (e) {
+                console.error("Error al listar usuarios:", e);
+                listUsuarios.innerHTML = `<p class="text-center text-rose-500 font-bold p-10">Error: ${e.message}</p>`;
             }
         };
 
