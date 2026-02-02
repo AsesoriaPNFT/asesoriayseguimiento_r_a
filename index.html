@@ -1985,12 +1985,10 @@
                 const { getDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
                 const whitelistSnap = await getDoc(doc(db, "whitelist", email.toLowerCase()));
 
-                /* 
-                // VALIDACIÓN DE LISTA BLANCA (Comentada para registro abierto)
+                // VALIDACIÓN DE LISTA BLANCA (Habilitada por solicitud del usuario)
                 if (!whitelistSnap.exists()) {
                     return msg("⛔ No estás en la lista de acceso autorizado.", "err");
-                } 
-                */
+                }
 
                 msg("⏳ Registrando...", "normal");
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
@@ -2012,51 +2010,72 @@
         }
 
         window.loginUser = async () => {
-            const email = document.getElementById('login-email').value.trim();
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
             const pass = document.getElementById('login-pass').value;
             if (!email || !pass) return msg("⚠️ Faltan datos", "err");
-            msg("Verificando...", "normal");
-            try { await signInWithEmailAndPassword(auth, email, pass); }
-            catch (e) { msg("⛔ Datos incorrectos", "err"); }
+
+            msg("Verificando credenciales...", "normal");
+
+            try {
+                const { getDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                const whitelistSnap = await getDoc(doc(db, "whitelist", email));
+
+                if (!whitelistSnap.exists()) {
+                    return msg("⛔ El correo no está autorizado en la lista de acceso.", "err");
+                }
+
+                await signInWithEmailAndPassword(auth, email, pass);
+            }
+            catch (e) {
+                console.error("Login Error:", e);
+                msg("⛔ Acceso denegado o error de sistema: " + e.code, "err");
+            }
         };
 
         window.logout = () => signOut(auth);
 
         // --- MONITOR DE SESIÓN PRINCIPAL ---
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                // Obtener datos de Firestore
-                const snap = await getDoc(doc(db, "registro_usuarios", user.uid));
-                if (snap.exists()) {
-                    window.currentUserData = snap.data();
+            try {
+                if (user) {
+                    console.log("Sesión activa:", user.email);
+                    const snap = await getDoc(doc(db, "registro_usuarios", user.uid));
+                    if (snap.exists()) {
+                        window.currentUserData = snap.data();
+                        console.log("Datos de usuario cargados:", window.currentUserData.nombre);
 
-                    // 1. Ocultar Login / Mostrar App
-                    document.getElementById('auth-screen').classList.add('hidden');
-                    document.getElementById('app-layout').classList.remove('hidden');
+                        document.getElementById('auth-screen').classList.add('hidden');
+                        document.getElementById('app-layout').classList.remove('hidden');
 
-                    // 2. Llenar Sidebar
-                    document.getElementById('sidebar-name').innerText = window.currentUserData.nombre;
-                    document.getElementById('sidebar-email').innerText = window.currentUserData.email;
-                    document.getElementById('sidebar-avatar').innerText = window.currentUserData.nombre.charAt(0);
+                        document.getElementById('sidebar-name').innerText = window.currentUserData.nombre;
+                        document.getElementById('sidebar-email').innerText = window.currentUserData.email;
+                        document.getElementById('sidebar-avatar').innerText = window.currentUserData.nombre.charAt(0);
 
-                    // 3. Verificar Rol ADMIN
-                    if (window.currentUserData.rol === 'admin') {
-                        document.getElementById('nav-admin').classList.remove('hidden'); // Mostrar botón Admin
-                        document.getElementById('user-role-badge').innerText = "ADMINISTRADOR";
-                        document.getElementById('user-role-badge').className = "text-[9px] font-black bg-amber-500 text-slate-900 px-2 py-0.5 rounded";
+                        if (window.currentUserData.rol === 'admin') {
+                            const navAdmin = document.getElementById('nav-admin');
+                            if (navAdmin) navAdmin.classList.remove('hidden');
+
+                            const badge = document.getElementById('user-role-badge');
+                            if (badge) {
+                                badge.innerText = "ADMINISTRADOR";
+                                badge.className = "text-[9px] font-black bg-amber-500 text-slate-900 px-2 py-0.5 rounded";
+                            }
+                        }
+                        router('dashboard');
+                    } else {
+                        console.warn("UID sin datos en Firestore:", user.uid);
+                        msg("⚠️ Usuario sin datos vinculado. Regístrese de nuevo.", "err");
+                        document.getElementById('auth-screen').classList.remove('hidden');
                     }
-
-                    // 4. Cargar Inicio
-                    router('dashboard');
-
                 } else {
-                    msg("⚠️ Usuario sin datos. Regístrese de nuevo.", "err");
+                    console.log("Sesión inactiva.");
+                    window.currentUserData = null;
+                    document.getElementById('app-layout').classList.add('hidden');
                     document.getElementById('auth-screen').classList.remove('hidden');
                 }
-            } else {
-                window.currentUserData = null;
-                document.getElementById('app-layout').classList.add('hidden');
-                document.getElementById('auth-screen').classList.remove('hidden');
+            } catch (err) {
+                console.error("Error en monitor de sesión:", err);
+                msg("⛔ Error de sistema al cargar sesión.", "err");
             }
         });
     </script>
