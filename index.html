@@ -365,7 +365,7 @@
                         <i class="ph-bold ph-sparkle text-xl"></i> <span>Guía Docente 2026</span>
                     </div>
                     <div onclick="router('foro')" id="nav-foro" class="nav-item text-sm">
-                        <i class="ph-bold ph-globe-hemisphere-west text-xl"></i> <span>Foro Docente</span>
+                        <i class="ph-bold ph-globe-hemisphere-west text-xl"></i> <span>Foro Nacional</span>
                     </div>
                     <div onclick="router('ia')" id="nav-ia" class="nav-item text-sm">
                         <i class="ph-bold ph-magic-wand text-xl"></i> <span>Asesor Virtual</span>
@@ -1477,13 +1477,35 @@
                     <div class="space-y-12 fade-in">
                         <div class="glass p-10 rounded-[3rem] bg-white border border-[#025964]/10 shadow-sm">
                             <p class="text-slate-500 font-medium leading-loose">
-                                Claro, basándome en el documento <b>"Orientaciones generales para docentes 2026"</b>, he extraído los aspectos estrictamente pedagógicos para la implementación del Programa Nacional de Formación Tecnológica (PNFT) en el nivel de <b>Secundaria</b> (III Ciclo y Educación Diversificada Vocacional).
+                                Basándose en el documento <b>"Orientaciones generales para docentes 2026"</b>, se definen los niveles de concreción que guían la labor docente en el Programa Nacional de Formación Tecnológica (PNFT).
                             </p>
                         </div>
 
-                        <!-- 1. Enfoque Metodológico -->
+                        <!-- 1. Niveles de Concreción -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 group hover:border-[#025964]/20 transition-all">
+                                <div class="flex items-center gap-4 mb-6">
+                                    <div class="w-14 h-14 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#025964] transition-transform group-hover:scale-105"><i class="ph-bold ph-strategy text-3xl"></i></div>
+                                    <h4 class="text-xl font-black text-slate-800 uppercase tracking-tighter">Macro Currículo</h4>
+                                </div>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    Representa el <b>Programa de Estudio oficial (PNFT)</b>. Es el nivel nacional que define las competencias, saberes y resultados de aprendizaje (RdA) obligatorios para todos los centros educativos del país.
+                                </p>
+                            </div>
+                            <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 group hover:border-[#025964]/20 transition-all">
+                                <div class="flex items-center gap-4 mb-6">
+                                    <div class="w-14 h-14 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#025964] transition-transform group-hover:scale-105"><i class="ph-bold ph-chalkboard-teacher text-3xl"></i></div>
+                                    <h4 class="text-xl font-black text-slate-800 uppercase tracking-tighter">Micro Currículo</h4>
+                                </div>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    Es la <b>mediación pedagógica y el planeamiento didáctico</b>. Es donde el docente adapta el macro currículo a la realidad de su aula, diversificando estrategias según el contexto y necesidades de sus estudiantes.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 2. Enfoque Metodológico -->
                         <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm">
-                            <h4 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-4 uppercase tracking-tighter">1. Enfoque Metodológico: Design Thinking</h4>
+                            <h4 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-4 uppercase tracking-tighter">2. Enfoque Metodológico: Design Thinking</h4>
                             <div class="space-y-6 text-slate-600 leading-relaxed">
                                 <p>Para secundaria, la pedagogía se centra en metodologías activas donde el estudiante es el protagonista de la <b>Resolución de Problemas</b>.</p>
                                 <ul class="space-y-4">
@@ -1500,9 +1522,9 @@
                             </div>
                         </div>
 
-                        <!-- 2. La Evaluación -->
+                        <!-- 3. La Evaluación -->
                         <div class="glass p-10 rounded-[2.5rem] bg-[#f1f8f9] border border-[#025964]/10">
-                            <h4 class="text-2xl font-black text-[#025964] mb-8 flex items-center gap-4 uppercase tracking-tighter">2. La Evaluación: El Componente Proyecto</h4>
+                            <h4 class="text-2xl font-black text-[#025964] mb-8 flex items-center gap-4 uppercase tracking-tighter">3. La Evaluación: El Componente Proyecto</h4>
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
                                 <div class="space-y-6">
                                     <p class="text-slate-700 font-bold mb-4">A diferencia de primaria (que usa pruebas de ejecución), la evaluación sumativa en secundaria gira en torno al desarrollo de un proyecto.</p>
@@ -1531,9 +1553,9 @@
                             </div>
                         </div>
 
-                        <!-- 3. Planeamiento Didáctico -->
+                        <!-- 4. Planeamiento Didáctico -->
                         <div class="glass p-10 rounded-[2.5rem] bg-white border border-slate-100">
-                            <h4 class="text-2xl font-black text-slate-800 mb-8 uppercase tracking-tighter flex items-center gap-4">3. Planeamiento Didáctico</h4>
+                            <h4 class="text-2xl font-black text-slate-800 mb-8 uppercase tracking-tighter flex items-center gap-4">4. Planeamiento Didáctico</h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm text-slate-600">
                                 <ul class="space-y-4">
                                     <li class="flex gap-3"><i class="ph-bold ph-check-circle text-[#008e9b]"></i> <div><b>Periodicidad:</b> El planeamiento se elabora de forma <b>bimestral</b> (cada dos meses).</div></li>
@@ -1550,10 +1572,10 @@
                             </div>
                         </div>
 
-                        <!-- 4. Estructura & 5. Vocacional -->
+                        <!-- 5. Estructura & 6. Vocacional -->
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100">
-                                <h4 class="text-xl font-black text-slate-800 mb-6 uppercase tracking-tighter">4. Estructura de los Módulos</h4>
+                                <h4 class="text-xl font-black text-slate-800 mb-6 uppercase tracking-tighter">5. Estructura de los Módulos</h4>
                                 <ul class="space-y-4 text-xs text-slate-500 font-medium">
                                     <li class="flex gap-2"><span>•</span> <span><b>Cantidad:</b> Dos módulos anuales, uno por cada periodo lectivo.</span></li>
                                     <li class="flex gap-2"><span>•</span> <span><b>Correlación:</b> Segmentos correlacionados; se pueden retomar actividades entre periodos.</span></li>
@@ -1561,7 +1583,7 @@
                                 </ul>
                             </div>
                             <div class="glass p-8 rounded-[2.5rem] bg-[#025964] text-white shadow-xl shadow-[#025964]/10">
-                                <h4 class="text-xl font-black mb-6 uppercase tracking-tighter">5. Adaptación Modalidad Vocacional</h4>
+                                <h4 class="text-xl font-black mb-6 uppercase tracking-tighter">6. Adaptación Modalidad Vocacional</h4>
                                 <div class="space-y-4 text-xs text-teal-50">
                                     <p><b>Diagnóstico Contextualizado:</b> Coordinación obligatoria con el docente guía para identificar necesidades específicas.</p>
                                     <p><b>Selección de Saberes:</b> Basado en diagnóstico, se seleccionan saberes de cualquier ciclo que respondan a las necesidades, priorizando <b>herramientas de productividad.</b></p>
@@ -1569,9 +1591,9 @@
                             </div>
                         </div>
 
-                        <!-- 6. Recursos -->
+                        <!-- 7. Recursos -->
                         <div class="glass p-10 rounded-[2.5rem] bg-slate-50 border border-slate-200">
-                            <h4 class="text-xl font-black text-slate-800 mb-8 uppercase tracking-tighter">6. Recursos de Apoyo Pedagógico</h4>
+                            <h4 class="text-xl font-black text-slate-800 mb-8 uppercase tracking-tighter">7. Recursos de Apoyo Pedagógico</h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                                     <h5 class="font-black text-teal-600 text-xs mb-2">Guías Docentes</h5>
@@ -2791,4 +2813,3 @@
 </body>
 
 </html>
-
