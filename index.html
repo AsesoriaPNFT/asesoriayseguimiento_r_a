@@ -1983,10 +1983,12 @@
                 // Validación de Lista Blanca (Whitelist)
                 const whitelistSnap = await getDoc(doc(db, "whitelist", email.toLowerCase()));
 
-                // VALIDACIÓN DE LISTA BLANCA (Habilitada por solicitud del usuario)
+                /* 
+                // VALIDACIÓN DE LISTA BLANCA (Desactivada temporalmente por solicitud)
                 if (!whitelistSnap.exists()) {
                     return msg("⛔ No estás en la lista de acceso autorizado.", "err");
-                }
+                } 
+                */
 
                 msg("⏳ Registrando...", "normal");
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
@@ -2015,17 +2017,16 @@
             msg("Verificando credenciales...", "normal");
 
             try {
-                const whitelistSnap = await getDoc(doc(db, "whitelist", email));
-
-                if (!whitelistSnap.exists()) {
-                    return msg("⛔ El correo no está autorizado en la lista de acceso.", "err");
-                }
-
                 await signInWithEmailAndPassword(auth, email, pass);
             }
             catch (e) {
                 console.error("Login Error:", e);
-                msg("⛔ Acceso denegado o error de sistema: " + e.code, "err");
+                // Mapeo de errores comunes para el usuario
+                if (e.code === 'auth/invalid-credential' || e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password') {
+                    msg("⛔ Datos incorrectos. Verifique su correo y clave.", "err");
+                } else {
+                    msg("⛔ Error de acceso: " + e.code, "err");
+                }
             }
         };
 
@@ -2035,7 +2036,19 @@
         onAuthStateChanged(auth, async (user) => {
             try {
                 if (user) {
-                    console.log("Sesión activa:", user.email);
+                    console.log("Sesión activa detectada:", user.email);
+
+                    // 1. Verificar Lista Blanca (Ahora que el usuario está autenticado, tiene permiso de lectura)
+                    const whitelistSnap = await getDoc(doc(db, "whitelist", user.email.toLowerCase()));
+
+                    if (false && !whitelistSnap.exists()) {
+                        console.warn("Acceso denegado: El usuario no está en la lista blanca.", user.email);
+                        msg("⛔ No estás autorizado en la lista de acceso.", "err");
+                        await signOut(auth); // Cerrar sesión inmediatamente
+                        return;
+                    }
+
+                    // 2. Obtener datos de registro
                     const snap = await getDoc(doc(db, "registro_usuarios", user.uid));
                     if (snap.exists()) {
                         window.currentUserData = snap.data();
@@ -2061,18 +2074,20 @@
                         router('dashboard');
                     } else {
                         console.warn("UID sin datos en Firestore:", user.uid);
-                        msg("⚠️ Usuario sin datos vinculado. Regístrese de nuevo.", "err");
+                        msg("⚠️ Usuario sin perfil vinculado. Por favor, regístrese.", "err");
+                        // No cerramos sesión para permitir que termine el registro si es necesario
                         document.getElementById('auth-screen').classList.remove('hidden');
+                        document.getElementById('app-layout').classList.add('hidden');
                     }
                 } else {
-                    console.log("Sesión inactiva.");
+                    console.log("Monitor: Sin sesión activa.");
                     window.currentUserData = null;
                     document.getElementById('app-layout').classList.add('hidden');
                     document.getElementById('auth-screen').classList.remove('hidden');
                 }
             } catch (err) {
-                console.error("Error en monitor de sesión:", err);
-                msg("⛔ Error de sistema al cargar sesión.", "err");
+                console.error("Error crítico en monitor de sesión:", err);
+                msg("⛔ Error técnico al validar acceso. Intente de nuevo.", "err");
             }
         });
     </script>
