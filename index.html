@@ -513,7 +513,7 @@
                                     <span class="bg-[#f1f8f9] text-[#025964] border border-[#025964]/20 text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-6 inline-block">Ecosistema de Colaboración</span>
                                     <h3 class="text-5xl font-black mb-6 leading-tight text-white-800">Nuestras <br><span class="text-[#025964]">Producciones Digitales</span></h3>
                                     <p class="text-slate-500 font-medium leading-relaxed text-lg italic mt-2 border-l-4 border-[#025964] pl-6">
-                                        "El poder del docente y el estudiante se manifiesta en lo que crean. Este es el espacio para compartir retos, apps, recursos y éxitos pedagógicos."
+                                        "El poder del docente y el estudiante se manifiesta en lo que crean. Este es el espacio para compartir soluciones a problemas, apps, recursos y éxitos pedagógicos."
                                     </p>
                                     <div class="mt-8">
                                         <a href="https://adminmepcr-my.sharepoint.com/:f:/g/personal/alberto_bustos_ortega_mep_go_cr/IgDapm3yAwYNSpv-eKTJND8FASqX99UebZBoTjwXfyg0Po4?e=MQdZTP" target="_blank" class="inline-flex items-center gap-3 bg-[#025964] text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-[#025964]/10 hover:scale-[1.02] transition-all">
@@ -617,9 +617,11 @@
                         <!-- Navigation Tabs -->
                         <div class="flex flex-col md:flex-row gap-4">
                             <div class="flex-1 glass p-2 rounded-[2.5rem] bg-[#f1f8f9] border border-slate-100 flex flex-wrap gap-2">
-                                <button onclick="switchOrientTab('admin')" id="tab-btn-admin" class="orient-tab-btn flex-1 min-w-[150px] px-8 py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all bg-[#025964] text-white shadow-lg shadow-[#025964]/10">Capa Administrativa</button>
-                                <button onclick="switchOrientTab('peda')" id="tab-btn-peda" class="orient-tab-btn flex-1 min-w-[150px] px-8 py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all text-slate-500 hover:text-[#025964]">Enfoque Pedagógico</button>
-                                <button onclick="switchOrientTab('plan')" id="tab-btn-plan" class="orient-tab-btn flex-1 min-w-[150px] px-8 py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all text-slate-500 hover:text-[#025964]">Planeamiento PIA</button>
+                                <button onclick="switchOrientTab('admin')" id="tab-btn-admin" class="orient-tab-btn flex-1 min-w-[120px] px-6 py-4 rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest transition-all bg-[#025964] text-white">Administración</button>
+                                <button onclick="switchOrientTab('peda')" id="tab-btn-peda" class="orient-tab-btn flex-1 min-w-[120px] px-6 py-4 rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-[#025964]">Pedagogía</button>
+                                <button onclick="switchOrientTab('plan')" id="tab-btn-plan" class="orient-tab-btn flex-1 min-w-[120px] px-6 py-4 rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-[#025964]">Planeamiento</button>
+                                <button onclick="switchOrientTab('eval')" id="tab-btn-eval" class="orient-tab-btn flex-1 min-w-[120px] px-6 py-4 rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-[#025964]">Evaluación</button>
+                                <button onclick="switchOrientTab('pob')" id="tab-btn-pob" class="orient-tab-btn flex-1 min-w-[120px] px-6 py-4 rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-[#025964]">Poblaciones</button>
                             </div>
                         </div>
 
@@ -694,7 +696,7 @@
                                         </div>
 
                                         <button onclick="window.generarSituacion()" class="w-full bg-[#025964] hover:bg-[#008e9b] text-white rounded-3xl py-5 font-black text-sm transition-all shadow-lg shadow-[#025964]/10 flex items-center justify-center gap-3 group uppercase tracking-widest">
-                                            Generar Retos de Aprendizaje <i class="ph-bold ph-magic-wand text-xl transition-transform group-hover:scale-105"></i>
+                                            Procesar Situación Problema <i class="ph-bold ph-magic-wand text-xl transition-transform group-hover:scale-105"></i>
                                         </button>
                                     </div>
 
@@ -943,14 +945,28 @@
                                 </div>
                             </div>
 
-                            <!-- IA Alert Generator -->
+                            <!-- IA HUB Administrativo -->
                             <div class="glass p-8 rounded-[2.5rem] bg-[#025964] text-white relative overflow-hidden shadow-xl shadow-[#025964]/10">
                                 <i class="ph-fill ph-shield-check absolute -right-10 -bottom-10 text-white/5 text-[15rem]"></i>
                                 <div class="relative z-10">
-                                    <h4 class="text-lg font-black mb-4 flex items-center gap-2 uppercase tracking-tighter"><i class="ph-bold ph-magic-wand text-teal-400"></i> Alerta PNFT Inteligente</h4>
-                                    <p class="text-[11px] text-teal-100/70 mb-6 leading-relaxed">Convierte tus apuntes de visita en un reporte técnico oficial para el sistema nacional mediante IA.</p>
-                                    <textarea id="admin-ia-input" class="w-full bg-white/10 border border-white/10 rounded-2xl p-4 text-xs text-white placeholder:text-teal-200/30 outline-none focus:bg-white/20 transition-all mb-4" rows="3" placeholder="Ej: La red falla en el laboratorio 2 de la Escuela España..."></textarea>
-                                    <button onclick="generarAlertaAdminIA()" class="w-full bg-white text-[#025964] py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg hover:scale-[1.02] transition-all">Generar Reporte IA</button>
+                                    <h4 class="text-lg font-black mb-4 flex items-center gap-2 uppercase tracking-tighter"><i class="ph-bold ph-magic-wand text-teal-400"></i> Admin IA HUB</h4>
+                                    
+                                    <div class="mb-4">
+                                        <label class="text-[9px] font-black uppercase tracking-widest text-teal-200/50 mb-2 block">Seleccione herramienta:</label>
+                                        <select id="admin-ia-type" class="w-full bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-[10px] font-bold text-white outline-none focus:bg-white/20 transition-all cursor-pointer appearance-none">
+                                            <option value="reporte" class="bg-[#025964]">Reporte Técnico de Visita</option>
+                                            <option value="circular" class="bg-[#025964]">Redactar Circular/Oficio</option>
+                                            <option value="pia" class="bg-[#025964]">Revisión Pedagógica (PIA)</option>
+                                            <option value="agenda" class="bg-[#025964]">Preparador de Agenda Visita</option>
+                                            <option value="analisis" class="bg-[#025964]">Análisis de Tendencias</option>
+                                        </select>
+                                    </div>
+
+                                    <textarea id="admin-ia-input" class="w-full bg-white/10 border border-white/10 rounded-2xl p-4 text-xs text-white placeholder:text-teal-200/30 outline-none focus:bg-white/20 transition-all mb-4" rows="4" placeholder="Ej: El docente tiene dudas con Design Thinking..."></textarea>
+                                    
+                                    <button onclick="ejecutarHerramientaIA()" id="btn-ia-admin" class="w-full bg-white text-[#025964] py-4 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+                                        <i class="ph ph-sparkle"></i> Procesar con IA
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -968,11 +984,17 @@
                                         </div>
                                     </div>
                                     <div class="flex gap-2">
-                                        <button onclick="document.getElementById('excel-upload').click()" class="bg-slate-50 border border-slate-100 text-slate-600 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-slate-100 transition-all">
-                                            <i class="ph-bold ph-upload"></i> Importar Excel
+                                        <button onclick="window.mostrarInstituciones()" class="bg-slate-50 border border-slate-100 text-slate-600 px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-slate-100 transition-all">
+                                            <i class="ph-bold ph-buildings"></i> Centros
                                         </button>
-                                        <button onclick="window.listarUsuarios()" class="bg-[#025964] text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-[#008e9b] transition-all">
-                                            <i class="ph-bold ph-users-four"></i> Ver Usuarios
+                                        <button onclick="window.listarUsuarios()" class="bg-[#025964] text-white px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-[#008e9b] transition-all">
+                                            <i class="ph-bold ph-users-four"></i> Usuarios
+                                        </button>
+                                        <button onclick="window.mostrarBitacora()" class="bg-teal-500 text-white px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-teal-600 transition-all">
+                                            <i class="ph-bold ph-notebook"></i> Bitácora
+                                        </button>
+                                        <button onclick="document.getElementById('excel-upload').click()" class="aspect-square bg-slate-50 border border-slate-200 text-slate-400 p-3 rounded-xl hover:text-green-600 hover:border-green-200 transition-all" title="Importar Excel">
+                                            <i class="ph-bold ph-file-xls text-lg"></i>
                                         </button>
                                         <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden" onchange="procesarExcel(this)">
                                     </div>
@@ -1020,13 +1042,53 @@
                                             Cargando lista de usuarios...
                                         </div>
                                     </div>
+
+                                    <!-- Bitácora de Seguimiento Section -->
+                                    <div id="admin-bitacora-section" class="hidden space-y-6">
+                                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                            <!-- Formulario de Aporte -->
+                                            <div class="space-y-4 bg-slate-50 p-6 rounded-[2rem] border border-slate-100">
+                                                <h4 class="text-sm font-black text-[#025964] uppercase tracking-widest mb-4">Nuevo Aporte de Seguimiento</h4>
+                                                <div class="grid grid-cols-2 gap-4">
+                                                    <input type="date" id="bitacora-fecha" class="input-field text-xs">
+                                                    <input type="text" id="bitacora-inst" class="input-field text-xs" placeholder="Nombre Institución">
+                                                </div>
+                                                <textarea id="bitacora-detalle" class="input-field text-xs min-h-[100px]" placeholder="Aspectos tratados y observaciones principales..."></textarea>
+                                                <textarea id="bitacora-reporte" class="input-field text-[10px] min-h-[150px] font-mono" placeholder="Pegue aquí el texto completo del informe técnico..."></textarea>
+                                                <button onclick="window.guardarAporteBitacora()" class="w-full bg-[#025964] text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg hover:bg-teal-600 transition-all flex items-center justify-center gap-2">
+                                                    <i class="ph ph-plus-circle"></i> Guardar Aporte
+                                                </button>
+                                            </div>
+
+                                            <!-- Resumen e Historial -->
+                                            <div class="space-y-4">
+                                                <div id="bitacora-resumen-ia" class="bg-[#025964] text-white p-6 rounded-[2rem] shadow-xl relative overflow-hidden min-h-[200px]">
+                                                    <h4 class="text-xs font-black uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Resumen IA de Seguimiento</h4>
+                                                    <div id="bitacora-ia-output" class="text-[11px] leading-relaxed italic text-teal-50">
+                                                        Los resúmenes técnicos aparecerán aquí tras analizar el historial.
+                                                    </div>
+                                                    <button onclick="window.analizarBitacoraIA()" id="btn-analizar-bitacora" class="mt-4 w-full bg-white text-[#025964] py-2 rounded-lg font-black text-[10px] uppercase tracking-widest hover:bg-teal-50 transition-all">Analizar Historial</button>
+                                                </div>
+                                                
+                                                <div class="bg-white border border-slate-100 p-6 rounded-[2rem] max-h-[300px] overflow-y-auto no-scrollbar">
+                                                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Historial Reciente</h4>
+                                                    <div id="bitacora-historial-list" class="space-y-3">
+                                                        <p class="text-[10px] text-slate-400 italic text-center py-4">Sin aportes registrados</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 `;
                 // Initialize Charts
-                setTimeout(initAdminCharts, 100);
+                setTimeout(() => {
+                    initAdminCharts();
+                    window.updateAdminChart();
+                }, 100);
             }
         };
 
@@ -1064,36 +1126,53 @@
             });
         };
 
-        window.generarAlertaAdminIA = async () => {
+        window.ejecutarHerramientaIA = async () => {
             const input = document.getElementById('admin-ia-input');
+            const type = document.getElementById('admin-ia-type').value;
             const txt = input.value.trim();
-            if (!txt) return;
+            if (!txt) return msg("⚠️ Por favor ingrese información", "normal");
 
-            const btn = event.target;
-            const originalText = btn.innerText;
-            btn.innerText = "Procesando Reporte...";
+            const btn = document.getElementById('btn-ia-admin');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = `<div class="w-4 h-4 border-2 border-teal-600 border-t-transparent rounded-full animate-spin"></div> Procesando...`;
             btn.disabled = true;
 
-            const prompt = `Como asistente administrativo del PNFT, toma los siguientes apuntes de visita y genera un REPORTE TÉCNICO FORMAL para el sistema oficial. 
-            Apuntes: "${txt}"
-            Formato: 1. Resumen Situación, 2. Acción Sugerida, 3. Clasificación (Urgente/Prioritario/Continuidad).`;
+            const prompts = {
+                reporte: `Genera un REPORTE TÉCNICO FORMAL de visita para el PNFT. Detalles: "${txt}". Formato: 1. Resumen, 2. Acción Sugerida, 3. Clasificación.`,
+                circular: `Redacta un OFICIO/CIRCULAR oficial del PNFT dirigido a docentes/directores. Contexto: "${txt}". Tono formal, empoderador y técnico.`,
+                pia: `Actúa como especialista pedagógico del PNFT. Evalúa este contenido de Planeamiento (PIA): "${txt}". Revisa si cumple con Design Thinking, saberes digitales y mediación proactiva. Da sugerencias de mejora.`,
+                agenda: `Crea una AGENDA DE VISITA técnica para una institución. Contexto: "${txt}". Incluye tiempos, objetivos técnicos y pedagógicos.`,
+                analisis: `Analiza la siguiente tendencia/situación observada en el campo: "${txt}". Indica posibles riesgos, oportunidades de capacitación y impacto en el programa.`
+            };
 
-            const respuesta = await llamarGemini(prompt, 'general');
+            try {
+                const respuesta = await llamarGemini(prompts[type], 'general');
+                const htmlRes = respuesta.text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
 
-            // Format for display
-            const htmlRes = respuesta.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
-            const container = input.parentElement;
-            const oldRes = document.getElementById('admin-ia-result');
-            if (oldRes) oldRes.remove();
+                const oldRes = document.getElementById('admin-ia-result');
+                if (oldRes) oldRes.remove();
 
-            const resDiv = document.createElement('div');
-            resDiv.id = 'admin-ia-result';
-            resDiv.className = 'mt-6 p-4 bg-white/10 rounded-2xl text-[10px] text-teal-50 border border-white/10 fade-in leading-relaxed';
-            resDiv.innerHTML = `<h5 class="font-black uppercase mb-2 border-b border-white/10 pb-2">Borrador de Reporte:</h5>${htmlRes}`;
-            container.appendChild(resDiv);
-
-            btn.innerText = originalText;
-            btn.disabled = false;
+                const resDiv = document.createElement('div');
+                resDiv.id = 'admin-ia-result';
+                resDiv.className = 'mt-6 p-6 bg-white/10 rounded-2xl text-[11px] text-teal-50 border border-white/20 fade-in leading-relaxed max-h-[400px] overflow-y-auto no-scrollbar';
+                resDiv.innerHTML = `<div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
+                                        <h5 class="font-black uppercase">Resultado IA Hub</h5>
+                                        <button onclick="this.parentElement.parentElement.remove()" class="text-teal-300 hover:text-white"><i class="ph ph-x"></i></button>
+                                    </div>
+                                    ${htmlRes}
+                                    <div class="mt-4 pt-4 border-t border-white/10">
+                                        <button onclick="navigator.clipboard.writeText(this.parentElement.previousSibling.textContent); msg('✅ Copiado', 'success')" class="text-[9px] font-black uppercase text-teal-300 hover:text-white flex items-center gap-2">
+                                            <i class="ph ph-copy"></i> Copiar resultado
+                                        </button>
+                                    </div>`;
+                input.parentElement.appendChild(resDiv);
+            } catch (e) {
+                console.error(e);
+                msg("⛔ Error con la IA", "err");
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
         };
 
         window.filtrarAsesor = (asesor) => {
@@ -1256,10 +1335,17 @@
                         <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm">
                             <h4 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-4 uppercase tracking-tighter">1. Enfoque Metodológico: Design Thinking</h4>
                             <div class="space-y-6 text-slate-600 leading-relaxed">
-                                <p>Para secundaria, la pedagogía se centra en metodologías activas donde el estudiante es el protagonista.</p>
+                                <p>Para secundaria, la pedagogía se centra en metodologías activas donde el estudiante es el protagonista de la <b>Resolución de Problemas</b>.</p>
                                 <ul class="space-y-4">
-                                    <li class="flex gap-3"><i class="ph-bold ph-caret-right text-[#025964] mt-1"></i> <div><b>Metodología Base:</b> Se recomienda explícitamente el uso de <b>Design Thinking</b> (Pensamiento de Diseño) para el desarrollo de las clases y proyectos.</div></li>
-                                    <li class="flex gap-3"><i class="ph-bold ph-caret-right text-[#025964] mt-1"></i> <div><b>Flexibilidad Condicionada:</b> Si el docente decide utilizar otra metodología activa distinta, es obligatorio que asegure la incorporación del <b>Componente Proyecto</b> y su respectiva evaluación sumativa.</div></li>
+                                    <li class="flex gap-3"><i class="ph-bold ph-caret-right text-[#025964] mt-1"></i> <div><b>Fases Oficiales:</b> El proceso debe vivir las 5 etapas: <b>Empatizar, Definir, Idear, Prototipar, Probar y Evaluar.</b></div></li>
+                                    <li class="flex gap-3"><i class="ph-bold ph-caret-right text-[#025964] mt-1"></i> <div><b>Áreas de Conocimiento PNFT:</b> Los proyectos se articulan mediante:<br>
+                                        <span class="text-[10px] font-black text-[#025964] tracking-widest uppercase mt-2 block">
+                                            • Apropiación Tecnológica y Digital<br>
+                                            • Programación y Algoritmos<br>
+                                            • Ciencias de Datos e Inteligencia Artificial<br>
+                                            • Computación Física y Robótica
+                                        </span>
+                                    </div></li>
                                 </ul>
                             </div>
                         </div>
@@ -1288,7 +1374,7 @@
                                         </li>
                                         <li>
                                             <p class="font-black text-slate-800 text-sm mb-1">2. Etapa de Desarrollo y Cierre</p>
-                                            <p class="text-xs text-slate-500">Se evalúa el prototipado y la solución final utilizando los indicadores de logro de los saberes conceptuales del módulo (ej. programación, robótica).</p>
+                                            <p class="text-xs text-slate-500">Se evalúa el prototipado y la solución final utilizando los indicadores de logro de las Áreas de Conocimiento (**Programación y Algoritmos, Computación Física y Robótica, Ciencias de Datos e Inteligencia Artificial**).</p>
                                         </li>
                                     </ul>
                                 </div>
@@ -1421,7 +1507,7 @@
                                 </div>
                                 <div class="bg-white/10 p-6 rounded-2xl border border-white/10">
                                     <p class="font-black text-xs uppercase mb-3 text-teal-400">Fases del Proyecto</p>
-                                    <p class="text-xs text-teal-50/70 leading-relaxed">Reflejar etapas de Empatizar/Definir (Inicial) e Idear/Prototipar/Testear (Desarrollo).</p>
+                                    <p class="text-xs text-teal-50/70 leading-relaxed">Reflejar las 5 fases: Empatizar, Definir, Idear, Prototipar, Probar y Evaluar.</p>
                                 </div>
                                 <div class="bg-white/10 p-6 rounded-2xl border border-white/10">
                                     <p class="font-black text-xs uppercase mb-3 text-teal-400">Saberes Integrales</p>
@@ -1463,7 +1549,7 @@
                                         </div>
                                         <p class="text-slate-500 text-sm leading-relaxed mb-6">Foco en el proceso cognitivo y de diseño:</p>
                                         <div class="space-y-3">
-                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-600"><i class="ph-bold ph-check text-[#008e9b]"></i> Empatía y definición del reto.</div>
+                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-600"><i class="ph-bold ph-check text-[#008e9b]"></i> Diagnóstico y definición del problema.</div>
                                             <div class="flex items-center gap-3 text-xs font-bold text-slate-600"><i class="ph-bold ph-check text-[#008e9b]"></i> Síntesis de hallazgos clave.</div>
                                             <div class="flex items-center gap-3 text-xs font-bold text-slate-600"><i class="ph-bold ph-check text-[#008e9b]"></i> Ideación de soluciones eficientes.</div>
                                         </div>
@@ -1475,9 +1561,9 @@
                                         </div>
                                         <p class="text-slate-500 text-sm leading-relaxed mb-6">Foco en la ejecución y saberes digitales:</p>
                                         <div class="space-y-3">
-                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-600"><i class="ph-bold ph-check text-[#025964]"></i> Implementación de algoritmos/código.</div>
-                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-600"><i class="ph-bold ph-check text-[#025964]"></i> Funcionalidad del prototipo digital.</div>
-                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-600"><i class="ph-bold ph-check text-[#025964]"></i> Validación y comunicación de resultados.</div>
+                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-600"><i class="ph-bold ph-check text-[#025964]"></i> Implementación de algoritmos, programación y diseño.</div>
+                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-600"><i class="ph-bold ph-check text-[#025964]"></i> Funcionalidad de la resolución de problemas (Prototipo).</div>
+                                            <div class="flex items-center gap-3 text-xs font-bold text-slate-600"><i class="ph-bold ph-check text-[#025964]"></i> Probar y Evaluar los resultados obtenidos.</div>
                                         </div>
                                     </div>
                                 </div>
@@ -1798,8 +1884,8 @@
                     <div class="glass p-8 rounded-3xl bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:border-[#025964]/30 transition-all">
                         <span class="absolute top-4 right-6 font-black text-4xl text-slate-50 group-hover:text-[#025964]/5 transition-colors">02</span>
                         <div class="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center text-[#025964] mb-6"><i class="ph-bold ph-strategy text-2xl"></i></div>
-                        <h4 class="text-xl font-black text-slate-800 mb-2">Diseño del Reto</h4>
-                        <p class="text-sm text-slate-500 font-medium leading-relaxed">Estructuración de la situación problema bajo el enfoque de Design Thinking.</p>
+                        <h4 class="text-xl font-black text-slate-800 mb-2">Resolución de Problemas</h4>
+                        <p class="text-sm text-slate-500 font-medium leading-relaxed">Estructuración de la situación problema bajo las 5 fases de Design Thinking.</p>
                     </div>
                     <div class="glass p-8 rounded-3xl bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:border-[#025964]/30 transition-all">
                         <span class="absolute top-4 right-6 font-black text-4xl text-slate-50 group-hover:text-[#025964]/5 transition-colors">03</span>
@@ -1886,30 +1972,70 @@
             container.innerHTML = phases[phase];
         };
 
-        window.switchAuthTab = (t) => {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            if (t !== 'recover') {
-                const tab = document.getElementById(`tab-${t}`);
-                if (tab) tab.classList.add('active');
+        window.msg = (text, type) => {
+            // Toast global para que sea visible en cualquier sección (especialmente admin)
+            let toast = document.getElementById('global-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'global-toast';
+                toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 z-[1000] px-6 py-3 rounded-2xl font-bold shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0';
+                document.body.appendChild(toast);
             }
-            document.getElementById('form-login').classList.toggle('hidden', t !== 'login');
-            document.getElementById('form-register').classList.toggle('hidden', t !== 'register');
-            document.getElementById('form-recover').classList.toggle('hidden', t !== 'recover');
-            msg("", "");
+
+            if (!text) {
+                toast.classList.add('translate-y-20', 'opacity-0');
+                return;
+            }
+
+            const colors = {
+                err: 'bg-rose-500 text-white',
+                success: 'bg-teal-500 text-white',
+                normal: 'bg-slate-800 text-white'
+            };
+
+            toast.innerText = text;
+            toast.className = `fixed bottom-8 left-1/2 -translate-x-1/2 z-[1000] px-6 py-3 rounded-2xl font-bold shadow-2xl transition-all duration-300 transform ${colors[type] || colors.normal}`;
+
+            // Mostrar
+            setTimeout(() => {
+                toast.classList.remove('translate-y-20', 'opacity-0');
+            }, 10);
+
+            // Ocultar automáticamente (excepto si es 'normal' que sw suele sobreescribir rápido)
+            if (type !== 'normal') {
+                setTimeout(() => {
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 4000);
+            }
         };
 
         window.enviarResetPass = async (targetEmail = null) => {
+            console.log("Iniciando envío de reseteo para:", targetEmail);
             const email = targetEmail || document.getElementById('login-email').value.trim() || prompt("Ingresa tu correo @mep.go.cr:");
             if (!email || !email.includes('@mep.go.cr')) return msg("⚠️ Ingresa un correo institucional válido", "err");
 
-            msg("⏳ Enviando enlace de recuperación...", "normal");
+            msg("⏳ Enviando enlace...", "normal");
             try {
                 await sendPasswordResetEmail(auth, email);
-                msg("✅ Enlace enviado.", "success");
+                console.log("Enlace enviado con éxito a:", email);
+                msg("✅ Enlace enviado con éxito.", "success");
             } catch (e) {
-                console.error(e);
+                console.error("Error en sendPasswordResetEmail:", e);
                 msg("⛔ Error: " + e.message, "err");
             }
+        };
+
+        window.switchAuthTab = (t) => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            // Ya no hay form-recover, así que simplificamos
+            const loginBtn = document.getElementById('tab-login');
+            const regBtn = document.getElementById('tab-register');
+            if (loginBtn) loginBtn.classList.toggle('active', t === 'login');
+            if (regBtn) regBtn.classList.toggle('active', t === 'register');
+
+            document.getElementById('form-login').classList.toggle('hidden', t !== 'login');
+            document.getElementById('form-register').classList.toggle('hidden', t !== 'register');
+            msg("", "");
         };
 
         window.registerUser = async () => {
@@ -1975,13 +2101,189 @@
             }
         };
 
+        window.mostrarBitacora = () => {
+            const listInstituciones = document.getElementById('admin-instituciones-list');
+            const listUsuarios = document.getElementById('admin-usuarios-list');
+            const sectionBitacora = document.getElementById('admin-bitacora-section');
+            const title = document.querySelector('#admin h3') || { innerText: "" };
+
+            listInstituciones.classList.add('hidden');
+            listUsuarios.classList.add('hidden');
+            sectionBitacora.classList.remove('hidden');
+            title.innerText = "Bitácora de Seguimiento";
+
+            document.getElementById('bitacora-fecha').value = new Date().toISOString().split('T')[0];
+            window.cargarHistorialBitacora();
+        };
+
+        window.guardarAporteBitacora = async () => {
+            const fecha = document.getElementById('bitacora-fecha').value;
+            const inst = document.getElementById('bitacora-inst').value.trim();
+            const detalle = document.getElementById('bitacora-detalle').value.trim();
+            const reporte = document.getElementById('bitacora-reporte').value.trim();
+
+            if (!fecha || !inst || !detalle) return msg("⚠️ Complete los campos básicos", "err");
+
+            msg("⏳ Guardando aporte...", "normal");
+            try {
+                const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                await addDoc(collection(db, "bitacora_seguimiento"), {
+                    fecha,
+                    institucion: inst,
+                    detalle,
+                    reporte,
+                    creadoPor: auth.currentUser.email,
+                    timestamp: new Date().getTime()
+                });
+                msg("✅ Aporte guardado", "success");
+                document.getElementById('bitacora-inst').value = "";
+                document.getElementById('bitacora-detalle').value = "";
+                document.getElementById('bitacora-reporte').value = "";
+                window.cargarHistorialBitacora();
+            } catch (e) {
+                console.error(e);
+                msg("⛔ Error al guardar", "err");
+            }
+        };
+
+        window.cargarHistorialBitacora = async () => {
+            const list = document.getElementById('bitacora-historial-list');
+            try {
+                const { collection, query, orderBy, limit, getDocs } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                const q = query(collection(db, "bitacora_seguimiento"), orderBy("timestamp", "desc"), limit(10));
+                const snap = await getDocs(q);
+
+                if (snap.empty) {
+                    list.innerHTML = '<p class="text-[10px] text-slate-400 italic text-center py-4">Sin aportes registrados</p>';
+                    return;
+                }
+
+                let html = "";
+                snap.forEach(doc => {
+                    const a = doc.data();
+                    html += `
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                            <div class="flex justify-between items-start mb-1">
+                                <p class="text-[10px] font-black text-[#025964] uppercase">${a.institucion}</p>
+                                <p class="text-[9px] text-slate-400">${a.fecha}</p>
+                            </div>
+                            <p class="text-[10px] text-slate-600 line-clamp-2">${a.detalle}</p>
+                        </div>
+                    `;
+                });
+                list.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        window.analizarBitacoraIA = async () => {
+            const { collection, getDocs, query, orderBy, limit, doc, setDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+            const snap = await getDocs(query(collection(db, "bitacora_seguimiento"), orderBy("timestamp", "desc"), limit(5)));
+
+            if (snap.empty) return msg("⚠️ No hay historial para analizar", "normal");
+
+            const btn = document.getElementById('btn-analizar-bitacora');
+            btn.innerText = "Analizando...";
+            btn.disabled = true;
+
+            const historialText = [];
+            snap.forEach(d => {
+                const data = d.data();
+                historialText.push(`INSTITUCIÓN: ${data.institucion}\nFECHA: ${data.fecha}\nDETALLE: ${data.detalle}\nINFORME: ${data.reporte || 'N/A'}`);
+            });
+
+            const prompt = `Eres Asesor Nacional del PNFT. Analiza este historial de visitas:
+            ${historialText.join('\n---\n')}
+            
+            TU MISIÓN:
+            1. Genera un RESUMEN EJECUTIVO (máx 1500 caracteres).
+            2. CLASIFICA cada centro según los siguientes CRITERIOS UNIFICADOS:
+               - URGENTE: Fallo técnico total, docentes sin capacitación básica o riesgo de abandono del programa. Requiere intervención inmediata.
+               - PRIORITARIO: Dudas pedagógicas de mediación, fallos técnicos parciales o necesidad de refuerzo en las fases de Design Thinking (Empatizar, Definir, Idear, Prototipar, Probar y Evaluar).
+               - CONTINUIDAD: Implementación fluida en la resolución de problemas, docentes autónomos y proyectos activos.
+
+            Devuelve el JSON al final del texto:
+            :::DATA_START:::
+            [{"institucion": "Nombre", "categoria": "Urgente|Prioritario|Continuidad"}]
+            :::DATA_END:::`;
+
+            try {
+                const res = await llamarGemini(prompt, 'general');
+                let text = res.text;
+
+                // Procesar JSON de categorías
+                const jsonMatch = text.match(/:::DATA_START:::([\s\S]*?):::DATA_END:::/);
+                if (jsonMatch) {
+                    const data = JSON.parse(jsonMatch[1]);
+                    for (const item of data) {
+                        const slug = item.institucion.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                        await setDoc(doc(db, "status_instituciones", slug), {
+                            nombre: item.institucion,
+                            categoria: item.categoria,
+                            actualizado: new Date().toLocaleDateString('es-CR')
+                        }, { merge: true });
+                    }
+                    text = text.replace(jsonMatch[0], "");
+                    window.updateAdminChart(); // Actualizar gráfico
+                }
+
+                document.getElementById('bitacora-ia-output').innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+                msg("✅ Análisis completado y tablero actualizado", "success");
+            } catch (e) {
+                console.error(e);
+                msg("⛔ Error en el análisis", "err");
+            } finally {
+                btn.innerText = "Analizar Historial";
+                btn.disabled = false;
+            }
+        };
+
+        window.updateAdminChart = async () => {
+            try {
+                const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                const snap = await getDocs(collection(db, "status_instituciones"));
+                let u = 0, p = 0, c = 0;
+                snap.forEach(d => {
+                    const cat = d.data().categoria.toLowerCase();
+                    if (cat.includes('urgente')) u++;
+                    else if (cat.includes('prioritario')) p++;
+                    else c++;
+                });
+
+                // Si no hay datos aún, usar placeholders
+                if (snap.empty) { u = 5; p = 15; c = 30; }
+
+                const chart = Chart.getChart("adminChart");
+                if (chart) {
+                    chart.data.datasets[0].data = [c, p, u];
+                    chart.update();
+                }
+            } catch (e) { console.error(e); }
+        };
+
+        window.mostrarInstituciones = () => {
+            const listInstituciones = document.getElementById('admin-instituciones-list');
+            const listUsuarios = document.getElementById('admin-usuarios-list');
+            const sectionBitacora = document.getElementById('admin-bitacora-section');
+            const title = document.querySelector('#admin h3') || { innerText: "" };
+
+            listInstituciones.classList.remove('hidden');
+            listUsuarios.classList.add('hidden');
+            sectionBitacora.classList.add('hidden');
+            title.innerText = "Gestión de Instituciones";
+        };
+
         window.listarUsuarios = async () => {
             const listInstituciones = document.getElementById('admin-instituciones-list');
             const listUsuarios = document.getElementById('admin-usuarios-list');
+            const sectionBitacora = document.getElementById('admin-bitacora-section');
             const title = document.querySelector('#admin h3') || { innerText: "" };
 
             listInstituciones.classList.add('hidden');
             listUsuarios.classList.remove('hidden');
+            sectionBitacora.classList.add('hidden');
+            title.innerText = "Control de Usuarios";
             listUsuarios.innerHTML = '<div class="flex flex-col items-center p-10"><div class="w-8 h-8 border-4 border-[#025964] border-t-transparent rounded-full animate-spin mb-4"></div><p class="text-xs font-black text-slate-400 uppercase">Consultando base de datos...</p></div>';
 
             try {
@@ -2004,6 +2306,7 @@
                                 <button onclick="window.enviarResetPass('${u.email}')" title="Enviar Enlace de Reseteo" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors"><i class="ph ph-paper-plane-tilt"></i></button>
                                 <button onclick="window.copiarDatosUsuario('${btoa(JSON.stringify(u))}')" title="Copiar Datos" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-teal-600 transition-colors"><i class="ph ph-copy"></i></button>
                                 <button onclick="window.editarUsuario('${doc.id}')" title="Editar" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-[#025964] transition-colors"><i class="ph ph-note-pencil"></i></button>
+                                <button onclick="window.eliminarUsuario('${doc.id}', '${u.nombre}')" title="Eliminar" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-600 transition-colors"><i class="ph ph-trash"></i></button>
                             </div>
                         </div>
                     `;
@@ -2065,6 +2368,26 @@
             } catch (e) {
                 console.error(e);
                 msg("⛔ Error al editar", "err");
+            }
+        };
+
+        window.eliminarUsuario = async (uid, nombre) => {
+            const confirm1 = confirm(`¿Está seguro de eliminar el perfil de ${nombre}?\n\nEsta acción borrará sus datos de registro y perderá el acceso al portal.`);
+            if (!confirm1) return;
+
+            const confirm2 = confirm(`⚠️ SEGUNDA CONFIRMACIÓN: ¿Realmente desea ELIMINAR a ${nombre}?`);
+            if (!confirm2) return;
+
+            msg("⏳ Eliminando...", "normal");
+            try {
+                // Importar deleteDoc
+                const { deleteDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                await deleteDoc(doc(db, "registro_usuarios", uid));
+                msg("✅ Usuario eliminado exitosamente", "success");
+                window.listarUsuarios();
+            } catch (e) {
+                console.error(e);
+                msg("⛔ Error al eliminar usuario", "err");
             }
         };
 
