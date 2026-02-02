@@ -2038,15 +2038,8 @@
                 if (user) {
                     console.log("Sesión activa detectada:", user.email);
 
-                    // 1. Verificar Lista Blanca (Ahora que el usuario está autenticado, tiene permiso de lectura)
-                    const whitelistSnap = await getDoc(doc(db, "whitelist", user.email.toLowerCase()));
-
-                    if (false && !whitelistSnap.exists()) {
-                        console.warn("Acceso denegado: El usuario no está en la lista blanca.", user.email);
-                        msg("⛔ No estás autorizado en la lista de acceso.", "err");
-                        await signOut(auth); // Cerrar sesión inmediatamente
-                        return;
-                    }
+                    // 1. Verificar Lista Blanca (Removido temporalmente para evitar errores de permiso)
+                    // El usuario ya está autenticado aquí.
 
                     // 2. Obtener datos de registro
                     const snap = await getDoc(doc(db, "registro_usuarios", user.uid));
