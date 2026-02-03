@@ -2396,47 +2396,64 @@
             btn.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Publicando...`;
 
             try {
+                console.log("--- INICIO PROCESO DE CARGA ---");
+                console.log("Datos iniciales:", { nombre, nivel, moduloIdx, saber, fileName: file.name });
+
                 // DETECCIÓN DE ASESOR PARA ADMINT/ASESORES
                 let asesorNombre = "Producciones Generales";
-                const userEmail = window.currentUserData.email.toLowerCase();
+                const userEmail = (window.currentUserData?.email || "").toLowerCase();
 
                 if (userEmail.includes("alberto.bustos")) asesorNombre = "Alberto Bustos Ortega";
                 else if (userEmail.includes("rodolfo.juarez")) asesorNombre = "Rodolfo Juárez Pérez";
-                else if (window.currentUserData.rol === 'admin') asesorNombre = "Asesoría Regional";
-                else asesorNombre = window.currentUserData.asesor || "Producciones Generales";
+                else if (window.currentUserData?.rol === 'admin') asesorNombre = "Asesoría Regional";
+                else asesorNombre = window.currentUserData?.asesor || "Producciones Generales";
+
+                console.log("Asesor mapeado:", asesorNombre);
 
                 const safeName = file.name.replace(/[^a-z0-9.]/gi, '_').toLowerCase();
-                const storagePath = `producciones/${asesorNombre}/${Date.now()}_${safeName}`;
-                // Usamos las funciones desde window para asegurar scope
-                const fileRef = window.ref(window.storage, storagePath);
+                const path = `producciones/${asesorNombre}/${Date.now()}_${safeName}`;
+                console.log("Paso 1: Ruta de storage ->", path);
 
-                msg("⏳ Subiendo archivo a la nube...", "normal");
-                const uploadRes = await window.uploadBytes(fileRef, file);
-                const downloadURL = await window.getDownloadURL(uploadRes.ref);
+                const fileRef = ref(storage, path);
+                console.log("Paso 2: Referencia creada con éxito.");
 
-                msg("⏳ Registrando en repositorio...", "normal");
-                await addDoc(collection(db, "producciones_digitales"), {
+                msg("⏳ Subiendo a la nube...", "normal");
+                console.log("Paso 3: Iniciando uploadBytes...");
+                const uploadRes = await uploadBytes(fileRef, file);
+                console.log("Paso 4: Upload completado satisfactoriamente.", uploadRes);
+
+                console.log("Paso 5: Solicitando URL pública...");
+                const downloadURL = await getDownloadURL(uploadRes.ref);
+                console.log("Paso 6: URL obtenida:", downloadURL);
+
+                msg("⏳ Registrando repositorio...", "normal");
+                const docData = {
                     nombre,
                     descripcion: desc,
                     nivel,
                     modulo: window.SABERES_DATA[nivel].modulos[moduloIdx].n,
                     saber,
                     fileURL: downloadURL,
-                    sharepointURL: (window.currentUserData.rol === 'admin') ? "https://adminmepcr-my.sharepoint.com/:f:/g/personal/alberto_bustos_ortega_mep_go_cr/IgA5aEg-hv6GQYuvA-cI0LLTASnf_MAIhPrpjFERWm2-3sw?e=qvvwoK" : "",
+                    sharepointURL: (window.currentUserData?.rol === 'admin') ? "https://adminmepcr-my.sharepoint.com/:f:/g/personal/alberto_bustos_ortega_mep_go_cr/IgA5aEg-hv6GQYuvA-cI0LLTASnf_MAIhPrpjFERWm2-3sw?e=qvvwoK" : "",
                     fileName: file.name,
-                    autor: window.currentUserData.nombre,
+                    autor: window.currentUserData?.nombre || "Usuario",
                     asesor: asesorNombre,
                     creadoEn: serverTimestamp(),
-                    email: window.currentUserData.email,
-                    esAdmin: (window.currentUserData.rol === 'admin')
-                });
+                    email: window.currentUserData?.email || "",
+                    esAdmin: (window.currentUserData?.rol === 'admin')
+                };
+                console.log("Paso 7: Datos Firestore:", docData);
 
-                msg("✅ Recurso compartido con éxito", "success");
+                await addDoc(collection(db, "producciones_digitales"), docData);
+                console.log("Paso 8: Registro Firestore exitoso.");
+
+                msg("✅ ¡Publicado en el ecosistema!", "success");
                 window.cerrarModalSubir();
                 window.cargarGaleriaRecursos();
             } catch (e) {
-                console.error(e);
-                msg("⛔ Error al subir el recurso", "err");
+                console.error("ERROR CRÍTICO:", e);
+                const code = e.code || "unknown";
+                msg(`⛔ Error (${code}): ${e.message}`, "err");
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="ph ph-upload-simple"></i> Publicar en el Ecosistema`;
