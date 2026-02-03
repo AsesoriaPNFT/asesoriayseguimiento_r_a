@@ -2384,8 +2384,14 @@
 
                     if (json.length === 0) throw new Error("El archivo está vacío");
 
-                    // 1. VALIDACIÓN DE COLUMNAS (Flexibilidad de nombres y capitalización)
-                    const headers = Object.keys(json[0] || {}).map(h => h.toLowerCase().trim());
+                    // 1. OBTENER ENCABEZADOS DE FORMA ROBUSTA (Leyendo la primera fila de la hoja)
+                    const range = XLSX.utils.decode_range(sheet['!ref']);
+                    const headers = [];
+                    for (let C = range.s.c; C <= range.e.c; ++C) {
+                        const cell = sheet[XLSX.utils.encode_cell({ r: range.s.r, c: C })];
+                        if (cell && cell.v) headers.push(String(cell.v).toLowerCase().trim());
+                    }
+
                     const required = [
                         { key: "correo del docente", name: "Correo del docente" },
                         { key: "cédula", name: "Cédula" },
@@ -2425,18 +2431,18 @@
                                 cedula: String(getVal(row, ["cédula", "cedula"]) || ""),
                                 email: emailValue,
                                 celular: String(getVal(row, ["celular", "teléfono", "telefono"]) || ""),
-                                institucion: getVal(row, ["centro_educativo", "institución", "institucion", "centro educativo"]) || "Sin Institución",
+                                institucion: getVal(row, ["centro_educativo", "centro educativo", "institución", "institucion"]) || "Sin Institución",
                                 codigo_saber: String(getVal(row, ["codsaber", "saber"]) || ""),
                                 codigo_presupuestario: String(getVal(row, ["código presupuestario", "codigo presupuestario", "presupuestario"]) || ""),
                                 correo_institucional: getVal(row, ["correo institucional", "email institucional"]).toLowerCase().trim(),
-                                regional: getVal(row, ["regional", "dirección regional"]),
+                                regional: getVal(row, ["regional", "regional", "dirección regional"]),
                                 circuito: getVal(row, ["circuito"]),
                                 dimension_2025: getVal(row, ["dimensión 2025", "dimension 2025"]),
                                 equipo_pronie: getVal(row, ["equipo pronie (según inventario fod)", "equipo pronie", "fod"]),
                                 programa_3_sutel: getVal(row, ["entregado programa 3 (según inventario sutel)", "sutel", "programa 3"]),
                                 formacion_tecnologica: getVal(row, ["formación tecnológica", "formacion tecnologica"]),
                                 plan_nacional: getVal(row, ["plan nacional"]),
-                                asesor_asignado: getVal(row, ["nombre del asesor", "asesor asignado", "asesor"]), // CAMPO 16
+                                asesor_asignado: getVal(row, ["nombre del asesor", "asesor asignado", "asesor"]),
                                 rol: "docente",
                                 registradoVia: "excel_v2026_ctrl",
                                 actualizadoEn: serverTimestamp()
