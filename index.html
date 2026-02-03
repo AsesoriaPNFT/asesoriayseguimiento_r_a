@@ -1078,39 +1078,29 @@
                         <div id="pausa-reflexiva-container"></div>
 
                         <div id="foro-publicar-container" class="glass p-8 rounded-[2.5rem] mb-12 bg-white relative shadow-xl border border-slate-100">
-                            <h4 class="text-[11px] font-black text-[#025964] uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                            <h4 class="text-[11px] font-black text-[#025964] uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
                                 <i class="ph ph-plus-circle text-lg"></i> Publicar en el Foro Docente
                             </h4>
+                            
+                            <!-- BANNER DE PROPÓSITO -->
+                            <div class="mb-6 p-4 bg-teal-50/50 rounded-2xl border border-teal-100/50 flex items-start gap-3">
+                                <i class="ph-fill ph-info text-teal-500 mt-1"></i>
+                                <p class="text-[10px] font-bold text-teal-800 leading-relaxed">
+                                    <span class="block mb-1 uppercase tracking-wider">Tu voz guía nuestra asesoría</span>
+                                    La información que compartes es un elemento esencial para el apoyo técnico y pedagógico que brindamos. ¡Cada aporte cuenta!
+                                </p>
+                            </div>
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 <div class="space-y-2">
                                     <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Eje Temático / Categoría</label>
                                     <select id="foro-categoria" onchange="window.mostrarGuiaForo()" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-xs font-bold text-slate-600 outline-none focus:border-[#025964] focus:bg-white transition-all appearance-none cursor-pointer">
-                                        <optgroup label="Alcance Curricular (Logros)">
-                                            <option value="Corto Plazo (Saberes)">Corto Plazo (Saberes e Indicadores)</option>
-                                            <option value="Mediano Plazo (RdA)">Mediano Plazo (RdA - Resultados)</option>
-                                            <option value="Largo Plazo (Competencias)">Largo Plazo (Perfil de Salida)</option>
-                                        </optgroup>
-                                        <optgroup label="Áreas de Conocimiento PNFT">
-                                            <option value="Apropiación Digital">Apropiación Tecnológica y Digital</option>
-                                            <option value="Programación y Algoritmos">Programación y Algoritmos</option>
-                                            <option value="Computación Física">Computación Física y Robótica</option>
-                                            <option value="Ciencia de Datos e IA">Ciencia de Datos e IA</option>
-                                        </optgroup>
-                                        <optgroup label="Gestión y Tendencias">
-                                            <option value="Recursos y Computadoras">Uso de Equipo y Computadoras</option>
-                                            <option value="Ejecución de Módulos">Desarrollo de Módulos</option>
-                                            <option value="Necesidad Detectada">Necesidad de Apoyo Técnica/Pedagógica</option>
-                                            <option value="Tendencia Educativa">Tendencia o Innovación</option>
-                                        </optgroup>
-                                        <optgroup label="Estructura Curricular: Macro y Micro">
-                                            <option value="Macrocurrículo - I Semestre">Macrocurrículo - I Semestre</option>
-                                            <option value="Macrocurrículo - II Semestre">Macrocurrículo - II Semestre</option>
-                                            <option value="Microcurrículo - I Semestre">Microcurrículo - I Semestre</option>
-                                            <option value="Microcurrículo - II Semestre">Microcurrículo - II Semestre</option>
-                                        </optgroup>
-                                        <option value="Reflexión Docente">Reflexión Docente 2026</option>
-                                        <option value="General" selected>Conversación General</option>
+                                        <option value="Logros en el Aula">🚀 Logros: Corto, Mediano y Largo Plazo</option>
+                                        <option value="Planeamiento y Macro">📋 Planeamiento: Macro y Microcurrículo</option>
+                                        <option value="Necesidad de Apoyo">🆘 Apoyo: Dudas Técnicas o Pedagógicas</option>
+                                        <option value="Áreas Técnicas PNFT">💻 Saberes: Progra, Robótica, IA o Datos</option>
+                                        <option value="Reflexión Docente">✨ Reflexión: Pausas y Desafíos 2026</option>
+                                        <option value="General" selected>💬 Conversación General / Otros</option>
                                     </select>
                                 </div>
                             </div>
@@ -1354,6 +1344,12 @@
                                                 <p class="text-[10px] text-slate-400 italic py-8 text-center">Analizando datos regionales...</p>
                                             </div>
                                         </div>
+                                        <div class="space-y-4">
+                                            <h5 class="text-[10px] font-black text-slate-800 uppercase tracking-widest flex items-center gap-2"><i class="ph-bold ph-eye-slash text-amber-500"></i> Atención por Silencio (Inactivos)</h5>
+                                            <div id="diag-inactive-list" class="space-y-3 max-h-[400px] overflow-y-auto no-scrollbar">
+                                                <!-- Se llena con usuarios que tienen 0 posts -->
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <!-- Área de Resultados IA -->
@@ -1389,6 +1385,22 @@
                                             Cargando lista de usuarios...
                                         </div>
                                     </div>
+
+                                    <!-- CONTENEDOR DE FICHA DOCENTE / HISTORIAL -->
+                                <div id="admin-usuario-actividad" class="hidden space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                                    <div class="flex items-center justify-between mb-8">
+                                        <button onclick="window.listarUsuarios()" class="text-[9px] font-black text-[#025964] uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 px-4 py-2 rounded-xl transition-all">
+                                            <i class="ph-bold ph-arrow-left"></i> Volver a la lista
+                                        </button>
+                                        <div class="text-right">
+                                            <h4 id="actividad-nombre" class="text-sm font-black text-slate-800 uppercase leading-none mb-1">Cargando...</h4>
+                                            <p id="actividad-info" class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Generando historial del foro</p>
+                                        </div>
+                                    </div>
+                                    <div id="actividad-timeline" class="space-y-4">
+                                        <!-- Se llena con los posts del usuario -->
+                                    </div>
+                                </div>
 
                                     <!-- Bitácora de Seguimiento Section -->
                                     <div id="admin-bitacora-section" class="hidden space-y-6">
@@ -2047,25 +2059,30 @@
             const area = document.getElementById('foro-msg');
 
             const guias = {
-                "Macrocurrículo - I Semestre": [
-                    "¿Cómo se integran los objetivos del macrocurrículo en su planeamiento didáctico diario?",
-                    "¿Qué desafíos técnicos ha enfrentado al alinear los indicadores nacionales con la realidad de su laboratorio?",
-                    "¿De qué manera la estructura administrativa del centro facilita o dificulta el cumplimiento de las metas macro?"
+                "Logros en el Aula": [
+                    "¿Qué evidencia de aprendizaje pudiste observar hoy en tus estudiantes?",
+                    "¿Cómo conectó la actividad de hoy con el Resultado de Aprendizaje (RdA) del módulo?",
+                    "¿Viste alguna chispa de 'Competencia Viva' (creatividad, resolución de problemas) en el salón?"
                 ],
-                "Macrocurrículo - II Semestre": [
-                    "¿Cómo ha evolucionado la comprensión de los estudiantes sobre las competencias globales propuestas al cierre de este semestre?",
-                    "¿Qué ajustes didácticos realizó para asegurar que el perfil de salida se esté cumpliendo según lo proyectado?",
-                    "¿Cómo impactan los resultados obtenidos en la proyección del próximo ciclo lectivo?"
+                "Planeamiento y Macro": [
+                    "¿Cómo estás integrando las metas del Macrocurrículo en tu planeamiento didáctico semanal?",
+                    "¿Qué desafíos has encontrado al bajar el Microcurrículo a la realidad de tu laboratorio?",
+                    "¿Sientes que el tiempo de ejecución de los indicadores es realista para tu grupo actual?"
                 ],
-                "Microcurrículo - I Semestre": [
-                    "¿Cómo se traducen los saberes específicos en experiencias de aprendizaje significativas en su aula hoy?",
-                    "¿Qué herramientas técnicas está utilizando para medir el avance individual de los estudiantes en cada indicador?",
-                    "¿Cómo maneja el tiempo administrativo para no sacrificar la profundidad pedagógica de los micro-objetivos?"
+                "Necesidad de Apoyo": [
+                    "¿Qué barrera técnica (equipo, conectividad) está frenando tu avance hoy?",
+                    "¿En qué parte específica del currículo sientes que necesitas una sesión de apoyo con el asesor?",
+                    "¿Hay algún recurso didáctico que no esté funcionando como esperabas?"
                 ],
-                "Microcurrículo - II Semestre": [
-                    "¿Qué evidencias tangibles existen de que los estudiantes han dominado los micro-saberes del segundo periodo?",
-                    "¿Cómo ha adaptado su mediación pedagógica ante imprevistos técnicos surgidos en el día a día?",
-                    "¿Qué relación observa entre la asistencia y el logro de los objetivos técnicos propuestos en el microcurrículo?"
+                "Áreas Técnicas PNFT": [
+                    "¿Cómo están respondiendo los chicos a los retos de Programación o IA?",
+                    "¿Qué estrategia usaste hoy para explicar un concepto técnico complejo (ej: algoritmos, sensores)?",
+                    "¿Cómo integraste la Apropiación Digital en una actividad no necesariamente tecnológica?"
+                ],
+                "Reflexión Docente": [
+                    "Respecto al desafío de la quincena: ¿Cómo ha cambiado tu perspectiva sobre este tema?",
+                    "¿Qué momento de 'ajá!' o descubrimiento tuviste hoy junto a tus estudiantes?",
+                    "Si pudieras cambiar una sola cosa de la dinámica de hoy para mejorar la reflexión, ¿cuál sería?"
                 ]
             };
 
@@ -3389,6 +3406,7 @@
             listUsuarios.classList.remove('hidden');
             sectionBitacora.classList.add('hidden');
             sectionDiag.classList.add('hidden');
+            document.getElementById('admin-usuario-actividad').classList.add('hidden');
             title.innerText = "Lista de Usuarios";
             listUsuarios.innerHTML = '<div class="flex flex-col items-center p-10"><div class="w-8 h-8 border-4 border-[#025964] border-t-transparent rounded-full animate-spin mb-4"></div><p class="text-xs font-black text-slate-400 uppercase">Consultando base de datos...</p></div>';
 
@@ -3422,10 +3440,13 @@
                                 </div>
                             </div>
                                 <span class="text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-transparent ${rolColor}">${u.rol || 'docente'}</span>
-                                <button onclick="window.enviarResetPass('${u.email}')" title="Enviar Enlace de Reseteo" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors"><i class="ph ph-paper-plane-tilt"></i></button>
-                                <button onclick="window.copiarDatosUsuario('${btoa(JSON.stringify(u))}')" title="Copiar Datos" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-teal-600 transition-colors"><i class="ph ph-copy"></i></button>
-                                <button onclick="window.editarUsuario('${doc.id}')" title="Editar" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-[#025964] transition-colors"><i class="ph ph-note-pencil"></i></button>
-                                <button onclick="window.eliminarUsuario('${doc.id}', '${u.nombre}')" title="Eliminar" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-600 transition-colors"><i class="ph ph-trash"></i></button>
+                                <div class="flex items-center gap-1">
+                                    <button onclick="window.verActividadDocente('${doc.id}', '${u.nombre}')" title="Ver Historial de Actividad" class="w-8 h-8 bg-[#025964]/10 rounded-lg flex items-center justify-center text-[#025964] hover:bg-[#025964] hover:text-white transition-all"><i class="ph-bold ph-calendar-check"></i></button>
+                                    <button onclick="window.enviarResetPass('${u.email}')" title="Enviar Enlace de Reseteo" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors"><i class="ph ph-paper-plane-tilt"></i></button>
+                                    <button onclick="window.copiarDatosUsuario('${btoa(JSON.stringify(u))}')" title="Copiar Datos" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-teal-600 transition-colors"><i class="ph ph-copy"></i></button>
+                                    <button onclick="window.editarUsuario('${doc.id}')" title="Editar" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-[#025964] transition-colors"><i class="ph ph-note-pencil"></i></button>
+                                    <button onclick="window.eliminarUsuario('${doc.id}', '${u.nombre}')" title="Eliminar" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-600 transition-colors"><i class="ph ph-trash"></i></button>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -3434,6 +3455,45 @@
             } catch (e) {
                 console.error("Error al listar usuarios:", e);
                 listUsuarios.innerHTML = `<p class="text-center text-rose-500 font-bold p-10">Error: ${e.message}</p>`;
+            }
+        };
+
+        window.verActividadDocente = async (uid, nombre) => {
+            const listUsers = document.getElementById('admin-usuarios-list');
+            const sectionAct = document.getElementById('admin-usuario-actividad');
+            const timeline = document.getElementById('actividad-timeline');
+
+            listUsers.classList.add('hidden');
+            sectionAct.classList.remove('hidden');
+            document.getElementById('actividad-nombre').innerText = nombre;
+            timeline.innerHTML = '<div class="p-10 text-center"><i class="ph ph-spinner-gap animate-spin text-2xl text-slate-300"></i></div>';
+
+            try {
+                const { collection, getDocs, query, where, orderBy } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                const q = query(collection(db, "foro_posts"), where("uid", "==", uid), orderBy("fecha", "desc"));
+                const snap = await getDocs(q);
+
+                if (snap.empty) {
+                    timeline.innerHTML = '<p class="text-[10px] text-slate-400 italic py-10 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-200">Este docente aún no ha realizado publicaciones en el foro.</p>';
+                } else {
+                    let html = "";
+                    snap.forEach(doc => {
+                        const p = doc.data();
+                        html += `
+                            <div class="p-5 bg-white rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden group">
+                                <div class="flex justify-between items-start mb-2">
+                                    <span class="text-[8px] font-black text-[#025964] bg-[#f1f8f9] px-2 py-0.5 rounded-full uppercase tracking-widest border border-[#025964]/10">${p.categoria}</span>
+                                    <span class="text-[8px] font-bold text-slate-400 uppercase">${p.fecha}</span>
+                                </div>
+                                <p class="text-xs text-slate-700 font-medium leading-relaxed">${p.mensaje}</p>
+                            </div>
+                        `;
+                    });
+                    timeline.innerHTML = html;
+                }
+            } catch (e) {
+                console.error(e);
+                timeline.innerHTML = '<p class="text-center text-rose-500 font-bold p-10">Error al cargar historial</p>';
             }
         };
 
@@ -3574,46 +3634,79 @@
                 const usersMap = {};
                 usersSnap.forEach(u => usersMap[u.id] = u.data());
 
+                const regionals = {};
+                const activeUserUids = new Set();
                 const keywords = ["ayuda", "duda", "error", "bloqueo", "no entiendo", "problema", "urgente", "necesito"];
                 let totalPosts = 0;
                 let needPosts = 0;
                 let alertsHtml = "";
-                const regionals = {};
 
                 postsSnap.forEach(doc => {
                     const p = doc.data();
                     totalPosts++;
+                    if (p.uid) activeUserUids.add(p.uid);
+
                     const msgLower = (p.mensaje || "").toLowerCase();
                     const isAlert = keywords.some(k => msgLower.includes(k));
-                    const isNeedCategory = ["Necesidad Detectada", "Macrocurrículo", "Microcurrículo"].some(c => (p.categoria || "").includes(c));
+                    const isNeedCategory = ["Necesidad", "Apoyo", "Ayuda"].some(c => (p.categoria || "").includes(c));
 
-                    if (isAlert || isNeedCategory) needPosts++;
+                    if (isAlert || isNeedCategory) {
+                        needPosts++;
+                        const user = usersMap[p.uid] || { nombre: "Anónimo", institucion: "N/A", regional: "N/A" };
 
-                    if (isAlert) {
-                        const user = usersMap[p.uid] || { regional: "Desconocida", institucion: "N/A" };
+                        // Agregar a la lista de alertas
                         alertsHtml += `
-                            <div class="p-4 bg-white rounded-2xl border-l-4 border-rose-500 shadow-sm hover:shadow-md transition-all">
-                                <div class="flex justify-between items-start mb-2">
-                                    <span class="text-[9px] font-black text-rose-500 uppercase tracking-widest bg-rose-50 px-2 py-0.5 rounded">${p.categoria}</span>
-                                    <span class="text-[8px] font-bold text-slate-400">Regional: ${user.regional || 'N/A'}</span>
+                            <div class="p-4 bg-white rounded-2xl border-l-[4px] border-rose-500 shadow-sm">
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-[9px] font-black text-rose-500 uppercase tracking-widest">${p.categoria}</span>
+                                    <span class="text-[8px] font-bold text-slate-400">${p.fecha}</span>
                                 </div>
-                                <p class="text-[11px] text-slate-700 font-bold mb-2">"${p.mensaje.substring(0, 100)}${p.mensaje.length > 100 ? '...' : ''}"</p>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-[8px] font-black text-slate-400 uppercase">${p.autor} - ${user.institucion}</span>
-                                    <button class="text-[8px] font-black text-blue-500 uppercase hover:underline">Ver conversación</button>
+                                <p class="text-xs font-bold text-slate-800 mb-2 leading-tight">"${p.mensaje.substring(0, 100)}${p.mensaje.length > 100 ? '...' : ''}"</p>
+                                <div class="flex justify-between items-center text-[8px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 p-2 rounded-xl border border-slate-100">
+                                    <span>👤 ${user.nombre}</span>
+                                    <span>📍 ${user.regional} | ${user.institucion}</span>
                                 </div>
                             </div>
                         `;
-                    }
 
-                    // Regional Tracking
-                    const user = usersMap[p.uid];
-                    if (user && user.regional) {
-                        if (!regionals[user.regional]) regionals[user.regional] = { count: 0, needs: 0 };
-                        regionals[user.regional].count++;
-                        if (isAlert || isNeedCategory) regionals[user.regional].needs++;
+                        // Agrupar por regional para el mapa
+                        const reg = user.regional || "Otras";
+                        if (!regionals[reg]) regionals[reg] = { count: 0, needs: 0 };
+                        regionals[reg].count++;
+                        regionals[reg].needs++;
+                    } else {
+                        // Track total posts per regional even if not a "need"
+                        const user = usersMap[p.uid];
+                        if (user && user.regional) {
+                            const reg = user.regional || "Otras";
+                            if (!regionals[reg]) regionals[reg] = { count: 0, needs: 0 };
+                            regionals[reg].count++;
+                        }
                     }
                 });
+
+                // Usuarios inactivos
+                let inactiveHtml = "";
+                let inactiveCount = 0;
+                usersSnap.forEach(doc => {
+                    const u = doc.data();
+                    if (!activeUserUids.has(doc.id) && u.rol !== 'admin') {
+                        inactiveCount++;
+                        inactiveHtml += `
+                            <div class="p-3 bg-white rounded-xl border border-slate-100 flex justify-between items-center hover:bg-amber-50 group transition-colors">
+                                <div>
+                                    <h6 class="text-[10px] font-black text-slate-700 uppercase leading-none mb-1">${u.nombre}</h6>
+                                    <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest">${u.regional} | ${u.institucion}</p>
+                                </div>
+                                <button onclick="window.verActividadDocente('${doc.id}', '${u.nombre}')" class="w-6 h-6 bg-slate-50 rounded-lg flex items-center justify-center text-slate-300 group-hover:text-amber-500 transition-colors"><i class="ph ph-magnifying-glass"></i></button>
+                            </div>
+                        `;
+                    }
+                });
+
+                if (!inactiveHtml) inactiveHtml = '<p class="text-[10px] text-teal-600 bg-teal-50 p-6 rounded-2xl text-center font-bold">🎉 ¡Todos los docentes registrados han participado!</p>';
+
+                document.getElementById('diag-inactive-list').innerHTML = inactiveHtml;
 
                 // Update KPIs
                 const score = totalPosts > 0 ? Math.round((needPosts / totalPosts) * 100) : 0;
@@ -3663,14 +3756,17 @@
                     contexto += `[Cat: ${d.data().categoria}] ${d.data().mensaje}\n`;
                 });
 
-                const prompt = `Como consultor experto en el PNFT 2026, analiza estos comentarios del foro docente y genera un reporte de priorización estratégico para los asesores Alberto y Rodolfo.
-                Contexto actual:
+                const prompt = `Como consultor experto en el PNFT 2026, analiza estos comentarios del foro docente y genera un reporte de diagnóstico curado para los asesores.
+                Contexto actual (últimas publicaciones):
                 ${contexto}
                 
-                Responde con estos 3 puntos:
-                1. Top 3 Necesidades Pedagógicas detectadas.
-                2. Top 3 Barreras Técnicas mencionadas.
-                3. Recomendación de Regionales a priorizar y por qué.`;
+                El reporte debe incluir:
+                1. Necesidades Recurrentes (¿Qué les está costando más?).
+                2. Aciertos y Logros Recurrentes (¿Qué está funcionando bien?).
+                3. Tendencias para el Apoyo Educativo (Patrones observados).
+                4. Valor de Prioridad (Recomendación directa de acción para Alberto y Rodolfo).
+                
+                Usa un tono profesional, estratégico y enfocado en la mejora del programa.`;
 
                 const res = await llamarGemini(prompt, 'reporte');
                 content.innerHTML = res.text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
