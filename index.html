@@ -705,7 +705,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div class="space-y-1">
                                         <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Módulo</label>
-                                        <select id="up-modulo" onchange="window.updateUploadSelectors()" class="input-field text-xs mb-0">
+                                        <select id="up-modulo" onchange="window.updateUploadSaberes()" class="input-field text-xs mb-0">
                                             <option value="">Primero elija nivel</option>
                                         </select>
                                     </div>
@@ -2380,13 +2380,19 @@
 
                     if (json.length === 0) throw new Error("El archivo está vacío");
 
-                    // 1. VALIDACIÓN DE COLUMNAS
-                    const headers = Object.keys(json[0] || {});
-                    const required = ["Correo del docente", "Cédula", "CENTRO_EDUCATIVO", "Nombre del Asesor"];
-                    const missing = required.filter(col => !headers.includes(col));
+                    // 1. VALIDACIÓN DE COLUMNAS (Flexibilidad de nombres y capitalización)
+                    const headers = Object.keys(json[0] || {}).map(h => h.toLowerCase().trim());
+                    const required = [
+                        { key: "correo del docente", name: "Correo del docente" },
+                        { key: "cédula", name: "Cédula" },
+                        { key: "centro_educativo", name: "CENTRO_EDUCATIVO" },
+                        { key: "nombre del asesor", name: "Nombre del Asesor" }
+                    ];
+
+                    const missing = required.filter(req => !headers.includes(req.key));
 
                     if (missing.length > 0) {
-                        throw new Error(`Faltan columnas obligatorias: ${missing.join(", ")}`);
+                        throw new Error(`Faltan columnas obligatorias: ${missing.map(m => m.name).join(", ")}`);
                     }
 
                     let creados = 0, errores = 0, total = json.length;
@@ -2401,26 +2407,32 @@
 
                         const row = json[i];
                         try {
-                            const email = (row["Correo del docente"] || row["Correo MEP"] || row.email || "").toLowerCase().trim();
-                            if (!email) { errores++; continue; }
+                            // Mapeo flexible de campos buscando por nombre normalizado
+                            const getVal = (row, keys) => {
+                                const found = Object.keys(row).find(k => keys.includes(k.toLowerCase().trim()));
+                                return found ? row[found] : "";
+                            };
+
+                            const emailValue = getVal(row, ["correo del docente", "correo mep", "email", "correo"]).toLowerCase().trim();
+                            if (!emailValue) { errores++; continue; }
 
                             const userData = {
-                                nombre: row["Docents de IE"] || row["Nombre del Docente"] || "Sin Nombre",
-                                cedula: String(row["Cédula"] || ""),
-                                email: email,
-                                celular: String(row["Celular"] || ""),
-                                institucion: row["CENTRO_EDUCATIVO"] || "Sin Institución",
-                                codigo_saber: String(row["CODSABER"] || ""),
-                                codigo_presupuestario: String(row["Código Presupuestario"] || ""),
-                                correo_institucional: (row["Correo institucional"] || "").toLowerCase().trim(),
-                                regional: row["REGIONAL"] || "",
-                                circuito: row["CIRCUITO"] || "",
-                                dimension_2025: row["Dimensión 2025"] || "",
-                                equipo_pronie: row["Equipo PRONIE (según inventario FOD)"] || "",
-                                programa_3_sutel: row["Entregado programa 3 (Según inventario SUTEL)"] || "",
-                                formacion_tecnologica: row["Formación Tecnológica"] || "",
-                                plan_nacional: row["Plan Nacional"] || "",
-                                asesor_asignado: row["Nombre del Asesor"] || "Sin Asesor", // CAMPO 16
+                                nombre: getVal(row, ["docents de ie", "nombre del docente", "docente", "nombre"]) || "Sin Nombre",
+                                cedula: String(getVal(row, ["cédula", "cedula"]) || ""),
+                                email: emailValue,
+                                celular: String(getVal(row, ["celular", "teléfono", "telefono"]) || ""),
+                                institucion: getVal(row, ["centro_educativo", "institución", "institucion", "centro educativo"]) || "Sin Institución",
+                                codigo_saber: String(getVal(row, ["codsaber", "saber"]) || ""),
+                                codigo_presupuestario: String(getVal(row, ["código presupuestario", "codigo presupuestario", "presupuestario"]) || ""),
+                                correo_institucional: getVal(row, ["correo institucional", "email institucional"]).toLowerCase().trim(),
+                                regional: getVal(row, ["regional", "dirección regional"]),
+                                circuito: getVal(row, ["circuito"]),
+                                dimension_2025: getVal(row, ["dimensión 2025", "dimension 2025"]),
+                                equipo_pronie: getVal(row, ["equipo pronie (según inventario fod)", "equipo pronie", "fod"]),
+                                programa_3_sutel: getVal(row, ["entregado programa 3 (según inventario sutel)", "sutel", "programa 3"]),
+                                formacion_tecnologica: getVal(row, ["formación tecnológica", "formacion tecnologica"]),
+                                plan_nacional: getVal(row, ["plan nacional"]),
+                                asesor_asignado: getVal(row, ["nombre del asesor", "asesor asignado", "asesor"]), // CAMPO 16
                                 rol: "docente",
                                 registradoVia: "excel_v2026_ctrl",
                                 actualizadoEn: serverTimestamp()
@@ -2470,6 +2482,8 @@
                     progressText.innerText = "❌ ERROR EN EL ARCHIVO";
                     detailText.innerText = err.message;
                     input.value = "";
+                    // Ocultar barra de carga tras unos segundos si hay error
+                    setTimeout(() => progressContainer.classList.add('hidden'), 8000);
                 }
             };
             reader.readAsArrayBuffer(file);
