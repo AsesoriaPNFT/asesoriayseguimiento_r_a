@@ -3063,7 +3063,7 @@
                 const snap = await getDocs(collection(db, "status_instituciones"));
                 let u = 0, p = 0, c = 0;
                 snap.forEach(d => {
-                    const cat = d.data().categoria.toLowerCase();
+                    const cat = (d.data().categoria || 'continuidad').toLowerCase();
                     if (cat.includes('urgente')) u++;
                     else if (cat.includes('prioritario')) p++;
                     else c++;
@@ -3080,17 +3080,6 @@
             } catch (e) { console.error(e); }
         };
 
-        window.mostrarInstituciones = () => {
-            const listInstituciones = document.getElementById('admin-instituciones-list');
-            const listUsuarios = document.getElementById('admin-usuarios-list');
-            const sectionBitacora = document.getElementById('admin-bitacora-section');
-            const title = document.querySelector('#admin h3') || { innerText: "" };
-
-            listInstituciones.classList.remove('hidden');
-            listUsuarios.classList.add('hidden');
-            sectionBitacora.classList.add('hidden');
-            title.innerText = "Gestión de Instituciones";
-        };
 
         window.listarUsuarios = async () => {
             const listInstituciones = document.getElementById('admin-instituciones-list');
