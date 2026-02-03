@@ -2396,19 +2396,23 @@
             btn.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Publicando...`;
 
             try {
-                const asesorNombre = (window.currentUserData?.asesor === 'alberto')
-                    ? 'Alberto Bustos Ortega'
-                    : (window.currentUserData?.asesor === 'rodolfo')
-                        ? 'Rodolfo Juárez Pérez'
-                        : 'Producciones Generales';
+                // DETECCIÓN DE ASESOR PARA ADMINT/ASESORES
+                let asesorNombre = "Producciones Generales";
+                const userEmail = window.currentUserData.email.toLowerCase();
+
+                if (userEmail.includes("alberto.bustos")) asesorNombre = "Alberto Bustos Ortega";
+                else if (userEmail.includes("rodolfo.juarez")) asesorNombre = "Rodolfo Juárez Pérez";
+                else if (window.currentUserData.rol === 'admin') asesorNombre = "Asesoría Regional";
+                else asesorNombre = window.currentUserData.asesor || "Producciones Generales";
 
                 const safeName = file.name.replace(/[^a-z0-9.]/gi, '_').toLowerCase();
                 const storagePath = `producciones/${asesorNombre}/${Date.now()}_${safeName}`;
-                const fileRef = ref(storage, storagePath);
+                // Usamos las funciones desde window para asegurar scope
+                const fileRef = window.ref(window.storage, storagePath);
 
                 msg("⏳ Subiendo archivo a la nube...", "normal");
-                const uploadRes = await uploadBytes(fileRef, file);
-                const downloadURL = await getDownloadURL(uploadRes.ref);
+                const uploadRes = await window.uploadBytes(fileRef, file);
+                const downloadURL = await window.getDownloadURL(uploadRes.ref);
 
                 msg("⏳ Registrando en repositorio...", "normal");
                 await addDoc(collection(db, "producciones_digitales"), {
@@ -2418,11 +2422,13 @@
                     modulo: window.SABERES_DATA[nivel].modulos[moduloIdx].n,
                     saber,
                     fileURL: downloadURL,
+                    sharepointURL: (window.currentUserData.rol === 'admin') ? "https://adminmepcr-my.sharepoint.com/:f:/g/personal/alberto_bustos_ortega_mep_go_cr/IgA5aEg-hv6GQYuvA-cI0LLTASnf_MAIhPrpjFERWm2-3sw?e=qvvwoK" : "",
                     fileName: file.name,
                     autor: window.currentUserData.nombre,
                     asesor: asesorNombre,
                     creadoEn: serverTimestamp(),
-                    email: window.currentUserData.email
+                    email: window.currentUserData.email,
+                    esAdmin: (window.currentUserData.rol === 'admin')
                 });
 
                 msg("✅ Recurso compartido con éxito", "success");
@@ -2462,10 +2468,15 @@
                 snap.forEach(doc => {
                     const r = doc.data();
                     const initials = r.autor.split(' ').map(n => n[0]).join('').substring(0, 2);
+                    const isAdmin = r.esAdmin || r.asesor?.includes("Asesor");
+                    const badgeClass = isAdmin ? "bg-amber-100 text-amber-600 border-amber-200" : "bg-teal-50 text-teal-600 border-teal-100";
+                    const badgeLabel = isAdmin ? "ASESORÍA REGIONAL" : r.nivel;
+
                     html += `
-                        <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 hover:border-teal-500/30 transition-all group flex flex-col h-full shadow-sm hover:shadow-xl">
+                        <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 hover:border-teal-500/30 transition-all group flex flex-col h-full shadow-sm hover:shadow-xl relative overflow-hidden">
+                            ${isAdmin ? '<div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-bl-full -translate-y-4 translate-x-4"></div>' : ''}
                             <div class="flex justify-between items-start mb-6">
-                                <span class="text-[9px] font-black bg-teal-50 text-teal-600 px-3 py-1 rounded-full uppercase tracking-widest border border-teal-100">${r.nivel}</span>
+                                <span class="text-[9px] font-black ${badgeClass} px-3 py-1 rounded-full uppercase tracking-widest border">${badgeLabel}</span>
                                 <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-teal-600 transition-colors">
                                     <i class="ph ph-file-pdf text-xl"></i>
                                 </div>
@@ -2476,15 +2487,22 @@
                             
                             <div class="space-y-4 pt-6 border-t border-slate-50">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-[#025964] flex items-center justify-center text-[10px] font-black text-white shadow-sm">${initials}</div>
+                                    <div class="w-8 h-8 rounded-full ${isAdmin ? 'bg-amber-500' : 'bg-[#025964]'} flex items-center justify-center text-[10px] font-black text-white shadow-sm">${initials}</div>
                                     <div>
                                         <p class="text-[10px] font-black text-slate-800 uppercase leading-none">${r.autor}</p>
                                         <p class="text-[9px] text-slate-400 font-bold uppercase tracking-tight mt-1">${r.asesor}</p>
                                     </div>
                                 </div>
-                                <div class="flex gap-2">
-                                    <a href="${r.fileURL}" target="_blank" class="flex-grow bg-[#025964] hover:bg-teal-600 text-white text-center py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-teal-900/10">Descargar Recurso</a>
-                                    <button onclick="msg('Recurso: ${r.modulo} / ${r.saber}', 'info')" class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 hover:bg-teal-50 hover:text-teal-600 transition-all"><i class="ph ph-info"></i></button>
+                                <div class="flex flex-col gap-2">
+                                    <a href="${r.fileURL}" target="_blank" class="w-full bg-[#025964] hover:bg-teal-600 text-white text-center py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-teal-900/10 flex items-center justify-center gap-2">
+                                        <i class="ph ph-download-simple"></i> Descargar Recurso
+                                    </a>
+                                    ${r.sharepointURL ? `
+                                        <a href="${r.sharepointURL}" target="_blank" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-center py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2">
+                                            <i class="ph ph-share-network"></i> Carpeta de Asesoría
+                                        </a>
+                                    ` : ''}
+                                    <button onclick="msg('Módulo: ${r.modulo} | Saber: ${r.saber}', 'normal')" class="w-full border border-slate-100 py-2 rounded-xl text-[9px] font-black text-slate-400 uppercase tracking-widest hover:bg-slate-50 transition-all">Ver Detalles Técnicos</button>
                                 </div>
                             </div>
                         </div>
@@ -2956,6 +2974,10 @@
         window.httpsCallable = httpsCallable;
         window.sendPasswordResetEmail = sendPasswordResetEmail;
         window.serverTimestamp = serverTimestamp;
+        window.storage = storage;
+        window.ref = ref;
+        window.uploadBytes = uploadBytes;
+        window.getDownloadURL = getDownloadURL;
 
         // Inicializar Functions
         window.functions = getFunctions(window.app);
