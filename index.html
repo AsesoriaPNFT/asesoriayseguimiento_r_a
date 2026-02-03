@@ -3233,7 +3233,11 @@
 
             try {
                 // 1. VALIDACIÓN DE LISTA BLANCA (Desde Excel)
-                const masterAdvisors = ["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr"];
+                const masterAdvisors = [
+                    "alberto.bustos.ortega@mep.go.cr",
+                    "rodolfo.juarez.perez@mep.go.cr",
+                    "yorleny.monge.monge@mep.go.cr"
+                ];
                 const isMaster = masterAdvisors.includes(email.toLowerCase());
 
                 let excelData = {};
@@ -3247,10 +3251,16 @@
                     excelData = excelSnap.data();
                 } else {
                     // Datos por defecto para asesores si no están en el Excel
+                    let nombreAsesor = "Asesor Nacional";
+                    if (email.toLowerCase().includes("alberto")) nombreAsesor = "Alberto Bustos Ortega";
+                    if (email.toLowerCase().includes("rodolfo")) nombreAsesor = "Rodolfo Juárez Pérez";
+                    if (email.toLowerCase().includes("yorleny")) nombreAsesor = "Yorleny Monge Monge";
+
                     excelData = {
                         rol: "admin",
-                        nombre: email.toLowerCase().includes("alberto") ? "Alberto Bustos Ortega" : "Rodolfo Juárez Pérez",
-                        institucion: "Asesoría Regional"
+                        nombre: nombreAsesor,
+                        institucion: "Asesoría Nacional PNFT",
+                        asesor_asignado: "Sede Central PNFT"
                     };
                 }
                 const finalData = {
@@ -3281,9 +3291,10 @@
                         if (existingSnap.exists() && existingSnap.data().rol) {
                             data.rol = existingSnap.data().rol;
                         }
-                        // Forzar admin si es master
-                        if (["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr"].includes(email.toLowerCase())) {
+                        // Forzar admin y cargo nacional si es master
+                        if (["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr", "yorleny.monge.monge@mep.go.cr"].includes(email.toLowerCase())) {
                             data.rol = "admin";
+                            data.institucion = "Asesoría Nacional PNFT";
                         }
 
                         await guardarFicha(loginRes.user.uid, data);
@@ -3910,10 +3921,15 @@
                     if (snap.exists()) {
                         window.currentUserData = snap.data();
 
-                        // FORZAR ROL ADMIN SI ES ASESOR (Máxima Seguridad)
-                        const admins = ["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr"];
+                        // FORZAR ROL ADMIN Y ETIQUETADO NACIONAL (Máxima Seguridad)
+                        const admins = [
+                            "alberto.bustos.ortega@mep.go.cr",
+                            "rodolfo.juarez.perez@mep.go.cr",
+                            "yorleny.monge.monge@mep.go.cr"
+                        ];
                         if (admins.includes(user.email.toLowerCase())) {
                             window.currentUserData.rol = 'admin';
+                            window.currentUserData.institucion = "Asesoría Nacional PNFT";
                         }
 
                         console.log("Datos de usuario cargados:", window.currentUserData.nombre);
