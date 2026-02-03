@@ -1497,8 +1497,12 @@
                     el.classList.toggle('border-transparent', id !== asesor);
                 }
             });
-            // Re-renderizar instituciones con el filtro
-            window.mostrarInstituciones(asesor);
+            window.currentAsesorFilter = asesor;
+            if (!document.getElementById('admin-usuarios-list').classList.contains('hidden')) {
+                window.listarUsuarios(asesor);
+            } else {
+                window.mostrarInstituciones(asesor);
+            }
         };
 
         window.switchLevelTab = (level) => {
@@ -2438,7 +2442,7 @@
                                 actualizadoEn: serverTimestamp()
                             };
 
-                            await setDoc(doc(db, "registro_usuarios", email), userData, { merge: true });
+                            await setDoc(doc(db, "registro_usuarios", emailValue), userData, { merge: true });
 
                             if (userData.institucion !== "Sin Institución") {
                                 const instSlug = userData.institucion.toLowerCase().replace(/[^a-z0-9]/g, '_');
@@ -2476,6 +2480,7 @@
                     input.value = "";
                     if (window.listarUsuarios && !document.getElementById('admin-usuarios-list').classList.contains('hidden')) window.listarUsuarios();
                     if (window.mostrarInstituciones) window.mostrarInstituciones();
+                    if (window.updateAdminChart) window.updateAdminChart();
 
                 } catch (err) {
                     console.error("Error en Excel:", err);
@@ -2555,6 +2560,7 @@
                                             <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">DR: ${inst.regional || 'N/A'}</span>
                                             <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">Circuito: ${inst.circuito || 'N/A'}</span>
                                             <span class="text-[9px] font-black text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100 uppercase tracking-widest">Presup: ${inst.codigo_presupuestario || 'N/A'}</span>
+                                            <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">Asesor: ${inst.asesor || 'No asignado'}</span>
                                         </div>
                                         <div class="flex gap-4 mt-3">
                                             <div class="flex items-center gap-1.5 opacity-60">
@@ -3108,7 +3114,8 @@
         };
 
 
-        window.listarUsuarios = async () => {
+        window.listarUsuarios = async (filtroAsesor = window.currentAsesorFilter) => {
+            window.currentAsesorFilter = filtroAsesor;
             const listInstituciones = document.getElementById('admin-instituciones-list');
             const listUsuarios = document.getElementById('admin-usuarios-list');
             const sectionBitacora = document.getElementById('admin-bitacora-section');
@@ -3125,6 +3132,13 @@
                 let html = "";
                 snap.forEach(doc => {
                     const u = doc.data();
+
+                    // APLICAR FILTRO DE ASESOR SI EXISTE
+                    if (window.currentAsesorFilter !== 'todos') {
+                        const asesorLower = String(u.asesor_asignado || "").toLowerCase();
+                        if (!asesorLower.includes(window.currentAsesorFilter)) return;
+                    }
+
                     const rolColor = u.rol === 'admin' ? 'bg-amber-500 text-white' : 'bg-teal-50 text-teal-600';
                     html += `
                         <div class="p-6 bg-white rounded-3xl border border-slate-100 flex justify-between items-center hover:shadow-md transition-all">
@@ -3133,9 +3147,12 @@
                                 <div>
                                     <h5 class="font-black text-slate-800 text-sm uppercase">${u.nombre}</h5>
                                     <p class="text-[10px] text-slate-500 font-medium">${u.email} | Cédula: ${u.cedula || 'N/A'}</p>
-                                    <div class="flex gap-2 mt-1">
+                                    <div class="flex gap-2 mt-1 flex-wrap">
                                         <span class="text-[9px] font-black text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100 uppercase tracking-widest">${u.institucion || 'Sin Institución'}</span>
                                         <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">Saber: ${u.codigo_saber || 'N/A'}</span>
+                                        <span class="text-[9px] font-black ${String(u.asesor_asignado || "").toLowerCase().includes('alberto') ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-purple-50 text-purple-600 border-purple-100'} px-2 py-0.5 rounded-full border uppercase tracking-widest">Asesor: ${u.asesor_asignado || 'N/A'}</span>
+                                        <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">${u.regional || 'Reg: N/A'}</span>
+                                        <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">Circ: ${u.circuito || 'N/A'}</span>
                                     </div>
                                 </div>
                             </div>
