@@ -2380,26 +2380,32 @@
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
                     const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const json = XLSX.utils.sheet_to_json(sheet);
+                    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                    if (rows.length === 0) throw new Error("El archivo está vacío");
 
-                    if (json.length === 0) throw new Error("El archivo está vacío");
+                    // 1. BUSCAR LA FILA DE ENCABEZADOS (la primera que tenga 'correo' o 'docente')
+                    const headerRowIndex = rows.findIndex(row =>
+                        row.some(cell => String(cell || "").toLowerCase().includes("correo"))
+                    );
 
-                    // 1. OBTENER ENCABEZADOS DE FORMA ROBUSTA (Leyendo la primera fila de la hoja)
-                    const range = XLSX.utils.decode_range(sheet['!ref']);
-                    const headers = [];
-                    for (let C = range.s.c; C <= range.e.c; ++C) {
-                        const cell = sheet[XLSX.utils.encode_cell({ r: range.s.r, c: C })];
-                        if (cell && cell.v) headers.push(String(cell.v).toLowerCase().trim());
+                    if (headerRowIndex === -1) {
+                        throw new Error("No se detectó la columna 'Correo del docente'. Verifique los encabezados.");
                     }
 
+                    const rawHeaders = rows[headerRowIndex];
+                    const headers = rawHeaders.map(h => String(h || "").toLowerCase().trim());
+
+                    // Re-procesar el JSON desde esa fila específica
+                    const json = XLSX.utils.sheet_to_json(sheet, { range: headerRowIndex });
+
                     const required = [
-                        { key: "correo del docente", name: "Correo del docente" },
+                        { key: "correo", name: "Correo del docente" },
                         { key: "cédula", name: "Cédula" },
-                        { key: "centro_educativo", name: "CENTRO_EDUCATIVO" },
-                        { key: "nombre del asesor", name: "Nombre del Asesor" }
+                        { key: "centro", name: "CENTRO_EDUCATIVO" },
+                        { key: "asesor", name: "Nombre del Asesor" }
                     ];
 
-                    const missing = required.filter(req => !headers.includes(req.key));
+                    const missing = required.filter(req => !headers.some(h => h.includes(req.key)));
 
                     if (missing.length > 0) {
                         throw new Error(`Faltan columnas obligatorias: ${missing.map(m => m.name).join(", ")}`);
@@ -2417,10 +2423,12 @@
 
                         const row = json[i];
                         try {
-                            // Mapeo flexible de campos buscando por nombre normalizado
-                            const getVal = (row, keys) => {
-                                const found = Object.keys(row).find(k => keys.includes(k.toLowerCase().trim()));
-                                return found ? row[found] : "";
+                            // Mapeo flexible: busca llaves que contengan las palabras clave
+                            const getVal = (r, searchKeys) => {
+                                const foundKey = Object.keys(r).find(k =>
+                                    searchKeys.some(sk => k.toLowerCase().trim().includes(sk))
+                                );
+                                return foundKey ? r[foundKey] : "";
                             };
 
                             const emailValue = getVal(row, ["correo del docente", "correo mep", "email", "correo"]).toLowerCase().trim();
