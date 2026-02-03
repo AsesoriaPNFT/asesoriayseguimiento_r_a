@@ -1953,9 +1953,9 @@
                         ${modulos.map((m, idx) => `<option value="${idx}">${m.n}</option>`).join('')}
                     </select>
                 </div>
-                <div class="group">
+                <div class="group col-span-full">
                     <label class="block text-xs font-black text-[#025964] uppercase tracking-widest mb-3 ml-1">Saberes a vincular</label>
-                    <div id="ia-saberes-list" class="flex flex-wrap gap-2 max-h-[150px] overflow-y-auto p-2 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div id="ia-saberes-list" class="grid grid-cols-1 gap-2 max-h-[250px] overflow-y-auto p-4 bg-slate-50/50 rounded-2xl border border-slate-100 shadow-inner">
                         <!-- Saberes appear here -->
                     </div>
                 </div>
@@ -1966,15 +1966,38 @@
         window.updateIASaberes = () => {
             const nivel = document.getElementById('ia-nivel').value;
             const moduloIdx = document.getElementById('ia-modulo').value;
+            if (!window.SABERES_DATA[nivel] || !window.SABERES_DATA[nivel].modulos[moduloIdx]) return;
+
             const saberes = window.SABERES_DATA[nivel].modulos[moduloIdx].s;
             const list = document.getElementById('ia-saberes-list');
 
-            list.innerHTML = saberes.map(s => `
-                <label class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-slate-100 cursor-pointer hover:border-[#025964]/30 transition-all text-[11px] font-bold text-slate-600">
-                    <input type="checkbox" name="ia-saber" value="${s}" class="accent-[#025964]">
-                    ${s}
-                </label>
-            `).join('');
+            // Agrupar por Área de Conocimiento
+            const grouped = {};
+            saberes.forEach(s => {
+                const area = s.a || 'General';
+                if (!grouped[area]) grouped[area] = [];
+                grouped[area].push(s.n);
+            });
+
+            let html = "";
+            for (const area in grouped) {
+                html += `
+                    <div class="col-span-full mt-6 mb-3 first:mt-0">
+                        <p class="text-[9px] font-black text-teal-600 uppercase tracking-widest flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-teal-500"></span> ${area}
+                        </p>
+                    </div>
+                    <div class="col-span-full grid grid-cols-2 md:grid-cols-3 gap-3">
+                        ${grouped[area].map(name => `
+                            <label class="flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl border border-slate-100 cursor-pointer hover:border-teal-500/30 transition-all text-[10px] font-bold text-slate-600 shadow-sm hover:shadow-md group">
+                                <input type="checkbox" name="ia-saber" value="${name}" class="w-4 h-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500 transition-all cursor-pointer">
+                                <span class="group-hover:text-[#025964] transition-colors">${name}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            list.innerHTML = html || '<p class="text-center text-slate-400 py-10 font-bold italic">No hay saberes disponibles.</p>';
         };
 
 
@@ -2303,29 +2326,47 @@
 
                     for (const row of json) {
                         try {
-                            const email = (row["Correo MEP"] || row.Email || row.email || "").toLowerCase().trim();
+                            // Mapeo detallado de los 15 campos solicitados (Total: 15)
+                            const email = (row["Correo del docente"] || row["Correo MEP"] || row.email || "").toLowerCase().trim();
                             if (!email) continue;
 
                             const userData = {
-                                nombre: row["Nombre del Docente"] || row.Nombre || row.nombre || "Sin Nombre",
-                                cedula: String(row["Cédula"] || row.cedula || row.Cedula || ""),
+                                nombre: row["Docents de IE"] || row["Nombre del Docente"] || row.nombre || "Sin Nombre",
+                                cedula: String(row["Cédula"] || row.cedula || ""),
                                 email: email,
-                                institucion: row["Institución"] || row.institucion || row.Institucion || "Sin Institución",
-                                codigo_saber: String(row["Código Saber"] || row.codigo_saber || ""),
-                                codigo_presupuestario: String(row["Código Presupuestario"] || row.codigo_presupuestario || ""),
+                                celular: String(row["Celular"] || ""),
+                                institucion: row["CENTRO_EDUCATIVO"] || row["Institución"] || "Sin Institución",
+                                codigo_saber: String(row["CODSABER"] || row["Código Saber"] || ""),
+                                codigo_presupuestario: String(row["Código Presupuestario"] || ""),
+                                correo_institucional: (row["Correo institucional"] || "").toLowerCase().trim(),
+                                regional: row["REGIONAL"] || "",
+                                circuito: row["CIRCUITO"] || "",
+                                dimension_2025: row["Dimensión 2025"] || "",
+                                equipo_pronie: row["Equipo PRONIE (según inventario FOD)"] || "",
+                                programa_3_sutel: row["Entregado programa 3 (Según inventario SUTEL)"] || "",
+                                formacion_tecnologica: row["Formación Tecnológica"] || "",
+                                plan_nacional: row["Plan Nacional"] || "",
                                 rol: "docente",
-                                registradoVia: "excel_v3",
-                                creadoEn: serverTimestamp()
+                                registradoVia: "excel_v2026_full",
+                                actualizadoEn: serverTimestamp()
                             };
 
+                            // Guardar/Actualizar Docente
                             await setDoc(doc(db, "registro_usuarios", email), userData, { merge: true });
 
+                            // Actualizar/Crear Institución con metadata técnica extendida
                             if (userData.institucion !== "Sin Institución") {
                                 const instSlug = userData.institucion.toLowerCase().replace(/[^a-z0-9]/g, '_');
                                 await setDoc(doc(db, "status_instituciones", instSlug), {
                                     nombre: userData.institucion,
+                                    regional: userData.regional,
+                                    circuito: userData.circuito,
+                                    correo_institucional: userData.correo_institucional,
+                                    codigo_presupuestario: userData.codigo_presupuestario,
+                                    equipo_pronie: userData.equipo_pronie,
+                                    programa_3_sutel: userData.programa_3_sutel,
                                     actualizado: new Date().toLocaleDateString('es-CR'),
-                                    categoria: "CONTINUIDAD"
+                                    categoria: row["Prioridad"] || "CONTINUIDAD"
                                 }, { merge: true });
                             }
                             creados++;
@@ -2398,9 +2439,21 @@
                                     <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-[#025964] shadow-sm font-black text-[10px] border border-slate-100 uppercase tracking-tighter">000${instId.length}</div>
                                     <div>
                                         <h5 class="font-black text-slate-800 uppercase text-sm">${inst.nombre}</h5>
-                                        <div class="flex gap-2 mt-1">
+                                        <div class="flex flex-wrap gap-2 mt-2">
                                             <span class="text-[9px] font-black px-2 py-0.5 rounded-full border uppercase tracking-widest ${catColor}">${categoria}</span>
-                                            <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">ID: ${instId.toUpperCase().substring(0, 4)}</span>
+                                            <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">DR: ${inst.regional || 'N/A'}</span>
+                                            <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">Circuito: ${inst.circuito || 'N/A'}</span>
+                                            <span class="text-[9px] font-black text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100 uppercase tracking-widest">Presup: ${inst.codigo_presupuestario || 'N/A'}</span>
+                                        </div>
+                                        <div class="flex gap-4 mt-3">
+                                            <div class="flex items-center gap-1.5 opacity-60">
+                                                <i class="ph ph-laptop text-[10px] text-slate-400"></i>
+                                                <span class="text-[8px] font-black text-slate-400 uppercase">FOD: ${inst.equipo_pronie || 'Pendiente'}</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5 opacity-60">
+                                                <i class="ph ph-broadcast text-[10px] text-slate-400"></i>
+                                                <span class="text-[8px] font-black text-slate-400 uppercase">SUTEL: ${inst.programa_3_sutel || 'Pendiente'}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -2444,12 +2497,18 @@
             if (nNombre === null) return;
             const nCat = prompt("Categoría (URGENTE, PRIORITARIO, CONTINUIDAD):", inst.categoria);
             if (nCat === null) return;
+            const nReg = prompt("Regional:", inst.regional || "");
+            if (nReg === null) return;
+            const nCir = prompt("Circuito:", inst.circuito || "");
+            if (nCir === null) return;
             const nNota = prompt("Nota de seguimiento:", inst.nota_seguimiento || "");
             if (nNota === null) return;
 
             await setDoc(doc(db, "status_instituciones", id), {
                 nombre: nNombre,
                 categoria: nCat.toUpperCase(),
+                regional: nReg,
+                circuito: nCir,
                 nota_seguimiento: nNota,
                 actualizado: new Date().toLocaleDateString('es-CR')
             }, { merge: true });
@@ -2468,6 +2527,10 @@
             if (!nombre) return;
             const cat = prompt("Prioridad (URGENTE, PRIORITARIO, CONTINUIDAD):", "CONTINUIDAD");
             if (!cat) return;
+            const reg = prompt("Regional:", "");
+            if (reg === null) return;
+            const cir = prompt("Circuito:", "");
+            if (cir === null) return;
 
             const instSlug = nombre.toLowerCase().replace(/[^a-z0-9]/g, '_');
             const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
@@ -2475,6 +2538,8 @@
             await setDoc(doc(db, "status_instituciones", instSlug), {
                 nombre: nombre,
                 categoria: cat.toUpperCase(),
+                regional: reg,
+                circuito: cir,
                 actualizado: new Date().toLocaleDateString('es-CR'),
                 nota_seguimiento: "Institución creada manualmente"
             }, { merge: true });
@@ -2946,8 +3011,11 @@
                                 <div class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 font-black text-lg">${u.nombre.charAt(0)}</div>
                                 <div>
                                     <h5 class="font-black text-slate-800 text-sm uppercase">${u.nombre}</h5>
-                                    <p class="text-[10px] text-slate-500 font-medium">${u.email} | Cód: ${u.codigo}</p>
-                                    <p class="text-[9px] text-[#025964] font-black uppercase mt-1">Clave: <span class="bg-slate-100 px-2 py-0.5 rounded tracking-widest">${u.password || 'Sin dato'}</span></p>
+                                    <p class="text-[10px] text-slate-500 font-medium">${u.email} | Cédula: ${u.cedula || 'N/A'}</p>
+                                    <div class="flex gap-2 mt-1">
+                                        <span class="text-[9px] font-black text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100 uppercase tracking-widest">${u.institucion || 'Sin Institución'}</span>
+                                        <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">Saber: ${u.codigo_saber || 'N/A'}</span>
+                                    </div>
                                 </div>
                             </div>
                                 <span class="text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-transparent ${rolColor}">${u.rol || 'docente'}</span>
@@ -2992,22 +3060,26 @@
                 const nNombre = prompt("Nombre completo del docente:", u.nombre);
                 if (nNombre === null) return;
 
-                const nCodigo = prompt("Código Institucional (4 dígitos):", u.codigo);
-                if (nCodigo === null) return;
+                const nCedula = prompt("Cédula:", u.cedula || "");
+                if (nCedula === null) return;
 
-                let nRol = prompt("Rol del usuario - Escriba 'admin' para darle permisos totales o 'docente' para nivel normal:", u.rol || "docente");
+                const nSaber = prompt("Código Saber:", u.codigo_saber || "");
+                if (nSaber === null) return;
+
+                let nRol = prompt("Rol (admin/docente):", u.rol || "docente");
                 if (nRol === null) return;
 
                 nRol = nRol.toLowerCase().trim();
                 if (nRol !== 'admin' && nRol !== 'docente') {
-                    alert("⚠️ Rol no válido. Por favor use 'admin' o 'docente'.");
+                    alert("⚠️ Rol no válido.");
                     return;
                 }
 
                 msg("⏳ Actualizando perfil...", "normal");
                 await setDoc(doc(db, "registro_usuarios", uid), {
                     nombre: nNombre,
-                    codigo: nCodigo,
+                    cedula: nCedula,
+                    codigo_saber: nSaber,
                     rol: nRol
                 }, { merge: true });
 
