@@ -3803,6 +3803,7 @@
                     // El usuario ya está autenticado aquí.
 
                     // 2. Obtener datos de registro
+                    const snap = await getDoc(doc(db, "registro_usuarios", user.uid));
                     if (snap.exists()) {
                         window.currentUserData = snap.data();
 
