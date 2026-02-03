@@ -2143,8 +2143,17 @@
                 });
                 galeria.innerHTML = html;
             } catch (e) {
-                console.error(e);
-                galeria.innerHTML = `<p class="col-span-full text-center text-rose-500 font-bold py-10">Error al cargar recursos: ${e.message}</p>`;
+                console.error("Error al cargar recursos:", e);
+                const isIndexError = e.message.includes("requires an index");
+                galeria.innerHTML = `
+                    <div class="col-span-full py-20 bg-rose-50 rounded-[2rem] border-2 border-dashed border-rose-200 flex flex-col items-center px-8 text-center">
+                        <i class="ph ph-warning-circle text-5xl text-rose-400 mb-4"></i>
+                        <h5 class="text-sm font-black text-rose-600 uppercase mb-2">Se requiere configuración de base de datos</h5>
+                        <p class="text-[10px] font-bold text-rose-500 max-w-sm leading-relaxed">
+                            ${isIndexError ? 'Firebase está preparando el índice de búsqueda. Por favor, <b>haz clic en el enlace azul</b> que aparece en la consola del navegador para activarlo automáticamente.' : 'Error al conectar con la base de datos.'}
+                        </p>
+                    </div>
+                `;
             }
         };
 
