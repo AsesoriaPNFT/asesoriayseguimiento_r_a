@@ -12,6 +12,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- Forzar actualización del navegador -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
 
@@ -390,6 +395,10 @@
                     </div>
                 </div>
                 <div class="flex flex-col gap-2">
+                    <button onclick="location.reload(true)"
+                        class="w-full flex items-center justify-center gap-2 text-xs font-black text-teal-600 hover:bg-teal-50 py-2 rounded-xl transition-colors border border-teal-100 uppercase mb-2">
+                        <i class="ph-bold ph-arrow-clockwise"></i> Actualizar Versión
+                    </button>
                     <button onclick="logout()"
                         class="w-full flex items-center justify-center gap-2 text-xs font-black text-rose-500 hover:bg-rose-50 py-2 rounded-xl transition-colors border border-rose-100 uppercase">
                         <i class="ph-bold ph-sign-out"></i> Cerrar Sesión
@@ -1367,6 +1376,17 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+
+                                <!-- Barra de Búsqueda Global (Usuarios/Instituciones) -->
+                                <div id="admin-search-container" class="mb-6 relative group">
+                                    <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#025964] transition-colors">
+                                        <i class="ph-bold ph-magnifying-glass text-lg"></i>
+                                    </div>
+                                    <input type="text" id="admin-search-input" 
+                                        class="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 pl-14 pr-6 text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-[#025964]/5 focus:border-[#025964]/20 transition-all shadow-sm"
+                                        placeholder="Buscar por nombre, correo, regional o centro educativo..."
+                                        onkeyup="window.ejecutarBusquedaAdmin()">
                                 </div>
 
                                 <div id="admin-instituciones-container" class="space-y-4 max-h-[600px] overflow-y-auto pr-2 no-scrollbar">
@@ -2408,6 +2428,10 @@
                 else if (window.currentUserData?.rol === 'admin') asesorNombre = "Asesoría Regional";
                 else asesorNombre = window.currentUserData?.asesor || "Producciones Generales";
 
+                // Sanitización extra: Si el nombre es N/A o vacío, usar General
+                if (!asesorNombre || asesorNombre === "N/A") asesorNombre = "Asesoría General";
+                asesorNombre = asesorNombre.replace(/[^a-z0-9 ]/gi, '').trim();
+
                 console.log("Asesor mapeado:", asesorNombre);
 
                 const safeName = file.name.replace(/[^a-z0-9.]/gi, '_').toLowerCase();
@@ -2727,26 +2751,26 @@
                                 return foundKey ? r[foundKey] : "";
                             };
 
-                            const emailValue = getVal(row, ["correo del docente", "correo mep", "email", "correo"]).toLowerCase().trim();
+                            const emailValue = getVal(row, ["correo del docente", "correo mep", "email", "correo", "e-mail", "contacto"]).toLowerCase().trim();
                             if (!emailValue) { errores++; continue; }
 
                             const userData = {
-                                nombre: getVal(row, ["docents de ie", "nombre del docente", "docente", "nombre"]) || "Sin Nombre",
-                                cedula: String(getVal(row, ["cédula", "cedula"]) || ""),
+                                nombre: getVal(row, ["docents de ie", "nombre del docente", "docente", "nombre", "funcionario", "nombre completo"]) || "Sin Nombre",
+                                cedula: String(getVal(row, ["cédula", "cedula", "id", "identificacion", "identificación", "cédula de identidad"]) || ""),
                                 email: emailValue,
-                                celular: String(getVal(row, ["celular", "teléfono", "telefono"]) || ""),
-                                institucion: getVal(row, ["centro_educativo", "centro educativo", "institución", "institucion"]) || "Sin Institución",
-                                codigo_saber: String(getVal(row, ["codsaber", "saber"]) || ""),
-                                codigo_presupuestario: String(getVal(row, ["código presupuestario", "codigo presupuestario", "presupuestario"]) || ""),
-                                correo_institucional: getVal(row, ["correo institucional", "email institucional"]).toLowerCase().trim(),
-                                regional: getVal(row, ["regional", "regional", "dirección regional"]),
-                                circuito: getVal(row, ["circuito"]),
+                                celular: String(getVal(row, ["celular", "teléfono", "telefono", "móvil", "movil", "contacto teléfono"]) || ""),
+                                institucion: getVal(row, ["centro_educativo", "centro educativo", "institución", "institucion", "centro", "nombre de la institución", "escuela", "colegio"]) || "Sin Institución",
+                                codigo_saber: String(getVal(row, ["codsaber", "saber", "código de saber", "codigo saber"]) || ""),
+                                codigo_presupuestario: String(getVal(row, ["código presupuestario", "codigo presupuestario", "presupuestario", "código centro", "codigo centro"]) || ""),
+                                correo_institucional: getVal(row, ["correo institucional", "email institucional", "correo centro"]).toLowerCase().trim(),
+                                regional: getVal(row, ["regional", "dirección regional", "dre", "region", "región"]),
+                                circuito: getVal(row, ["circuito", "p_circuito", "circ", "número de circuito"]),
                                 dimension_2025: getVal(row, ["dimensión 2025", "dimension 2025"]),
-                                equipo_pronie: getVal(row, ["equipo pronie (según inventario fod)", "equipo pronie", "fod"]),
-                                programa_3_sutel: getVal(row, ["entregado programa 3 (según inventario sutel)", "sutel", "programa 3"]),
-                                formacion_tecnologica: getVal(row, ["formación tecnológica", "formacion tecnologica"]),
-                                plan_nacional: getVal(row, ["plan nacional"]),
-                                asesor_asignado: getVal(row, ["nombre del asesor", "asesor asignado", "asesor"]),
+                                equipo_pronie: getVal(row, ["equipo pronie (según inventario fod)", "equipo pronie", "fod", "computadoras", "equipo"]),
+                                programa_3_sutel: getVal(row, ["entregado programa 3 (según inventario sutel)", "sutel", "programa 3", "conectividad"]),
+                                formacion_tecnologica: getVal(row, ["formación tecnológica", "formacion tecnologica", "formacion"]),
+                                plan_nacional: getVal(row, ["plan nacional", "pnft"]),
+                                asesor_asignado: getVal(row, ["nombre del asesor", "asesor asignado", "asesor", "asesor pnft"]),
                                 rol: "docente",
                                 registradoVia: "excel_v2026_ctrl",
                                 actualizadoEn: serverTimestamp()
@@ -2806,6 +2830,7 @@
 
         window.currentAsesorFilter = 'todos';
         window.mostrarInstituciones = async (filtroAsesor = window.currentAsesorFilter) => {
+            document.getElementById('admin-search-input').value = ""; // Limpiar búsqueda
             window.currentAsesorFilter = filtroAsesor;
             const listInstituciones = document.getElementById('admin-instituciones-list');
             const listUsuarios = document.getElementById('admin-usuarios-list');
@@ -2858,7 +2883,8 @@
                             'text-teal-600 bg-teal-50 border-teal-100';
 
                     html += `
-                        <div class="p-6 bg-white rounded-3xl border border-slate-100 hover:border-[#025964]/20 transition-all group shadow-sm">
+                        <div class="p-6 bg-white rounded-3xl border border-slate-100 hover:border-[#025964]/20 transition-all group shadow-sm searchable-item" 
+                             data-search="${(inst.nombre + " " + (inst.asesor || "") + " " + (inst.regional || "") + " " + (inst.circuito || "")).toLowerCase()}">
                             <div class="flex justify-between items-start mb-6">
                                 <div class="flex items-center gap-4">
                                     <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-[#025964] shadow-sm font-black text-[10px] border border-slate-100 uppercase tracking-tighter">000${instId.length}</div>
@@ -3232,7 +3258,8 @@
                     ...excelData, // Priorizar datos técnicos del Excel
                     telefono: data.telefono, // Mantener el del formulario
                     nombre: data.nombre || excelData.nombre,
-                    fecha_registro: serverTimestamp()
+                    fecha_registro: serverTimestamp(),
+                    perfil_completo: true // Marca para el panel de admin
                 };
 
                 msg("⏳ Registrando cuenta...", "normal");
@@ -3445,7 +3472,22 @@
         };
 
 
+        window.ejecutarBusquedaAdmin = () => {
+            const query = document.getElementById('admin-search-input').value.toLowerCase().trim();
+            const items = document.querySelectorAll('.searchable-item');
+
+            items.forEach(item => {
+                const text = item.getAttribute('data-search') || "";
+                if (text.includes(query)) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        };
+
         window.listarUsuarios = async (filtroAsesor = window.currentAsesorFilter) => {
+            document.getElementById('admin-search-input').value = ""; // Limpiar búsqueda al cambiar
             window.currentAsesorFilter = filtroAsesor;
             const listInstituciones = document.getElementById('admin-instituciones-list');
             const listUsuarios = document.getElementById('admin-usuarios-list');
@@ -3475,12 +3517,18 @@
                     }
 
                     const rolColor = u.rol === 'admin' ? 'bg-amber-500 text-white' : 'bg-teal-50 text-teal-600';
+                    const esCompleto = u.perfil_completo || u.rol === 'admin';
+
                     html += `
-                        <div class="p-6 bg-white rounded-3xl border border-slate-100 flex justify-between items-center hover:shadow-md transition-all">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 font-black text-lg">${u.nombre.charAt(0)}</div>
+                        <div class="p-6 bg-white rounded-3xl border border-slate-100 flex flex-wrap justify-between items-center hover:shadow-md transition-all gap-4 searchable-item"
+                             data-search="${(u.nombre + " " + u.email + " " + (u.institucion || "") + " " + (u.regional || "")).toLowerCase()}">
+                            <div class="flex items-center gap-4 min-w-[300px]">
+                                <div class="w-12 h-12 ${esCompleto ? 'bg-slate-100 text-slate-400' : 'bg-rose-50 text-rose-400'} rounded-2xl flex items-center justify-center font-black text-lg">${u.nombre.charAt(0)}</div>
                                 <div>
-                                    <h5 class="font-black text-slate-800 text-sm uppercase">${u.nombre}</h5>
+                                    <h5 class="font-black text-slate-800 text-sm uppercase flex items-center gap-2">
+                                        ${u.nombre}
+                                        ${!esCompleto ? '<span class="text-[7px] bg-rose-500 text-white px-1.5 py-0.5 rounded-md animate-pulse">CUENTA PENDIENTE</span>' : ''}
+                                    </h5>
                                     <p class="text-[10px] text-slate-500 font-medium">${u.email} | Cédula: ${u.cedula || 'N/A'}</p>
                                     <div class="flex gap-2 mt-1 flex-wrap">
                                         <span class="text-[9px] font-black text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100 uppercase tracking-widest">${u.institucion || 'Sin Institución'}</span>
@@ -3491,6 +3539,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="flex items-center gap-4">
                                 <span class="text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-transparent ${rolColor}">${u.rol || 'docente'}</span>
                                 <div class="flex items-center gap-1">
                                     <button onclick="window.verActividadDocente('${doc.id}', '${u.nombre}')" title="Ver Historial de Actividad" class="w-8 h-8 bg-[#025964]/10 rounded-lg flex items-center justify-center text-[#025964] hover:bg-[#025964] hover:text-white transition-all"><i class="ph-bold ph-calendar-check"></i></button>
@@ -3649,11 +3698,26 @@
             }
             catch (e) {
                 console.error("Login Error:", e);
-                // Mapeo de errores comunes para el usuario
-                if (e.code === 'auth/invalid-credential' || e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password') {
-                    msg("⛔ Datos incorrectos. Verifique su correo y clave.", "err");
+                const errorCode = e.code;
+
+                if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/user-not-found' || errorCode === 'auth/wrong-password') {
+                    // VERIFICAR SI ESTÁ AUTORIZADO PERO NO REGISTRADO
+                    try {
+                        const preAuthRef = doc(db, "registro_usuarios", email);
+                        const preAuthSnap = await getDoc(preAuthRef);
+
+                        if (preAuthSnap.exists()) {
+                            msg("⭐ ¡Tu correo está autorizado! Pero aún no has creado tu contraseña. Por favor, ve a la pestaña REGISTRO.", "normal");
+                            // Opcionalmente cambiar de pestaña
+                            setTimeout(() => window.switchAuthTab('register'), 3000);
+                        } else {
+                            msg("⛔ Credenciales incorrectas o usuario no autorizado.", "err");
+                        }
+                    } catch (checkErr) {
+                        msg("⛔ Datos incorrectos. Verifique su correo y clave.", "err");
+                    }
                 } else {
-                    msg("⛔ Error de acceso: " + e.code, "err");
+                    msg("⛔ Error de acceso: " + errorCode, "err");
                 }
             }
         };
