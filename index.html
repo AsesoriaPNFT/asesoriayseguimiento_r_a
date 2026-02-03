@@ -1186,11 +1186,11 @@
                                 <canvas id="adminChart" class="w-full"></canvas>
                                 <div class="mt-8 grid grid-cols-2 gap-4">
                                     <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                        <p class="text-2xl font-black text-slate-800">48</p>
+                                        <p class="text-2xl font-black text-slate-800" id="admin-stat-instituciones">0</p>
                                         <p class="text-[10px] font-black uppercase text-slate-400">Inst. Activas</p>
                                     </div>
                                     <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                        <p class="text-2xl font-black text-slate-800">124</p>
+                                        <p class="text-2xl font-black text-slate-800" id="admin-stat-docentes">0</p>
                                         <p class="text-[10px] font-black uppercase text-slate-400">Docentes</p>
                                     </div>
                                 </div>
@@ -1344,6 +1344,9 @@
                     window.updateAdminChart();
                     window.toggleAdminPDFButton();
                     window.mostrarInstituciones();
+                    // Limpiar estado de progreso si existe
+                    const progressContainer = document.getElementById('excel-progress-container');
+                    if (progressContainer) progressContainer.classList.add('hidden');
                 }, 100);
             }
         };
@@ -2367,6 +2370,7 @@
             progressText.innerText = "Iniciando proceso...";
             detailText.innerText = "Leyendo archivo Excel...";
 
+            const reader = new FileReader();
             reader.onload = async (e) => {
                 try {
                     const data = new Uint8Array(e.target.result);
@@ -3070,11 +3074,20 @@
                 });
 
                 // Si no hay datos aún, usar placeholders
-                if (snap.empty) { u = 5; p = 15; c = 30; }
+                if (snap.empty) { u = 0; p = 0; c = 0; }
+
+                // Actualizar números de estadísticas
+                const statInst = document.getElementById('admin-stat-instituciones');
+                const statDocs = document.getElementById('admin-stat-docentes');
+                if (statInst) statInst.innerText = snap.size;
+
+                // Para los docentes, necesitamos contar la otra colección
+                const snapUsers = await getDocs(collection(db, "registro_usuarios"));
+                if (statDocs) statDocs.innerText = snapUsers.size;
 
                 const chart = Chart.getChart("adminChart");
                 if (chart) {
-                    chart.data.datasets[0].data = [c, p, u];
+                    chart.data.datasets[0].data = [c || 1, p || 0, u || 0];
                     chart.update();
                 }
             } catch (e) { console.error(e); }
