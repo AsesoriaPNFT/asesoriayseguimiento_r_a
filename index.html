@@ -365,7 +365,7 @@
                         <i class="ph-bold ph-sparkle text-xl"></i> <span>Guía Docente 2026</span>
                     </div>
                     <div onclick="router('foro')" id="nav-foro" class="nav-item text-sm">
-                        <i class="ph-bold ph-globe-hemisphere-west text-xl"></i> <span>Foro Nacional</span>
+                        <i class="ph-bold ph-globe-hemisphere-west text-xl"></i> <span>Foro Docente</span>
                     </div>
                     <div onclick="router('ia')" id="nav-ia" class="nav-item text-sm">
                         <i class="ph-bold ph-magic-wand text-xl"></i> <span>Asesor Virtual</span>
@@ -1045,37 +1045,74 @@
 
 
             } else if (view === 'foro') {
-                title.innerText = "Comunidad PNFT";
+                title.innerText = "Foro Docente";
                 let postsHtml = '';
                 try {
-                    const q = window.query(window.collection(db, "foro_posts"), window.orderBy("fecha", "desc"), window.limit(8));
+                    const q = window.query(window.collection(db, "foro_posts"), window.orderBy("fecha", "desc"), window.limit(15));
                     const querySnapshot = await window.getDocs(q);
                     querySnapshot.forEach((doc) => {
                         const p = doc.data();
                         const date = p.fecha?.toDate().toLocaleDateString() || 'Hoy';
+                        const category = p.categoria || 'General';
                         postsHtml += `
-                            <div class="glass p-8 rounded-3xl mb-6 bg-white border-l-8 border-[#025964] shadow-sm hover:shadow-md transition-shadow">
+                            <div class="glass p-8 rounded-3xl mb-6 bg-white border-l-8 border-[#025964] shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                                <div class="absolute top-0 right-0 p-4 opacity-5 text-[#025964]"><i class="ph ph-chat-circle-dots text-4xl"></i></div>
                                 <div class="flex justify-between items-center mb-4">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 bg-[#f1f8f9] rounded-full flex items-center justify-center text-[#025964] font-black">${p.autor.charAt(0)}</div>
-                                        <span class="font-black text-slate-800 text-sm">${p.autor}</span>
+                                        <div class="w-10 h-10 bg-[#f1f8f9] rounded-2xl flex items-center justify-center text-[#025964] font-black shadow-sm uppercase">${p.autor.charAt(0)}</div>
+                                        <div>
+                                            <span class="font-black text-slate-800 text-sm block leading-none mb-1">${p.autor}</span>
+                                            <span class="text-[8px] font-black bg-teal-50 text-teal-600 px-2 py-0.5 rounded-md border border-teal-100 uppercase tracking-widest">${category}</span>
+                                        </div>
                                     </div>
                                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-full">${date}</span>
                                 </div>
-                                <p class="text-slate-600 font-medium leading-relaxed">${p.mensaje}</p>
+                                <p class="text-slate-600 font-medium leading-relaxed whitespace-pre-wrap">${p.mensaje}</p>
                             </div>`;
                     });
-                } catch (e) { postsHtml = '<p class="text-slate-400 text-center font-bold">Inicia una conversación compartiendo algo arriba.</p>'; }
+                } catch (e) { postsHtml = '<p class="text-slate-400 text-center font-bold">Inicia la conversación compartiendo tus logros o necesidades arriba.</p>'; }
 
                 container.innerHTML = `
                     <div class="fade-in max-w-4xl mx-auto">
-                        <div class="glass p-8 rounded-[2.5rem] mb-12 bg-white relative shadow-xl border border-slate-100 overflow-hidden">
-                            <div class="absolute top-0 right-0 p-8 opacity-5 text-[#025964]"><i class="ph ph-chat-circle-dots text-8xl"></i></div>
-                            <textarea id="foro-msg" class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-6 text-slate-800 text-lg focus:border-[#025964] focus:bg-white outline-none resize-none transition-all placeholder:text-slate-300 font-medium" rows="3" placeholder="¿Qué éxito has tenido hoy en clase? Comparte..."></textarea>
-                            <div class="flex justify-between items-center mt-6">
-                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest pl-2 italic">Foro de experiencias docentes</p>
-                                <button onclick="publicarForo()" class="bg-[#025964] hover:bg-[#008e9b] text-white px-10 py-3 rounded-2xl font-black text-sm transition-all shadow-lg shadow-[#025964]/10 flex items-center gap-3">
-                                    Publicar Experiencia <i class="ph ph-paper-plane-tilt"></i>
+                        <div class="glass p-8 rounded-[2.5rem] mb-12 bg-white relative shadow-xl border border-slate-100">
+                            <h4 class="text-[11px] font-black text-[#025964] uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                                <i class="ph ph-plus-circle text-lg"></i> Publicar en el Foro Docente
+                            </h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div class="space-y-2">
+                                    <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Eje Temático / Categoría</label>
+                                    <select id="foro-categoria" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-xs font-bold text-slate-600 outline-none focus:border-[#025964] focus:bg-white transition-all appearance-none cursor-pointer">
+                                        <optgroup label="Alcance Curricular (Logros)">
+                                            <option value="Corto Plazo (Saberes)">Corto Plazo (Saberes e Indicadores)</option>
+                                            <option value="Mediano Plazo (RdA)">Mediano Plazo (RdA - Resultados)</option>
+                                            <option value="Largo Plazo (Competencias)">Largo Plazo (Perfil de Salida)</option>
+                                        </optgroup>
+                                        <optgroup label="Áreas de Conocimiento PNFT">
+                                            <option value="Apropiación Digital">Apropiación Tecnológica y Digital</option>
+                                            <option value="Programación y Algoritmos">Programación y Algoritmos</option>
+                                            <option value="Computación Física">Computación Física y Robótica</option>
+                                            <option value="Ciencia de Datos e IA">Ciencia de Datos e IA</option>
+                                        </optgroup>
+                                        <optgroup label="Gestión y Tendencias">
+                                            <option value="Recursos y Computadoras">Uso de Equipo y Computadoras</option>
+                                            <option value="Ejecución de Módulos">Desarrollo de Módulos</option>
+                                            <option value="Necesidad Detectada">Necesidad de Apoyo Técnica/Pedagógica</option>
+                                            <option value="Tendencia Educativa">Tendencia o Innovación</option>
+                                        </optgroup>
+                                        <option value="General" selected>Conversación General</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <textarea id="foro-msg" class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-6 text-slate-800 text-sm focus:border-[#025964] focus:bg-white outline-none resize-none transition-all placeholder:text-slate-300 font-medium" rows="3" placeholder="Describe tu experiencia, logro o necesidad pedagógica aquí..."></textarea>
+                            
+                            <div class="flex flex-col md:flex-row justify-between items-center mt-6 gap-4">
+                                <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest leading-relaxed max-w-sm">
+                                    Esta información es utilizada por la asesoría para detectar tendencias y mejorar el acompañamiento docente.
+                                </p>
+                                <button onclick="publicarForo()" class="w-full md:w-auto bg-[#025964] hover:bg-[#008e9b] text-white px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-[#025964]/10 flex items-center justify-center gap-3">
+                                    Enviar al Foro <i class="ph-bold ph-paper-plane-tilt"></i>
                                 </button>
                             </div>
                         </div>
@@ -1221,6 +1258,25 @@
                                             <i class="ph-bold ph-file-xls text-lg"></i>
                                         </button>
                                         <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden" onchange="window.procesarExcel(this)">
+                                    </div>
+                                </div>
+
+                                <!-- UI de Progreso de Excel -->
+                                <div id="excel-progress-container" class="hidden mb-8 p-6 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200 animate-pulse-slow">
+                                    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-10 h-10 bg-[#025964] rounded-2xl flex items-center justify-center text-white shadow-lg shadow-[#025964]/20"><i class="ph-bold ph-spinner-gap animate-spin"></i></div>
+                                            <div>
+                                                <p id="excel-progress-text" class="text-[10px] font-black text-slate-800 uppercase tracking-widest leading-none mb-1">Cargando información...</p>
+                                                <p id="excel-detail-text" class="text-[9px] font-bold text-slate-400 uppercase">Validando registros...</p>
+                                            </div>
+                                        </div>
+                                        <button onclick="window.abortarCargaExcel = true" class="bg-rose-50 text-rose-500 px-5 py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest border border-rose-100 hover:bg-rose-500 hover:text-white transition-all flex items-center gap-2 shadow-sm">
+                                            <i class="ph-bold ph-stop"></i> Detener Carga
+                                        </button>
+                                    </div>
+                                    <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden shadow-inner">
+                                        <div id="excel-progress-bar" class="h-full bg-teal-500 transition-all duration-300 w-0"></div>
                                     </div>
                                 </div>
 
@@ -1438,8 +1494,8 @@
                     el.classList.toggle('border-transparent', id !== asesor);
                 }
             });
-            // Lógica de filtrado real se aplicaría sobre el snapshot de Firebase o los datos del Excel
-            console.log(`Filtrando por asesor: ${asesor}`);
+            // Re-renderizar instituciones con el filtro
+            window.mostrarInstituciones(asesor);
         };
 
         window.switchLevelTab = (level) => {
@@ -1886,12 +1942,14 @@
 
         window.publicarForo = async () => {
             const txt = document.getElementById('foro-msg').value.trim();
+            const cat = document.getElementById('foro-categoria').value;
             if (!txt) return;
             try {
                 await window.addDoc(window.collection(db, "foro_posts"), {
                     autor: window.currentUserData?.nombre || "Docente",
                     uid: auth.currentUser.uid,
                     mensaje: txt,
+                    categoria: cat,
                     fecha: serverTimestamp()
                 });
                 router('foro');
@@ -2292,51 +2350,63 @@
 
         // --- LÓGICA EXCEL (ADMIN) ---
         // --- LÓGICA EXCEL (ADMIN REFINADA) ---
+        window.abortarCargaExcel = false;
         window.procesarExcel = (input) => {
             const file = input.files[0];
             if (!file) return;
 
-            const activeStatus = document.getElementById('excel-status') || (() => {
-                const s = document.createElement('p');
-                s.id = 'excel-status';
-                input.parentElement.appendChild(s);
-                return s;
-            })();
+            const progressContainer = document.getElementById('excel-progress-container');
+            const progressBar = document.getElementById('excel-progress-bar');
+            const progressText = document.getElementById('excel-progress-text');
+            const detailText = document.getElementById('excel-detail-text');
 
-            activeStatus.innerText = "Leyendo archivo...";
-            activeStatus.className = "mt-2 text-center text-xs text-teal-600 font-bold";
+            // Preparar UI
+            progressContainer.classList.remove('hidden');
+            window.abortarCargaExcel = false;
+            progressBar.style.width = '0%';
+            progressText.innerText = "Iniciando proceso...";
+            detailText.innerText = "Leyendo archivo Excel...";
 
-            const reader = new FileReader();
             reader.onload = async (e) => {
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
-                    const sheetName = workbook.SheetNames[0];
-                    const sheet = workbook.Sheets[sheetName];
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
                     const json = XLSX.utils.sheet_to_json(sheet);
 
                     if (json.length === 0) throw new Error("El archivo está vacío");
 
-                    activeStatus.innerText = `⏳ Registrando ${json.length} docentes...`;
+                    // 1. VALIDACIÓN DE COLUMNAS
+                    const headers = Object.keys(json[0] || {});
+                    const required = ["Correo del docente", "Cédula", "CENTRO_EDUCATIVO", "Nombre del Asesor"];
+                    const missing = required.filter(col => !headers.includes(col));
 
-                    let creados = 0;
-                    let errores = 0;
+                    if (missing.length > 0) {
+                        throw new Error(`Faltan columnas obligatorias: ${missing.join(", ")}`);
+                    }
 
+                    let creados = 0, errores = 0, total = json.length;
                     const { doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
 
-                    for (const row of json) {
+                    for (let i = 0; i < total; i++) {
+                        if (window.abortarCargaExcel) {
+                            detailText.innerText = "🛑 DETENIDO: Se han guardado los registros procesados hasta ahora.";
+                            setTimeout(() => progressContainer.classList.add('hidden'), 5000);
+                            return;
+                        }
+
+                        const row = json[i];
                         try {
-                            // Mapeo detallado de los 15 campos solicitados (Total: 15)
                             const email = (row["Correo del docente"] || row["Correo MEP"] || row.email || "").toLowerCase().trim();
-                            if (!email) continue;
+                            if (!email) { errores++; continue; }
 
                             const userData = {
-                                nombre: row["Docents de IE"] || row["Nombre del Docente"] || row.nombre || "Sin Nombre",
-                                cedula: String(row["Cédula"] || row.cedula || ""),
+                                nombre: row["Docents de IE"] || row["Nombre del Docente"] || "Sin Nombre",
+                                cedula: String(row["Cédula"] || ""),
                                 email: email,
                                 celular: String(row["Celular"] || ""),
-                                institucion: row["CENTRO_EDUCATIVO"] || row["Institución"] || "Sin Institución",
-                                codigo_saber: String(row["CODSABER"] || row["Código Saber"] || ""),
+                                institucion: row["CENTRO_EDUCATIVO"] || "Sin Institución",
+                                codigo_saber: String(row["CODSABER"] || ""),
                                 codigo_presupuestario: String(row["Código Presupuestario"] || ""),
                                 correo_institucional: (row["Correo institucional"] || "").toLowerCase().trim(),
                                 regional: row["REGIONAL"] || "",
@@ -2346,15 +2416,14 @@
                                 programa_3_sutel: row["Entregado programa 3 (Según inventario SUTEL)"] || "",
                                 formacion_tecnologica: row["Formación Tecnológica"] || "",
                                 plan_nacional: row["Plan Nacional"] || "",
+                                asesor_asignado: row["Nombre del Asesor"] || "Sin Asesor", // CAMPO 16
                                 rol: "docente",
-                                registradoVia: "excel_v2026_full",
+                                registradoVia: "excel_v2026_ctrl",
                                 actualizadoEn: serverTimestamp()
                             };
 
-                            // Guardar/Actualizar Docente
                             await setDoc(doc(db, "registro_usuarios", email), userData, { merge: true });
 
-                            // Actualizar/Crear Institución con metadata técnica extendida
                             if (userData.institucion !== "Sin Institución") {
                                 const instSlug = userData.institucion.toLowerCase().replace(/[^a-z0-9]/g, '_');
                                 await setDoc(doc(db, "status_instituciones", instSlug), {
@@ -2363,34 +2432,48 @@
                                     circuito: userData.circuito,
                                     correo_institucional: userData.correo_institucional,
                                     codigo_presupuestario: userData.codigo_presupuestario,
-                                    equipo_pronie: userData.equipo_pronie,
-                                    programa_3_sutel: userData.programa_3_sutel,
+                                    asesor: userData.asesor_asignado,
                                     actualizado: new Date().toLocaleDateString('es-CR'),
                                     categoria: row["Prioridad"] || "CONTINUIDAD"
                                 }, { merge: true });
                             }
                             creados++;
                         } catch (err) {
-                            console.error("Error en fila:", row, err);
+                            console.error("Error en fila:", i, err);
                             errores++;
                         }
+
+                        // Actualizar UI
+                        const p = Math.round(((i + 1) / total) * 100);
+                        progressBar.style.width = `${p}%`;
+                        progressText.innerText = `Procesando: ${p}%`;
+                        detailText.innerText = `Fila ${i + 1} de ${total} | Éxitos: ${creados} | Errores: ${errores}`;
+
+                        // Pequeña pausa para no bloquear el hilo principal y permitir el botón Detener
+                        if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
                     }
 
-                    activeStatus.innerText = `✅ Éxito: ${creados} cargados. ⚠️ Errores: ${errores}.`;
-                    activeStatus.className = "mt-2 text-center text-xs text-green-500 font-bold";
+                    progressText.innerText = "✅ PROCESO COMPLETADO";
+                    detailText.innerText = `Finalizado. Éxitos: ${creados} | Errores: ${errores}`;
+                    setTimeout(() => progressContainer.classList.add('hidden'), 6000);
+
+                    input.value = "";
                     if (window.listarUsuarios && !document.getElementById('admin-usuarios-list').classList.contains('hidden')) window.listarUsuarios();
                     if (window.mostrarInstituciones) window.mostrarInstituciones();
 
                 } catch (err) {
-                    console.error("Error procesando Excel:", err);
-                    activeStatus.innerText = `⛔ Error: ${err.message}`;
-                    activeStatus.className = "mt-2 text-center text-xs text-rose-500 font-bold";
+                    console.error("Error en Excel:", err);
+                    progressText.innerText = "❌ ERROR EN EL ARCHIVO";
+                    detailText.innerText = err.message;
+                    input.value = "";
                 }
             };
             reader.readAsArrayBuffer(file);
         };
 
-        window.mostrarInstituciones = async () => {
+        window.currentAsesorFilter = 'todos';
+        window.mostrarInstituciones = async (filtroAsesor = window.currentAsesorFilter) => {
+            window.currentAsesorFilter = filtroAsesor;
             const listInstituciones = document.getElementById('admin-instituciones-list');
             const listUsuarios = document.getElementById('admin-usuarios-list');
             const sectionBitacora = document.getElementById('admin-bitacora-section');
@@ -2425,6 +2508,13 @@
                 let html = "";
                 instSnap.forEach(iDoc => {
                     const inst = iDoc.data();
+
+                    // APLICAR FILTRO DE ASESOR
+                    if (window.currentAsesorFilter !== 'todos') {
+                        const nameLower = (inst.asesor || "").toLowerCase();
+                        if (!nameLower.includes(window.currentAsesorFilter)) return;
+                    }
+
                     const docentes = usuariosPorInst[inst.nombre] || [];
                     const instId = iDoc.id;
                     const categoria = inst.categoria || 'CONTINUIDAD';
@@ -2438,7 +2528,10 @@
                                 <div class="flex items-center gap-4">
                                     <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-[#025964] shadow-sm font-black text-[10px] border border-slate-100 uppercase tracking-tighter">000${instId.length}</div>
                                     <div>
-                                        <h5 class="font-black text-slate-800 uppercase text-sm">${inst.nombre}</h5>
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <h5 class="font-black text-slate-800 uppercase text-sm">${inst.nombre}</h5>
+                                            <span class="text-[8px] font-black bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md border border-slate-200 uppercase tracking-wider">${inst.asesor || 'Sin Asesor'}</span>
+                                        </div>
                                         <div class="flex flex-wrap gap-2 mt-2">
                                             <span class="text-[9px] font-black px-2 py-0.5 rounded-full border uppercase tracking-widest ${catColor}">${categoria}</span>
                                             <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">DR: ${inst.regional || 'N/A'}</span>
@@ -2773,19 +2866,31 @@
             msg("⏳ Verificando autorización...", "normal");
 
             try {
-                // Validación de Lista Blanca (Whitelist)
-                const whitelistSnap = await getDoc(doc(db, "whitelist", email.toLowerCase()));
+                // 1. VALIDACIÓN DE LISTA BLANCA (Desde Excel)
+                // Buscamos si el correo existe como documento en registro_usuarios
+                const docRef = doc(db, "registro_usuarios", email.toLowerCase());
+                const excelSnap = await getDoc(docRef);
 
-                /* 
-                // VALIDACIÓN DE LISTA BLANCA (Desactivada temporalmente por solicitud)
-                if (!whitelistSnap.exists()) {
-                    return msg("⛔ No estás en la lista de acceso autorizado.", "err");
-                } 
-                */
+                if (!excelSnap.exists()) {
+                    return msg("⛔ Tu correo no está pre-autorizado. Contacta a un asesor.", "err");
+                }
 
-                msg("⏳ Registrando...", "normal");
+                // Recuperar datos técnicos del Excel para fusionarlos
+                const excelData = excelSnap.data();
+                const finalData = {
+                    ...data,
+                    ...excelData, // Priorizar datos técnicos del Excel
+                    telefono: data.telefono, // Mantener el del formulario
+                    nombre: data.nombre || excelData.nombre,
+                    fecha_registro: serverTimestamp()
+                };
+
+                msg("⏳ Registrando cuenta...", "normal");
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
-                await guardarFicha(res.user.uid, data);
+
+                // Guardar en documento indexado por UID (estándar de la app)
+                await guardarFicha(res.user.uid, finalData);
+
                 msg("✅ Cuenta creada con éxito.", "success");
             } catch (error) {
                 console.error("Error en Registro:", error);
