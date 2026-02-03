@@ -1563,7 +1563,7 @@
 
             try {
                 const respuesta = await llamarGemini(prompts[type], 'general');
-                const htmlRes = respuesta.text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+                const htmlRes = respuesta.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
 
                 const oldRes = document.getElementById('admin-ia-result');
                 if (oldRes) oldRes.remove();
@@ -2125,8 +2125,8 @@
             try {
                 const callGemini = window.httpsCallable(window.functions, 'callGemini');
                 const result = await callGemini({ prompt: promptTxt, type: type });
-                // Siempre devolvemos objeto { text: ... } para evitar ReferenceError: text is not defined
-                return { text: result.data.text };
+                // Devolvemos solo el texto para compatibilidad con .split() y .replace()
+                return result.data.text;
             } catch (error) {
                 console.error("Error al llamar a Gemini Function:", error);
                 const errorMsg = error.message || 'Error desconocido';
@@ -2135,7 +2135,7 @@
                 let feedback = `⛔ Error (${errorCode}): ${errorMsg}`;
                 if (errorCode === 'unauthenticated') feedback = "⚠️ Debes iniciar sesión para usar la IA.";
 
-                return { text: feedback };
+                return feedback;
             }
         }
 
@@ -3344,7 +3344,7 @@
 
             try {
                 const res = await llamarGemini(prompt, 'general');
-                let text = res.text;
+                let text = res;
 
                 // Procesar JSON de categorías
                 const jsonMatch = text.match(/:::DATA_START:::([\s\S]*?):::DATA_END:::/);
@@ -3782,7 +3782,7 @@
                 Usa un tono profesional, estratégico y enfocado en la mejora del programa.`;
 
                 const res = await llamarGemini(prompt, 'reporte');
-                content.innerHTML = res.text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+                content.innerHTML = res.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
                 resDiv.classList.remove('hidden');
                 msg("✅ Reporte estratégico generado", "success");
             } catch (e) {
