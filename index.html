@@ -3409,14 +3409,24 @@
                 const isMaster = masterAdvisors.includes(email.toLowerCase());
 
                 let excelData = {};
-                if (!isMaster) {
-                    const docRef = doc(db, "registro_usuarios", email.toLowerCase());
-                    const excelSnap = await getDoc(docRef);
+                let excelSnap = null;
 
-                    if (!excelSnap.exists()) {
-                        return msg("⛔ Tu correo no está pre-autorizado. Contacta a un asesor.", "err");
+                if (!isMaster) {
+                    try {
+                        const docRef = doc(db, "registro_usuarios", email.toLowerCase());
+                        excelSnap = await getDoc(docRef);
+
+                        if (!excelSnap.exists()) {
+                            return msg("⛔ Tu correo no está pre-autorizado. Contacta a un asesor.", "err");
+                        }
+                        excelData = excelSnap.data();
+                    } catch (err) {
+                        console.error("Whitelist check error:", err);
+                        if (err.message.includes("permissions")) {
+                            return msg("⛔ Error de permisos. Se requiere configurar reglas de acceso en Firebase.", "err");
+                        }
+                        return msg("⛔ Error al verificar autorización.", "err");
                     }
-                    excelData = excelSnap.data();
                 } else {
                     // Datos por defecto para asesores si no están en el Excel
                     let nombreAsesor = "Asesor Nacional";
@@ -3446,10 +3456,14 @@
                 await guardarFicha(res.user.uid, finalData);
 
                 // Si existía un registro previo por email (Excel), eliminarlo para evitar duplicados
-                if (excelSnap.exists()) {
+                if (excelSnap && excelSnap.exists()) {
                     const { deleteDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-                    await deleteDoc(doc(db, "registro_usuarios", email));
-                    console.log("Registro temporal de Excel eliminado.");
+                    try {
+                        await deleteDoc(doc(db, "registro_usuarios", email.toLowerCase()));
+                        console.log("Registro temporal de Excel eliminado.");
+                    } catch (delErr) {
+                        console.warn("No se pudo eliminar el registro temporal (Excel). Probablemente falta permiso de delete.", delErr);
+                    }
                 }
 
                 msg("✅ Cuenta creada con éxito.", "success");
