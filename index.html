@@ -816,12 +816,26 @@
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-50 pt-4">
                                     <div class="space-y-1">
-                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Dimensión 2025</label>
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Dimensión</label>
                                         <input type="text" id="edit-user-dimension" class="input-field text-xs mb-0">
                                     </div>
                                     <div class="space-y-1">
                                         <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Equipo PRONIE</label>
                                         <input type="text" id="edit-user-pronie" class="input-field text-xs mb-0">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Programa 3 (SUTEL)</label>
+                                        <input type="text" id="edit-user-programa3" class="input-field text-xs mb-0">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Formación Tecno</label>
+                                        <input type="text" id="edit-user-formacion" class="input-field text-xs mb-0">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Plan Nacional</label>
+                                        <input type="text" id="edit-user-plannacional" class="input-field text-xs mb-0">
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -830,7 +844,7 @@
                                         <input type="text" id="edit-user-asesor" class="input-field text-xs mb-0">
                                     </div>
                                     <div class="space-y-1">
-                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Correo Institucional</label>
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Correo Institucional (Centro)</label>
                                         <input type="email" id="edit-user-email-institucional" class="input-field text-xs mb-0">
                                     </div>
                                 </div>
@@ -2949,26 +2963,26 @@
                             };
 
                             // Buscar el correo del docente EXCLUYENDO el institucional
-                            const emailValue = getVal(row, ["correo docente", "correo del docente", "email docente", "correo mep", "email", "correo"], ["institucional", "centro"]).toLowerCase().trim();
+                            const emailValue = getVal(row, ["correo1", "correo docente", "correo del docente", "email docente", "correo personal", "personal", "docente", "funcionario", "correo mep", "email", "contacto", "correo"], ["institucional", "centro"]).toLowerCase().trim();
                             if (!emailValue) { errores++; continue; }
 
                             const userData = {
-                                nombre: getVal(row, ["docents de ie", "nombre del docente", "docente", "nombre", "funcionario", "nombre completo"]) || "Sin Nombre",
-                                cedula: String(getVal(row, ["cédula", "cedula", "id", "identificacion", "identificación", "cédula de identidad"]) || ""),
+                                nombre: getVal(row, ["NombreDocente", "docents de ie", "nombre del docente", "docente", "nombre", "funcionario", "nombre completo"]) || "Sin Nombre",
+                                cedula: String(getVal(row, ["Cedula", "cédula", "cedula", "id", "identificacion", "identificación", "cédula de identidad"]) || ""),
                                 email: emailValue,
-                                celular: String(getVal(row, ["celular", "teléfono", "telefono", "móvil", "movil", "contacto teléfono"]) || ""),
-                                institucion: getVal(row, ["centro_educativo", "centro educativo", "institución", "institucion", "centro", "nombre de la institución", "escuela", "colegio"]) || "Sin Institución",
-                                codigo_saber: String(getVal(row, ["codsaber", "saber", "código de saber", "codigo saber"]) || ""),
-                                codigo_presupuestario: String(getVal(row, ["código presupuestario", "codigo presupuestario", "presupuestario", "código centro", "codigo centro"]) || ""),
-                                correo_institucional: getVal(row, ["correo institucional", "email institucional", "correo centro"]).toLowerCase().trim(),
-                                regional: getVal(row, ["regional", "dirección regional", "dre", "region", "región"]),
-                                circuito: getVal(row, ["circuito", "p_circuito", "circ", "número de circuito"]),
-                                dimension_2025: getVal(row, ["dimensión 2025", "dimension 2025"]),
-                                equipo_pronie: getVal(row, ["equipo pronie (según inventario fod)", "equipo pronie", "fod", "computadoras", "equipo"]),
-                                programa_3_sutel: getVal(row, ["entregado programa 3 (según inventario sutel)", "sutel", "programa 3", "conectividad"]),
-                                formacion_tecnologica: getVal(row, ["formación tecnológica", "formacion tecnologica", "formacion"]),
-                                plan_nacional: getVal(row, ["plan nacional", "pnft"]),
-                                asesor_asignado: getVal(row, ["nombre del asesor", "asesor asignado", "asesor", "asesor pnft"]),
+                                celular: String(getVal(row, ["Celular", "celular", "teléfono", "telefono", "móvil", "movil", "contacto teléfono"]) || ""),
+                                institucion: getVal(row, ["CENTRO_EDUCATIVO", "centro educativo", "institución", "institucion", "centro", "nombre de la institución", "escuela", "colegio"]) || "Sin Institución",
+                                codigo_saber: String(getVal(row, ["CODSABER", "saber", "código de saber", "codigo saber"]) || ""),
+                                codigo_presupuestario: String(getVal(row, ["codiPres", "código presupuestario", "codigo presupuestario", "presupuestario", "código centro", "codigo centro"]) || ""),
+                                correo_institucional: getVal(row, ["Correo2", "correo institucional", "email institucional", "correo centro"]).toLowerCase().trim(),
+                                regional: getVal(row, ["REGIONAL", "regional", "dirección regional", "dre", "region", "región"]),
+                                circuito: getVal(row, ["CIRCUITO", "circuito", "p_circuito", "circ", "número de circuito"]),
+                                dimension_2025: getVal(row, ["Dimension", "dimensión 2025", "dimension 2025"]),
+                                equipo_pronie: getVal(row, ["equipopronie", "equipo pronie"]),
+                                sutel_p3: getVal(row, ["programa3", "sutel", "p3"]),
+                                formacion_tecno: getVal(row, ["formaciontecno", "formación tecnológica", "formacion"]),
+                                plan_nacional: getVal(row, ["planacional", "plan nacional"]),
+                                asesor_asignado: getVal(row, ["Asesor", "asesor", "nombre del asesor"]),
                                 rol: "docente",
                                 registradoVia: "excel_v2026_ctrl",
                                 actualizadoEn: serverTimestamp()
@@ -3778,8 +3792,8 @@
                                         ${!esCompleto ? '<span class="text-[7px] bg-rose-500 text-white px-1.5 py-0.5 rounded-md animate-pulse">PENDIENTE</span>' : ''}
                                     </h5>
                                     <p class="text-[10px] text-slate-500 font-medium truncate">
-                                        <i class="ph ph-envelope-simple"></i> ${u.email} 
-                                        | ID: ${u.cedula || 'N/A'}
+                                        <i class="ph ph-shield-check"></i> <span class="text-[#025964] font-bold">Autorizado:</span> ${doc.id} 
+                                        ${u.cedula ? `| ID: ${u.cedula}` : ''}
                                     </p>
                                     <div class="flex gap-2 mt-1 flex-wrap">
                                         <span class="text-[9px] font-black text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100 uppercase tracking-widest">${u.institucion || 'Sin Inst.'}</span>
@@ -3937,6 +3951,9 @@
                 document.getElementById('edit-user-circuito').value = u.circuito || "";
                 document.getElementById('edit-user-dimension').value = u.dimension_2025 || "";
                 document.getElementById('edit-user-pronie').value = u.equipo_pronie || "";
+                document.getElementById('edit-user-programa3').value = u.sutel_p3 || "";
+                document.getElementById('edit-user-formacion').value = u.formacion_tecno || "";
+                document.getElementById('edit-user-plannacional').value = u.plan_nacional || "";
                 document.getElementById('edit-user-asesor').value = u.asesor_asignado || "";
                 document.getElementById('edit-user-email-institucional').value = u.correo_institucional || "";
                 document.getElementById('edit-user-rol').value = u.rol || "docente";
@@ -3962,6 +3979,9 @@
                 circuito: document.getElementById('edit-user-circuito').value,
                 dimension_2025: document.getElementById('edit-user-dimension').value,
                 equipo_pronie: document.getElementById('edit-user-pronie').value,
+                sutel_p3: document.getElementById('edit-user-programa3').value,
+                formacion_tecno: document.getElementById('edit-user-formacion').value,
+                plan_nacional: document.getElementById('edit-user-plannacional').value,
                 asesor_asignado: document.getElementById('edit-user-asesor').value,
                 correo_institucional: document.getElementById('edit-user-email-institucional').value.toLowerCase().trim(),
                 rol: document.getElementById('edit-user-rol').value,
