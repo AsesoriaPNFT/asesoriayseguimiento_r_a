@@ -621,6 +621,18 @@
         };
 
         window.router = async (view) => {
+            // SEGURIDAD: Prevenir acceso no autorizado
+            const protectedViews = ['admin', 'bitacora', 'diagnostico'];
+            if (protectedViews.includes(view)) {
+                if (!window.currentUserData || window.currentUserData.rol !== 'admin') {
+                    console.warn("⚠️ Acceso denegado a:", view);
+                    msg("⛔ No tienes permisos para esta sección.", "err");
+                    // Evitar bucle infinito si ya estamos en un lugar seguro
+                    if (view !== 'dashboard') return window.router('dashboard');
+                    return;
+                }
+            }
+
             // Close sidebar on navigation (mobile)
             document.getElementById('main-sidebar').classList.remove('open');
             document.getElementById('sidebar-overlay').classList.remove('active');
@@ -3446,14 +3458,24 @@
         window.registerUser = async () => {
             const email = document.getElementById('reg-email').value.trim();
             const pass = document.getElementById('reg-pass').value;
-            const advisor = document.getElementById('reg-advisor').value;
+            const advisorKey = document.getElementById('reg-advisor').value;
+
+            // Mapeo técnico del asesor
+            const advisorMap = {
+                'alberto': 'Alberto Bustos Ortega',
+                'rodolfo': 'Rodolfo Juárez Pérez',
+                'admin': 'Sede Central PNFT'
+            };
+            const advisorName = advisorMap[advisorKey] || "Sin Asesor";
+
             const data = {
                 nombre: document.getElementById('reg-name').value.trim(),
                 telefono: document.getElementById('reg-phone').value.trim(),
                 codigo: document.getElementById('reg-code').value.trim(),
                 email: email,
-                password: pass, // Guardamos la clave para recuperación rápida por el admin
-                asesor: advisor,
+                password: pass,
+                asesor: advisorKey,
+                asesor_asignado: advisorName, // Sincronización con visualización Admin
                 rol: "docente",
                 ultimo_acceso: serverTimestamp()
             };
@@ -4311,6 +4333,9 @@
                                 badge.innerText = "ADMINISTRADOR";
                                 badge.className = "text-[9px] font-black bg-amber-500 text-slate-900 px-2 py-0.5 rounded";
                             }
+                        } else {
+                            const navAdmin = document.getElementById('nav-admin');
+                            if (navAdmin) navAdmin.classList.add('hidden');
                         }
                         router('dashboard');
                     } else {
