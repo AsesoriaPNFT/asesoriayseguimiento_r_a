@@ -59,6 +59,13 @@
             box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
         }
 
+        /* Custom Breakpoints */
+        @media (min-width: 480px) {
+            .xs\:flex {
+                display: flex;
+            }
+        }
+
         .glass-panel {
             background: rgba(255, 255, 255, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -433,7 +440,7 @@
                 </div>
             </header>
 
-            <div id="content-area" class="p-10 max-w-7xl mx-auto fade-in">
+            <div id="content-area" class="p-4 sm:p-10 max-w-7xl mx-auto fade-in">
             </div>
         </main>
     </div>
@@ -682,7 +689,6 @@
                         </div>
                     </div>
 
-                    <!-- Modal de Carga -->
                     <div id="modal-subir" class="fixed inset-0 z-[2000] hidden flex items-center justify-center p-6">
                         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="window.cerrarModalSubir()"></div>
                         <div class="glass w-full max-w-xl bg-white rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
@@ -756,6 +762,149 @@
                             <div class="p-8 border-t border-slate-100 bg-slate-50">
                                 <button onclick="window.subirRecursoDigital()" id="btn-subir" class="w-full bg-[#025964] hover:bg-teal-600 text-white py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl transition-all disabled:bg-slate-300 flex items-center justify-center gap-2">
                                     <i class="ph ph-upload-simple"></i> Publicar en el Ecosistema
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Editar Usuario -->
+                    <div id="modal-editar-usuario" class="fixed inset-0 z-[2000] hidden flex items-center justify-center p-6">
+                        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="window.cerrarModalEditarUsuario()"></div>
+                        <div class="glass w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
+                            <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-[#025964] text-white">
+                                <div>
+                                    <h3 class="text-xl font-black uppercase tracking-tighter leading-none">Editar Perfil de Docente</h3>
+                                    <p id="edit-user-email-label" class="text-[10px] text-teal-200 uppercase tracking-widest mt-2 font-bold">Cargando...</p>
+                                </div>
+                                <button onclick="window.cerrarModalEditarUsuario()" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all"><i class="ph-bold ph-x"></i></button>
+                            </div>
+                            <div class="p-8 overflow-y-auto no-scrollbar space-y-6">
+                                <input type="hidden" id="edit-user-uid">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Nombre Completo</label>
+                                        <input type="text" id="edit-user-nombre" class="input-field text-xs mb-0">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Cédula</label>
+                                        <input type="text" id="edit-user-cedula" class="input-field text-xs mb-0">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Celular</label>
+                                        <input type="text" id="edit-user-celular" class="input-field text-xs mb-0">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Institución</label>
+                                        <input type="text" id="edit-user-institucion" class="input-field text-xs mb-0">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Cod. Saber</label>
+                                        <input type="text" id="edit-user-saber" class="input-field text-xs mb-0">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Regional</label>
+                                        <input type="text" id="edit-user-regional" class="input-field text-xs mb-0">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Circuito</label>
+                                        <input type="text" id="edit-user-circuito" class="input-field text-xs mb-0">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-50 pt-4">
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Dimensión 2025</label>
+                                        <input type="text" id="edit-user-dimension" class="input-field text-xs mb-0">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Equipo PRONIE</label>
+                                        <input type="text" id="edit-user-pronie" class="input-field text-xs mb-0">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Asesor Asignado</label>
+                                        <input type="text" id="edit-user-asesor" class="input-field text-xs mb-0">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Rol de Acceso</label>
+                                        <select id="edit-user-rol" class="input-field text-xs mb-0">
+                                            <option value="docente">Docente</option>
+                                            <option value="admin">Administrador</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-8 border-t border-slate-100 bg-slate-50">
+                                <button onclick="window.guardarCambiosUsuario()" class="w-full bg-[#025964] hover:bg-teal-600 text-white py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl transition-all">
+                                    Guardar Cambios del Docente
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Editar Institución -->
+                    <div id="modal-editar-institucion" class="fixed inset-0 z-[2000] hidden flex items-center justify-center p-6">
+                        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="window.cerrarModalEditarInstitucion()"></div>
+                        <div class="glass w-full max-w-xl bg-white rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
+                            <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-[#008e9b] text-white">
+                                <div>
+                                    <h3 class="text-xl font-black uppercase tracking-tighter leading-none">Editar Institución</h3>
+                                    <p id="edit-inst-id-label" class="text-[10px] text-teal-100 uppercase tracking-widest mt-2 font-bold">Ref: ...</p>
+                                </div>
+                                <button onclick="window.cerrarModalEditarInstitucion()" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all"><i class="ph-bold ph-x"></i></button>
+                            </div>
+                            <div class="p-8 overflow-y-auto no-scrollbar space-y-6">
+                                <input type="hidden" id="edit-inst-id">
+                                <div class="space-y-1">
+                                    <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Nombre del Centro Educativo</label>
+                                    <input type="text" id="edit-inst-nombre" class="input-field text-xs mb-0">
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Prioridad / Categoría</label>
+                                        <select id="edit-inst-categoria" class="input-field text-xs mb-0">
+                                            <option value="URGENTE">🔥 URGENTE</option>
+                                            <option value="PRIORITARIO">⭐ PRIORITARIO</option>
+                                            <option value="CONTINUIDAD">✅ CONTINUIDAD</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Asesor Asignado</label>
+                                        <input type="text" id="edit-inst-asesor" class="input-field text-xs mb-0">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Dirección Regional</label>
+                                        <input type="text" id="edit-inst-regional" class="input-field text-xs mb-0">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Número de Circuito</label>
+                                        <input type="text" id="edit-inst-circuito" class="input-field text-xs mb-0">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Código Presupuestario</label>
+                                        <input type="text" id="edit-inst-presupuestario" class="input-field text-xs mb-0">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Correo Institucional</label>
+                                        <input type="text" id="edit-inst-correo" class="input-field text-xs mb-0">
+                                    </div>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Notas de Seguimiento</label>
+                                    <textarea id="edit-inst-nota" class="input-field text-xs mb-0 min-h-[80px]"></textarea>
+                                </div>
+                            </div>
+                            <div class="p-8 border-t border-slate-100 bg-slate-50">
+                                <button onclick="window.guardarCambiosInstitucion()" class="w-full bg-[#008e9b] hover:bg-teal-700 text-white py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl transition-all">
+                                    Actualizar Datos del Centro
                                 </button>
                             </div>
                         </div>
@@ -1257,16 +1406,16 @@
                         <!-- Right: Institution Management -->
                         <div class="lg:col-span-2 space-y-8">
                             <div class="glass p-8 rounded-[2.5rem] bg-white border border-slate-100 relative overflow-hidden">
-                                <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
-                                    <div>
+                                <div class="flex flex-col gap-6 mb-8 md:flex-row md:items-center md:justify-between">
+                                    <div class="w-full md:w-auto">
                                         <h3 class="text-2xl font-black text-slate-800 mb-1 uppercase tracking-tighter">Gestión de Instituciones</h3>
-                                        <div class="flex gap-4 mt-2">
+                                        <div class="flex flex-wrap gap-x-4 gap-y-2 mt-2">
                                             <button onclick="filtrarAsesor('todos')" id="filter-todos" class="text-[9px] font-black uppercase tracking-widest text-[#025964] border-b-2 border-[#025964]">Todos</button>
-                                            <button onclick="filtrarAsesor('alberto')" id="filter-alberto" class="text-[9px] font-black uppercase tracking-widest text-slate-400 border-b-2 border-transparent hover:text-[#025964] transition-all">Docentes Alberto Bustos O.</button>
-                                            <button onclick="filtrarAsesor('rodolfo')" id="filter-rodolfo" class="text-[9px] font-black uppercase tracking-widest text-slate-400 border-b-2 border-transparent hover:text-[#025964] transition-all">Docentes Rodolfo Juárez P.</button>
+                                            <button onclick="filtrarAsesor('alberto')" id="filter-alberto" class="text-[9px] font-black uppercase tracking-widest text-slate-400 border-b-2 border-transparent hover:text-[#025964] transition-all">Alberto Bustos O.</button>
+                                            <button onclick="filtrarAsesor('rodolfo')" id="filter-rodolfo" class="text-[9px] font-black uppercase tracking-widest text-slate-400 border-b-2 border-transparent hover:text-[#025964] transition-all">Rodolfo Juárez P.</button>
                                         </div>
                                     </div>
-                                    <div class="flex gap-2">
+                                    <div class="flex flex-wrap gap-2 w-full md:w-auto justify-start md:justify-end">
                                         <button onclick="window.crearInstitucion()" class="bg-teal-500 text-white px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-teal-600 transition-all shadow-lg shadow-teal-500/10">
                                             <i class="ph-bold ph-plus"></i> Nueva
                                         </button>
@@ -2883,14 +3032,14 @@
                             'text-teal-600 bg-teal-50 border-teal-100';
 
                     html += `
-                        <div class="p-6 bg-white rounded-3xl border border-slate-100 hover:border-[#025964]/20 transition-all group shadow-sm searchable-item" 
+                        <div class="p-4 sm:p-6 bg-white rounded-3xl border border-slate-100 hover:border-[#025964]/20 transition-all group shadow-sm searchable-item" 
                              data-search="${(inst.nombre + " " + (inst.asesor || "") + " " + (inst.regional || "") + " " + (inst.circuito || "")).toLowerCase()}">
-                            <div class="flex justify-between items-start mb-6">
+                            <div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-[#025964] shadow-sm font-black text-[10px] border border-slate-100 uppercase tracking-tighter">000${instId.length}</div>
-                                    <div>
-                                        <div class="flex items-center gap-2 mb-1">
-                                            <h5 class="font-black text-slate-800 uppercase text-sm">${inst.nombre}</h5>
+                                    <div class="hidden xs:flex w-12 h-12 bg-slate-50 rounded-2xl items-center justify-center text-[#025964] shadow-sm font-black text-[10px] border border-slate-100 uppercase tracking-tighter shrink-0">000${instId.length}</div>
+                                    <div class="min-w-0">
+                                        <div class="flex flex-wrap items-center gap-2 mb-1">
+                                            <h5 class="font-black text-slate-800 uppercase text-sm truncate">${inst.nombre}</h5>
                                             <span class="text-[8px] font-black bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md border border-slate-200 uppercase tracking-wider">${inst.asesor || 'Sin Asesor'}</span>
                                         </div>
                                         <div class="flex flex-wrap gap-2 mt-2">
@@ -2942,31 +3091,50 @@
             }
         };
 
+        window.cerrarModalEditarInstitucion = () => {
+            document.getElementById('modal-editar-institucion').classList.add('hidden');
+        };
+
         window.editarInstitucion = async (id) => {
-            const { doc, getDoc, setDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+            const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
             const snap = await getDoc(doc(db, "status_instituciones", id));
             if (!snap.exists()) return;
             const inst = snap.data();
 
-            const nNombre = prompt("Nombre:", inst.nombre);
-            if (nNombre === null) return;
-            const nCat = prompt("Categoría (URGENTE, PRIORITARIO, CONTINUIDAD):", inst.categoria);
-            if (nCat === null) return;
-            const nReg = prompt("Regional:", inst.regional || "");
-            if (nReg === null) return;
-            const nCir = prompt("Circuito:", inst.circuito || "");
-            if (nCir === null) return;
-            const nNota = prompt("Nota de seguimiento:", inst.nota_seguimiento || "");
-            if (nNota === null) return;
+            document.getElementById('edit-inst-id').value = id;
+            document.getElementById('edit-inst-id-label').innerText = `Ref: ${id}`;
+            document.getElementById('edit-inst-nombre').value = inst.nombre || "";
+            document.getElementById('edit-inst-categoria').value = inst.categoria || "CONTINUIDAD";
+            document.getElementById('edit-inst-asesor').value = inst.asesor || "";
+            document.getElementById('edit-inst-regional').value = inst.regional || "";
+            document.getElementById('edit-inst-circuito').value = inst.circuito || "";
+            document.getElementById('edit-inst-presupuestario').value = inst.codigo_presupuestario || "";
+            document.getElementById('edit-inst-correo').value = inst.correo_institucional || "";
+            document.getElementById('edit-inst-nota').value = inst.nota_seguimiento || "";
 
-            await setDoc(doc(db, "status_instituciones", id), {
-                nombre: nNombre,
-                categoria: nCat.toUpperCase(),
-                regional: nReg,
-                circuito: nCir,
-                nota_seguimiento: nNota,
+            document.getElementById('modal-editar-institucion').classList.remove('hidden');
+        };
+
+        window.guardarCambiosInstitucion = async () => {
+            const id = document.getElementById('edit-inst-id').value;
+            const data = {
+                nombre: document.getElementById('edit-inst-nombre').value,
+                categoria: document.getElementById('edit-inst-categoria').value,
+                asesor: document.getElementById('edit-inst-asesor').value,
+                regional: document.getElementById('edit-inst-regional').value,
+                circuito: document.getElementById('edit-inst-circuito').value,
+                codigo_presupuestario: document.getElementById('edit-inst-presupuestario').value,
+                correo_institucional: document.getElementById('edit-inst-correo').value,
+                nota_seguimiento: document.getElementById('edit-inst-nota').value,
                 actualizado: new Date().toLocaleDateString('es-CR')
-            }, { merge: true });
+            };
+
+            msg("⏳ Actualizando centro...", "normal");
+            const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+            await setDoc(doc(db, "status_instituciones", id), data, { merge: true });
+
+            msg("✅ Institución actualizada", "success");
+            window.cerrarModalEditarInstitucion();
             window.mostrarInstituciones();
         };
 
@@ -3264,12 +3432,11 @@
                     };
                 }
                 const finalData = {
-                    ...data,
-                    ...excelData, // Priorizar datos técnicos del Excel
-                    telefono: data.telefono, // Mantener el del formulario
-                    nombre: data.nombre || excelData.nombre,
+                    ...excelData, // Datos técnicos del Excel (regional, circuito, saber, etc)
+                    ...data, // Datos del formulario (nombre, telefono, codigo, email, pass, asesor)
+                    nombre: data.nombre || excelData.nombre, // Asegurar que el nombre manual no sea sobreescrito por vacío
                     fecha_registro: serverTimestamp(),
-                    perfil_completo: true // Marca para el panel de admin
+                    perfil_completo: true
                 };
 
                 msg("⏳ Registrando cuenta...", "normal");
@@ -3277,6 +3444,13 @@
 
                 // Guardar en documento indexado por UID (estándar de la app)
                 await guardarFicha(res.user.uid, finalData);
+
+                // Si existía un registro previo por email (Excel), eliminarlo para evitar duplicados
+                if (excelSnap.exists()) {
+                    const { deleteDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                    await deleteDoc(doc(db, "registro_usuarios", email));
+                    console.log("Registro temporal de Excel eliminado.");
+                }
 
                 msg("✅ Cuenta creada con éxito.", "success");
             } catch (error) {
@@ -3531,22 +3705,20 @@
                     const esCompleto = u.perfil_completo || u.rol === 'admin';
 
                     html += `
-                        <div class="p-6 bg-white rounded-3xl border border-slate-100 flex flex-wrap justify-between items-center hover:shadow-md transition-all gap-4 searchable-item"
+                        <div class="p-4 sm:p-6 bg-white rounded-3xl border border-slate-100 flex flex-col md:flex-row md:justify-between md:items-center hover:shadow-md transition-all gap-4 searchable-item"
                              data-search="${(u.nombre + " " + u.email + " " + (u.institucion || "") + " " + (u.regional || "")).toLowerCase()}">
-                            <div class="flex items-center gap-4 min-w-[300px]">
-                                <div class="w-12 h-12 ${esCompleto ? 'bg-slate-100 text-slate-400' : 'bg-rose-50 text-rose-400'} rounded-2xl flex items-center justify-center font-black text-lg">${u.nombre.charAt(0)}</div>
-                                <div>
-                                    <h5 class="font-black text-slate-800 text-sm uppercase flex items-center gap-2">
+                            <div class="flex items-center gap-4 min-w-0">
+                                <div class="hidden xs:flex w-12 h-12 ${esCompleto ? 'bg-slate-100 text-slate-400' : 'bg-rose-50 text-rose-400'} rounded-2xl items-center justify-center font-black text-lg shrink-0">${u.nombre.charAt(0)}</div>
+                                <div class="min-w-0">
+                                    <h5 class="font-black text-slate-800 text-sm uppercase flex flex-wrap items-center gap-2 truncate">
                                         ${u.nombre}
-                                        ${!esCompleto ? '<span class="text-[7px] bg-rose-500 text-white px-1.5 py-0.5 rounded-md animate-pulse">CUENTA PENDIENTE</span>' : ''}
+                                        ${!esCompleto ? '<span class="text-[7px] bg-rose-500 text-white px-1.5 py-0.5 rounded-md animate-pulse">PENDIENTE</span>' : ''}
                                     </h5>
-                                    <p class="text-[10px] text-slate-500 font-medium">${u.email} | Cédula: ${u.cedula || 'N/A'}</p>
+                                    <p class="text-[10px] text-slate-500 font-medium truncate">${u.email} | ID: ${u.cedula || 'N/A'}</p>
                                     <div class="flex gap-2 mt-1 flex-wrap">
-                                        <span class="text-[9px] font-black text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100 uppercase tracking-widest">${u.institucion || 'Sin Institución'}</span>
+                                        <span class="text-[9px] font-black text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100 uppercase tracking-widest">${u.institucion || 'Sin Inst.'}</span>
                                         <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">Saber: ${u.codigo_saber || 'N/A'}</span>
                                         <span class="text-[9px] font-black ${String(u.asesor_asignado || "").toLowerCase().includes('alberto') ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-purple-50 text-purple-600 border-purple-100'} px-2 py-0.5 rounded-full border uppercase tracking-widest">Asesor: ${u.asesor_asignado || 'N/A'}</span>
-                                        <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">${u.regional || 'Reg: N/A'}</span>
-                                        <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100 uppercase tracking-widest">Circ: ${u.circuito || 'N/A'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -3626,43 +3798,63 @@
             }
         };
 
+        window.cerrarModalEditarUsuario = () => {
+            document.getElementById('modal-editar-usuario').classList.add('hidden');
+        };
+
         window.editarUsuario = async (uid) => {
             try {
                 const userSnap = await getDoc(doc(db, "registro_usuarios", uid));
                 if (!userSnap.exists()) return;
                 const u = userSnap.data();
 
-                const nNombre = prompt("Nombre completo del docente:", u.nombre);
-                if (nNombre === null) return;
+                document.getElementById('edit-user-uid').value = uid;
+                document.getElementById('edit-user-email-label').innerText = `Email: ${u.email || 'N/A'}`;
+                document.getElementById('edit-user-nombre').value = u.nombre || "";
+                document.getElementById('edit-user-cedula').value = u.cedula || "";
+                document.getElementById('edit-user-celular').value = u.celular || "";
+                document.getElementById('edit-user-institucion').value = u.institucion || "";
+                document.getElementById('edit-user-saber').value = u.codigo_saber || "";
+                document.getElementById('edit-user-regional').value = u.regional || "";
+                document.getElementById('edit-user-circuito').value = u.circuito || "";
+                document.getElementById('edit-user-dimension').value = u.dimension_2025 || "";
+                document.getElementById('edit-user-pronie').value = u.equipo_pronie || "";
+                document.getElementById('edit-user-asesor').value = u.asesor_asignado || u.asesor || "";
+                document.getElementById('edit-user-rol').value = u.rol || "docente";
 
-                const nCedula = prompt("Cédula:", u.cedula || "");
-                if (nCedula === null) return;
+                document.getElementById('modal-editar-usuario').classList.remove('hidden');
+            } catch (e) {
+                console.error(e);
+                msg("⛔ Error al cargar datos", "err");
+            }
+        };
 
-                const nSaber = prompt("Código Saber:", u.codigo_saber || "");
-                if (nSaber === null) return;
+        window.guardarCambiosUsuario = async () => {
+            const uid = document.getElementById('edit-user-uid').value;
+            const data = {
+                nombre: document.getElementById('edit-user-nombre').value,
+                cedula: document.getElementById('edit-user-cedula').value,
+                celular: document.getElementById('edit-user-celular').value,
+                institucion: document.getElementById('edit-user-institucion').value,
+                codigo_saber: document.getElementById('edit-user-saber').value,
+                regional: document.getElementById('edit-user-regional').value,
+                circuito: document.getElementById('edit-user-circuito').value,
+                dimension_2025: document.getElementById('edit-user-dimension').value,
+                equipo_pronie: document.getElementById('edit-user-pronie').value,
+                asesor_asignado: document.getElementById('edit-user-asesor').value,
+                rol: document.getElementById('edit-user-rol').value,
+                actualizadoEn: serverTimestamp()
+            };
 
-                let nRol = prompt("Rol (admin/docente):", u.rol || "docente");
-                if (nRol === null) return;
-
-                nRol = nRol.toLowerCase().trim();
-                if (nRol !== 'admin' && nRol !== 'docente') {
-                    alert("⚠️ Rol no válido.");
-                    return;
-                }
-
-                msg("⏳ Actualizando perfil...", "normal");
-                await setDoc(doc(db, "registro_usuarios", uid), {
-                    nombre: nNombre,
-                    cedula: nCedula,
-                    codigo_saber: nSaber,
-                    rol: nRol
-                }, { merge: true });
-
-                msg("✅ Usuario actualizado", "success");
+            msg("⏳ Actualizando...", "normal");
+            try {
+                await setDoc(doc(db, "registro_usuarios", uid), data, { merge: true });
+                msg("✅ Cambios guardados", "success");
+                window.cerrarModalEditarUsuario();
                 window.listarUsuarios();
             } catch (e) {
                 console.error(e);
-                msg("⛔ Error al editar", "err");
+                msg("⛔ Error al guardar", "err");
             }
         };
 
