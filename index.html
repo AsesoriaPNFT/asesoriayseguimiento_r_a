@@ -2934,18 +2934,22 @@
 
                         const row = json[i];
                         try {
-                            // Mapeo flexible: Prioriza el orden de las searchKeys para evitar ambigüedades
-                            const getVal = (r, searchKeys) => {
+                            // Mapeo flexible: Prioriza el orden de las searchKeys y permite exclusiones
+                            const getVal = (r, searchKeys, excludeKeys = []) => {
                                 for (const sk of searchKeys) {
-                                    const foundKey = Object.keys(r).find(k =>
-                                        k.toLowerCase().trim().includes(sk.toLowerCase().trim())
-                                    );
+                                    const foundKey = Object.keys(r).find(k => {
+                                        const keyLower = k.toLowerCase().trim();
+                                        const matchesSearch = keyLower.includes(sk.toLowerCase().trim());
+                                        const matchesExclude = excludeKeys.some(ex => keyLower.includes(ex.toLowerCase().trim()));
+                                        return matchesSearch && !matchesExclude;
+                                    });
                                     if (foundKey) return r[foundKey];
                                 }
                                 return "";
                             };
 
-                            const emailValue = getVal(row, ["correo docente", "correo del docente", "email docente", "correo mep", "email", "correo"]).toLowerCase().trim();
+                            // Buscar el correo del docente EXCLUYENDO el institucional
+                            const emailValue = getVal(row, ["correo docente", "correo del docente", "email docente", "correo mep", "email", "correo"], ["institucional", "centro"]).toLowerCase().trim();
                             if (!emailValue) { errores++; continue; }
 
                             const userData = {
@@ -3775,7 +3779,6 @@
                                     </h5>
                                     <p class="text-[10px] text-slate-500 font-medium truncate">
                                         <i class="ph ph-envelope-simple"></i> ${u.email} 
-                                        ${u.correo_institucional ? `<span class="text-slate-400"> (Inst: ${u.correo_institucional})</span>` : ''}
                                         | ID: ${u.cedula || 'N/A'}
                                     </p>
                                     <div class="flex gap-2 mt-1 flex-wrap">
