@@ -2948,23 +2948,24 @@
 
                         const row = json[i];
                         try {
-                            // Mapeo flexible: Prioriza el orden de las searchKeys y permite exclusiones
+                            // Mapeo flexible: Prioriza el nombre exacto y luego variaciones
                             const getVal = (r, searchKeys, excludeKeys = []) => {
                                 for (const sk of searchKeys) {
+                                    const searchLower = sk.toLowerCase().trim();
                                     const foundKey = Object.keys(r).find(k => {
                                         const keyLower = k.toLowerCase().trim();
-                                        const matchesSearch = keyLower.includes(sk.toLowerCase().trim());
+                                        const matchesSearch = keyLower === searchLower || keyLower.includes(searchLower);
                                         const matchesExclude = excludeKeys.some(ex => keyLower.includes(ex.toLowerCase().trim()));
                                         return matchesSearch && !matchesExclude;
                                     });
-                                    if (foundKey) return r[foundKey];
+                                    if (foundKey && r[foundKey] !== undefined && r[foundKey] !== null) return r[foundKey];
                                 }
                                 return "";
                             };
 
                             // Buscar el correo del docente EXCLUYENDO el institucional
-                            const emailValue = getVal(row, ["correo1", "correo docente", "correo del docente", "email docente", "correo personal", "personal", "docente", "funcionario", "correo mep", "email", "contacto", "correo"], ["institucional", "centro"]).toLowerCase().trim();
-                            if (!emailValue) { errores++; continue; }
+                            const emailValue = String(getVal(row, ["Correo1", "correo docente", "correo del docente", "email docente", "correo personal", "personal", "docente", "funcionario", "correo mep", "email", "contacto", "correo"], ["institucional", "centro"])).toLowerCase().trim();
+                            if (!emailValue || emailValue === "undefined") { errores++; continue; }
 
                             const userData = {
                                 nombre: getVal(row, ["NombreDocente", "docents de ie", "nombre del docente", "docente", "nombre", "funcionario", "nombre completo"]) || "Sin Nombre",
@@ -2974,7 +2975,7 @@
                                 institucion: getVal(row, ["CENTRO_EDUCATIVO", "centro educativo", "institución", "institucion", "centro", "nombre de la institución", "escuela", "colegio"]) || "Sin Institución",
                                 codigo_saber: String(getVal(row, ["CODSABER", "saber", "código de saber", "codigo saber"]) || ""),
                                 codigo_presupuestario: String(getVal(row, ["codiPres", "código presupuestario", "codigo presupuestario", "presupuestario", "código centro", "codigo centro"]) || ""),
-                                correo_institucional: getVal(row, ["Correo2", "correo institucional", "email institucional", "correo centro"]).toLowerCase().trim(),
+                                correo_institucional: String(getVal(row, ["Correo2", "correo institucional", "email institucional", "correo centro"], ["correo1"])).toLowerCase().trim(),
                                 regional: getVal(row, ["REGIONAL", "regional", "dirección regional", "dre", "region", "región"]),
                                 circuito: getVal(row, ["CIRCUITO", "circuito", "p_circuito", "circ", "número de circuito"]),
                                 dimension_2025: getVal(row, ["Dimension", "dimensión 2025", "dimension 2025"]),
@@ -2984,7 +2985,8 @@
                                 plan_nacional: getVal(row, ["planacional", "plan nacional"]),
                                 asesor_asignado: getVal(row, ["Asesor", "asesor", "nombre del asesor"]),
                                 rol: "docente",
-                                registradoVia: "excel_v2026_ctrl",
+                                perfil_completo: false,
+                                registradoVia: "excel_v2026_final",
                                 actualizadoEn: serverTimestamp()
                             };
 
@@ -3471,7 +3473,7 @@
                 ];
                 const isMaster = masterAdvisors.includes(email.toLowerCase());
 
-                let excelData = {};
+                let excelTechnicalData = {};
                 let excelSnap = null;
 
                 if (!isMaster) {
@@ -3482,32 +3484,30 @@
                         if (!excelSnap.exists()) {
                             return msg("⛔ Tu correo no está pre-autorizado. Contacta a un asesor.", "err");
                         }
-                        excelData = excelSnap.data();
+                        excelTechnicalData = excelSnap.data();
                     } catch (err) {
                         console.error("Whitelist check error:", err);
-                        if (err.message.includes("permissions")) {
-                            return msg("⛔ Error de permisos. Se requiere configurar reglas de acceso en Firebase.", "err");
-                        }
                         return msg("⛔ Error al verificar autorización.", "err");
                     }
                 } else {
-                    // Datos por defecto para asesores si no están en el Excel
                     let nombreAsesor = "Asesor Nacional";
                     if (email.toLowerCase().includes("alberto")) nombreAsesor = "Alberto Bustos Ortega";
                     if (email.toLowerCase().includes("rodolfo")) nombreAsesor = "Rodolfo Juárez Pérez";
                     if (email.toLowerCase().includes("yorleny")) nombreAsesor = "Yorleny Monge Monge";
 
-                    excelData = {
+                    excelTechnicalData = {
                         rol: "admin",
                         nombre: nombreAsesor,
                         institucion: "Asesoría Nacional PNFT",
                         asesor_asignado: "Sede Central PNFT"
                     };
                 }
+
+                // MERGE FINAL: Técnicos de Excel + Manuales de Formulario
                 const finalData = {
-                    ...excelData, // Datos técnicos del Excel (regional, circuito, saber, etc)
-                    ...data, // Datos del formulario (nombre, telefono, codigo, email, pass, asesor)
-                    nombre: data.nombre || excelData.nombre, // Asegurar que el nombre manual no sea sobreescrito por vacío
+                    ...excelTechnicalData,
+                    ...data,
+                    nombre: data.nombre || excelTechnicalData.nombre,
                     fecha_registro: serverTimestamp(),
                     perfil_completo: true
                 };
@@ -3515,17 +3515,15 @@
                 msg("⏳ Registrando cuenta...", "normal");
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
 
-                // Guardar en documento indexado por UID (estándar de la app)
                 await guardarFicha(res.user.uid, finalData);
 
-                // Si existía un registro previo por email (Excel), eliminarlo para evitar duplicados
                 if (excelSnap && excelSnap.exists()) {
-                    const { deleteDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                    const { deleteDoc, doc: fDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
                     try {
-                        await deleteDoc(doc(db, "registro_usuarios", email.toLowerCase()));
+                        await deleteDoc(fDoc(db, "registro_usuarios", email.toLowerCase()));
                         console.log("Registro temporal de Excel eliminado.");
                     } catch (delErr) {
-                        console.warn("No se pudo eliminar el registro temporal (Excel). Probablemente falta permiso de delete.", delErr);
+                        console.warn("No se pudo eliminar el registro temporal.");
                     }
                 }
 
@@ -3537,26 +3535,36 @@
                     try {
                         const loginRes = await signInWithEmailAndPassword(auth, email, pass);
 
-                        // FIX: Antes de guardar, verificar si ya tiene un rol (ej: admin)
-                        const existingSnap = await getDoc(doc(db, "registro_usuarios", loginRes.user.uid));
-                        if (existingSnap.exists() && existingSnap.data().rol) {
-                            data.rol = existingSnap.data().rol;
-                        }
-                        // Forzar admin y cargo nacional si es master
-                        if (["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr", "yorleny.monge.monge@mep.go.cr"].includes(email.toLowerCase())) {
-                            data.rol = "admin";
-                            data.institucion = "Asesoría Nacional PNFT";
-                        }
+                        // Si ya está autenticado, intentamos recuperar su data técnica (Whitelist)
+                        let technicalData = {};
+                        try {
+                            const snap = await getDoc(doc(db, "registro_usuarios", email.toLowerCase()));
+                            if (snap.exists()) technicalData = snap.data();
+                        } catch (e) { }
 
-                        await guardarFicha(loginRes.user.uid, data);
-                        msg("✅ Perfil reparado. Reiniciando...", "success");
-                        setTimeout(() => location.reload(), 1500);
-                    } catch (e) {
-                        console.error("Error reparando perfil:", e);
-                        msg("⛔ Contraseña incorrecta para reparar el perfil.", "err");
+                        const repairData = {
+                            ...technicalData,
+                            ...data,
+                            nombre: data.nombre || technicalData.nombre,
+                            perfil_completo: true,
+                            rol: (technicalData.rol === 'admin' || ["alberto.bustos.ortega@mep.go.cr", "rodolfo.juarez.perez@mep.go.cr", "yorleny.monge.monge@mep.go.cr"].includes(email.toLowerCase())) ? "admin" : "docente",
+                            institucion: (technicalData.rol === 'admin' || email.toLowerCase().includes("alberto") || email.toLowerCase().includes("rodolfo") || email.toLowerCase().includes("yorleny")) ? (technicalData.institucion || "Asesoría Nacional PNFT") : (data.institucion || technicalData.institucion)
+                        };
+
+                        await guardarFicha(loginRes.user.uid, repairData);
+
+                        // Limpiar el registro por email si quedó pendiente
+                        try {
+                            const { deleteDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                            await deleteDoc(doc(db, "registro_usuarios", email.toLowerCase()));
+                        } catch (e) { }
+
+                        msg("✅ Perfil recuperado y actualizado.", "success");
+                    } catch (loginErr) {
+                        msg("⛔ El correo ya está en uso por otro docente.", "err");
                     }
                 } else {
-                    msg("Error: " + error.message, "err");
+                    msg("⛔ No pudimos crear tu cuenta. Verifica tus datos.", "err");
                 }
             }
         };
@@ -3769,8 +3777,10 @@
             try {
                 const snap = await getDocs(collection(db, "registro_usuarios"));
                 let html = "";
+                window.userCache = {}; // Cache para evitar errores de caracteres especiales en botones
                 snap.forEach(doc => {
                     const u = doc.data();
+                    window.userCache[doc.id] = u;
 
                     // APLICAR FILTRO DE ASESOR SI EXISTE
                     if (window.currentAsesorFilter !== 'todos') {
@@ -3783,12 +3793,12 @@
 
                     html += `
                         <div class="p-4 sm:p-6 bg-white rounded-3xl border border-slate-100 flex flex-col md:flex-row md:justify-between md:items-center hover:shadow-md transition-all gap-4 searchable-item"
-                             data-search="${(u.nombre + " " + u.email + " " + (u.institucion || "") + " " + (u.regional || "")).toLowerCase()}">
+                             data-search="${(u.nombre + " " + (u.email || doc.id) + " " + (u.institucion || "") + " " + (u.regional || "")).toLowerCase()}">
                             <div class="flex items-center gap-4 min-w-0">
-                                <div class="hidden xs:flex w-12 h-12 ${esCompleto ? 'bg-slate-100 text-slate-400' : 'bg-rose-50 text-rose-400'} rounded-2xl items-center justify-center font-black text-lg shrink-0">${u.nombre.charAt(0)}</div>
+                                <div class="hidden xs:flex w-12 h-12 ${esCompleto ? 'bg-slate-100 text-slate-400' : 'bg-rose-50 text-rose-400'} rounded-2xl items-center justify-center font-black text-lg shrink-0">${(u.nombre || "?").charAt(0)}</div>
                                 <div class="min-w-0">
                                     <h5 class="font-black text-slate-800 text-sm uppercase flex flex-wrap items-center gap-2 truncate">
-                                        ${u.nombre}
+                                        ${u.nombre || "Sin Nombre"}
                                         ${!esCompleto ? '<span class="text-[7px] bg-rose-500 text-white px-1.5 py-0.5 rounded-md animate-pulse">PENDIENTE</span>' : ''}
                                     </h5>
                                     <p class="text-[10px] text-slate-500 font-medium truncate">
@@ -3805,11 +3815,11 @@
                             <div class="flex items-center gap-4">
                                 <span class="text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-transparent ${rolColor}">${u.rol || 'docente'}</span>
                                 <div class="flex items-center gap-1">
-                                    <button onclick="window.verActividadDocente('${doc.id}', '${u.nombre}')" title="Ver Historial de Actividad" class="w-8 h-8 bg-[#025964]/10 rounded-lg flex items-center justify-center text-[#025964] hover:bg-[#025964] hover:text-white transition-all"><i class="ph-bold ph-calendar-check"></i></button>
-                                    <button onclick="window.enviarResetPass('${u.email}')" title="Enviar Enlace de Reseteo" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors"><i class="ph ph-paper-plane-tilt"></i></button>
-                                    <button onclick="window.copiarDatosUsuario('${btoa(JSON.stringify(u))}')" title="Copiar Datos" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-teal-600 transition-colors"><i class="ph ph-copy"></i></button>
+                                    <button onclick="window.verActividadDocente('${doc.id}')" title="Ver Historial de Actividad" class="w-8 h-8 bg-[#025964]/10 rounded-lg flex items-center justify-center text-[#025964] hover:bg-[#025964] hover:text-white transition-all"><i class="ph-bold ph-calendar-check"></i></button>
+                                    <button onclick="window.enviarResetPass('${u.email || doc.id}')" title="Enviar Enlace de Reseteo" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors"><i class="ph ph-paper-plane-tilt"></i></button>
+                                    <button onclick="window.copiarDatosUsuario('${doc.id}')" title="Copiar Datos" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-teal-600 transition-colors"><i class="ph ph-copy"></i></button>
                                     <button onclick="window.editarUsuario('${doc.id}')" title="Editar" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-[#025964] transition-colors"><i class="ph ph-note-pencil"></i></button>
-                                    <button onclick="window.eliminarUsuario('${doc.id}', '${u.nombre}')" title="Eliminar" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-600 transition-colors"><i class="ph ph-trash"></i></button>
+                                    <button onclick="window.eliminarUsuario('${doc.id}')" title="Eliminar" class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-600 transition-colors"><i class="ph ph-trash"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -3822,14 +3832,15 @@
             }
         };
 
-        window.verActividadDocente = async (uid, nombre) => {
+        window.verActividadDocente = async (uid) => {
+            const u = window.userCache[uid] || { nombre: "Docente" };
             const listUsers = document.getElementById('admin-usuarios-list');
             const sectionAct = document.getElementById('admin-usuario-actividad');
             const timeline = document.getElementById('actividad-timeline');
 
             listUsers.classList.add('hidden');
             sectionAct.classList.remove('hidden');
-            document.getElementById('actividad-nombre').innerText = nombre;
+            document.getElementById('actividad-nombre').innerText = u.nombre;
             timeline.innerHTML = '<div class="p-10 text-center"><i class="ph ph-spinner-gap animate-spin text-2xl text-slate-300"></i></div>';
 
             try {
@@ -3923,9 +3934,14 @@
 
         window.editarUsuario = async (uid) => {
             try {
-                const userSnap = await getDoc(doc(db, "registro_usuarios", uid));
-                if (!userSnap.exists()) return;
-                const u = userSnap.data();
+                let u = window.userCache[uid];
+                if (!u) {
+                    // Fallback si no está en cache (ej: carga directa por link)
+                    const snap = await getDoc(doc(db, "registro_usuarios", uid));
+                    if (!snap.exists()) return;
+                    u = snap.data();
+                    window.userCache[uid] = u;
+                }
                 const esPendiente = !u.perfil_completo;
 
                 document.getElementById('edit-user-uid').value = uid;
@@ -4010,11 +4026,12 @@
             }
         };
 
-        window.eliminarUsuario = async (uid, nombre) => {
-            const confirm1 = confirm(`¿Está seguro de eliminar el perfil de ${nombre}?\n\nEsta acción borrará sus datos de registro y perderá el acceso al portal.`);
+        window.eliminarUsuario = async (uid) => {
+            const u = window.userCache[uid] || { nombre: "este usuario" };
+            const confirm1 = confirm(`¿Está seguro de eliminar el perfil de ${u.nombre}?\n\nEsta acción borrará sus datos de registro y perderá el acceso al portal.`);
             if (!confirm1) return;
 
-            const confirm2 = confirm(`⚠️ SEGUNDA CONFIRMACIÓN: ¿Realmente desea ELIMINAR a ${nombre}?`);
+            const confirm2 = confirm(`⚠️ SEGUNDA CONFIRMACIÓN: ¿Realmente desea ELIMINAR a ${u.nombre}?`);
             if (!confirm2) return;
 
             msg("⏳ Eliminando...", "normal");
